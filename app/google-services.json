@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "8886926922",
+    "project_id": "nica-explore",
+    "storage_bucket": "nica-explore.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8886926922:android:cd999aa80de54f83d2b0b3",
+        "android_client_info": {
+          "package_name": "com.lospuntoycoma.nicaexplorer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCi-rkxrEsxFkBa12dAjxh4AnpkfTveAuI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
