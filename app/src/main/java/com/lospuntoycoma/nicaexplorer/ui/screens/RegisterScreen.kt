@@ -302,7 +302,8 @@ fun RegisterScreen(
                 onClick = {
                     showValidation = true
                     nameError = fullName.isBlank()
-                    emailError = email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                    val emailTrimmed = email.trim()
+                    emailError = emailTrimmed.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(emailTrimmed).matches()
                     passwordError = password.length < 6
                     confirmError = password != confirmPassword
                     termsError = !acceptTerms

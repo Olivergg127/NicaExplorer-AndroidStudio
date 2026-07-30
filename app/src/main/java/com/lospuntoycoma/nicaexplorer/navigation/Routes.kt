@@ -9,6 +9,7 @@ object Routes {
     const val CATALOG = "catalog/{cityId}"
     const val PROFILE = "profile"
     const val ASSISTANT = "assistant"
+    const val ADMIN_PANEL = "admin_panel"
     const val AR_PLACEHOLDER = "ar_placeholder/{cityId}/{monumentId}"
 
     fun catalog(cityId: String) = "catalog/$cityId"

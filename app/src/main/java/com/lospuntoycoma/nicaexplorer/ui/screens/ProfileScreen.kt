@@ -43,18 +43,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
+import com.lospuntoycoma.nicaexplorer.ui.viewmodels.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
+    userViewModel: UserViewModel,
     onLogout: () -> Unit,
     onBack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
+    val userProfile by userViewModel.userProfile.collectAsState()
 
     Scaffold(
         topBar = {
@@ -115,6 +120,29 @@ fun ProfileScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.85f)
                     )
+
+                    userProfile?.rol?.let { rol ->
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = when (rol) {
+                                        com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN -> Color(0xFFFFD700)
+                                        com.lospuntoycoma.nicaexplorer.model.UserRole.AUDITOR -> Color(0xFFADD8E6)
+                                        else -> Color.White.copy(alpha = 0.3f)
+                                    },
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = rol.name,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN) Color.Black else Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
             }
 

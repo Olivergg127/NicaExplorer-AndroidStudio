@@ -1,0 +1,20 @@
+- [x] Actualizar dependencias en `app/build.gradle.kts` (Versión inicial)
+- [x] Crear el repositorio `GeminiRepository.kt`
+- [x] Actualizar Kotlin a 2.3.0 en `build.gradle.kts` (raíz) para compatibilidad de metadatos
+- [x] Migrar `jvmTarget` al nuevo `compilerOptions` DSL en `app/build.gradle.kts`
+- [x] Corregir imports en `GeminiRepository.kt`
+- [x] Realizar Sincronización de Gradle y verificar compilación (Éxito)
+- [x] Conectar `AssistantScreen.kt` con `GeminiRepository`
+- [x] Implementar estado de carga (loading) en la UI
+- [x] Probar flujo de envío de mensajes
+- [x] Configurar instrucciones de sistema en `GeminiRepository.kt`
+- [x] Verificar priorización de Nicaragua en el asistente
+- [x] Crear modelos `UserRole` y `UserProfile`
+- [/] Implementar Sistema de Administración y Gestión de Roles
+- [ ] Configurar Súper Admin (`admin@nicaexplorer.com`) en `FirebaseRepository`
+- [ ] Añadir funciones de gestión de usuarios en `FirebaseRepository`
+- [x] Crear `UserViewModel.kt` para estado global
+- [x] Crear `AdminPanelScreen.kt` para gestión de roles
+- [x] Integrar Panel de Administración en `HomeScreen` y `AppNavigation`
+- [x] Mostrar insignia de rol en `ProfileScreen`
+- [x] Sincronizar Gradle y verificar compilación (Éxito)

@@ -36,19 +36,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.data.GeminiRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssistantScreen(onBack: () -> Unit) {
     var message by remember { mutableStateOf("") }
     val messages = remember { mutableStateListOf<ChatMessage>() }
+    var isLoading by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     val quickQuestions = listOf(
         "¿Qué puedo visitar en Juigalpa?",
@@ -122,15 +127,19 @@ fun AssistantScreen(onBack: () -> Unit) {
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
                                     .clickable {
-                                        messages.add(ChatMessage(question, isUser = true))
-                                        messages.add(
-                                            ChatMessage(
-                                                "Gracias por tu pregunta. Esta es una versión de demostración del asistente. " +
-                                                        "En la versión completa podré responderte sobre lugares turísticos, " +
-                                                        "monumentos y experiencias de realidad aumentada en Nicaragua.",
-                                                isUser = false
+                                        val questionText = question
+                                        messages.add(ChatMessage(questionText, isUser = true))
+                                        isLoading = true
+                                        scope.launch {
+                                            val response = GeminiRepository.generateContent(questionText)
+                                            messages.add(
+                                                ChatMessage(
+                                                    response ?: "Lo siento, no pude procesar tu solicitud en este momento.",
+                                                    isUser = false
+                                                )
                                             )
-                                        )
+                                            isLoading = false
+                                        }
                                     },
                                 shape = RoundedCornerShape(16.dp),
                                 colors = CardDefaults.cardColors(
@@ -150,6 +159,16 @@ fun AssistantScreen(onBack: () -> Unit) {
                 } else {
                     items(messages) { msg ->
                         ChatBubble(message = msg)
+                    }
+                    if (isLoading) {
+                        item {
+                            ChatBubble(
+                                message = ChatMessage(
+                                    text = "Escribiendo...",
+                                    isUser = false
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -181,18 +200,25 @@ fun AssistantScreen(onBack: () -> Unit) {
 
                 IconButton(
                     onClick = {
-                        if (message.isNotBlank()) {
-                            messages.add(ChatMessage(message, isUser = true))
-                            messages.add(
-                                ChatMessage(
-                                    "Gracias por tu mensaje. Esta es una versión de demostración del asistente. " +
-                                            "Pronto podré ayudarte con información turística detallada.",
-                                    isUser = false
-                                )
-                            )
+                        if (message.isNotBlank() && !isLoading) {
+                            val userMessage = message.trim()
+                            messages.add(ChatMessage(userMessage, isUser = true))
                             message = ""
+                            isLoading = true
+                            
+                            scope.launch {
+                                val response = GeminiRepository.generateContent(userMessage)
+                                messages.add(
+                                    ChatMessage(
+                                        response ?: "Lo siento, hubo un problema al conectar con mi cerebro artificial.",
+                                        isUser = false
+                                    )
+                                )
+                                isLoading = false
+                            }
                         }
-                    }
+                    },
+                    enabled = !isLoading
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Send,

@@ -10,7 +10,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
+import com.lospuntoycoma.nicaexplorer.ui.screens.AdminPanelScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ArPlaceholderScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.AssistantScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.CatalogScreen
@@ -20,9 +22,12 @@ import com.lospuntoycoma.nicaexplorer.ui.screens.LoginScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ProfileScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RegisterScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.SplashScreen
+import com.lospuntoycoma.nicaexplorer.ui.viewmodels.UserViewModel
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
+    val userViewModel: UserViewModel = viewModel()
+    
     NavHost(
         navController = navController,
         startDestination = Routes.SPLASH,
@@ -64,6 +69,7 @@ fun AppNavigation(navController: NavHostController) {
         composable(Routes.LOGIN) {
             LoginScreen(
                 onLoginSuccess = {
+                    userViewModel.loadUserProfile()
                     navController.navigate(Routes.HOME) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
                     }
@@ -87,6 +93,7 @@ fun AppNavigation(navController: NavHostController) {
 
         composable(Routes.HOME) {
             HomeScreen(
+                userViewModel = userViewModel,
                 onCityClick = {
                     navController.navigate(Routes.CITY_SELECTION)
                 },
@@ -96,11 +103,22 @@ fun AppNavigation(navController: NavHostController) {
                 onAssistantClick = {
                     navController.navigate(Routes.ASSISTANT)
                 },
+                onAdminPanelClick = {
+                    navController.navigate(Routes.ADMIN_PANEL)
+                },
                 onLogout = {
                     FirebaseRepository.signOut()
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(0) { inclusive = true }
                     }
+                }
+            )
+        }
+
+        composable(Routes.ADMIN_PANEL) {
+            AdminPanelScreen(
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -148,6 +166,7 @@ fun AppNavigation(navController: NavHostController) {
 
         composable(Routes.PROFILE) {
             ProfileScreen(
+                userViewModel = userViewModel,
                 onLogout = {
                     FirebaseRepository.signOut()
                     navController.navigate(Routes.LOGIN) {
