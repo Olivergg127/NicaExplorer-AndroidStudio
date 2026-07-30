@@ -65,7 +65,8 @@ fun ProfileScreen(
         topBar = {
             NicaTopBar(
                 title = "Perfil",
-                onBack = onBack
+                onBack = onBack,
+                showTitleText = false
             )
         }
     ) { padding ->

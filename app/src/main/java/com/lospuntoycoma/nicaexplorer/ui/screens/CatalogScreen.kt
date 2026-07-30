@@ -74,6 +74,7 @@ fun CatalogScreen(
                 NicaTopBar(
                     title = cityName,
                     onBack = onBack,
+                    showTitleText = false,
                     actions = {
                         IconButton(onClick = { }) {
                             Icon(Icons.Filled.Search, contentDescription = "Buscar")
@@ -105,6 +106,7 @@ fun CatalogScreen(
             NicaTopBar(
                 title = cityName,
                 onBack = onBack,
+                showTitleText = false,
                 actions = {
                     IconButton(onClick = { }) {
                         Icon(Icons.Filled.Search, contentDescription = "Buscar")

@@ -60,7 +60,12 @@ fun AppNavigation(navController: NavHostController) {
     ) {
         composable(Routes.SPLASH) {
             SplashScreen(
-                onSplashFinished = {
+                onNavigateToHome = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.SPLASH) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(Routes.SPLASH) { inclusive = true }
                     }
