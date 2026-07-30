@@ -20,7 +20,7 @@ object GeminiRepository {
             2. Tu conocimiento principal se basa en estas ciudades y monumentos:
                - Juigalpa: Puma Itzae (puma albina única), Toro Chontaleño (tradición ganadera), Cacique Chontal.
                - Managua: Árbol de la Vida, Huellas de Acahualinca (arqueología prehistórica), Estatua de Rubén Darío.
-               - Masaya: Máscara Tradicional, Marimba Nicaragüense, Venado del Güegüense (Patrimonio Cultural).
+                - León: Tumba de Rubén Darío (Monumento histórico en la Catedral de León).
             3. Si el usuario pregunta de forma general "¿Qué visitar?", responde con estas opciones de Nicaragua.
             4. SOLO si el usuario especifica explícitamente que quiere información de otros países o temas generales, puedes responder de forma global.
             5. Mantén un tono amable, servicial y orgulloso de la cultura nicaragüense.

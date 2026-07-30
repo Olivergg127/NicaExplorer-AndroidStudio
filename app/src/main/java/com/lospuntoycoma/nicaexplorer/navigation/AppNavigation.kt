@@ -1,10 +1,12 @@
 package com.lospuntoycoma.nicaexplorer.navigation
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -138,11 +140,19 @@ fun AppNavigation(navController: NavHostController) {
             route = Routes.CATALOG,
             arguments = listOf(navArgument("cityId") { type = NavType.StringType })
         ) { backStackEntry ->
+            val context = LocalContext.current
             val cityId = backStackEntry.arguments?.getString("cityId") ?: ""
             CatalogScreen(
                 cityId = cityId,
                 onArClick = { monumentId ->
-                    navController.navigate(Routes.arPlaceholder(cityId, monumentId))
+                    Intent().setClassName(
+                        context.packageName,
+                        "com.unity3d.player.UnityPlayerGameActivity"
+                    ).also { intent ->
+                        intent.putExtra("cityId", cityId)
+                        intent.putExtra("monumentId", monumentId)
+                        context.startActivity(intent)
+                    }
                 },
                 onBack = {
                     navController.popBackStack()
