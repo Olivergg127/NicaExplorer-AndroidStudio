@@ -165,6 +165,11 @@ git clone https://github.com/Olivergg127/Los-punto-y-coma.git
 
 ---
 
+# Video de navegacion
+https://drive.google.com/file/d/1Hv8G8RbysrzM5twwemFSqcf_BdQe7Fv5/view?usp=drivesdk
+
+Video uso de aplicación
+
 # Estado del repositorio
 
 Actualmente el proyecto se encuentra en desarrollo activo.
