@@ -14,14 +14,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
+import com.lospuntoycoma.nicaexplorer.ui.screens.AcercaDeScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.AdminPanelScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ArPlaceholderScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.AssistantScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.CatalogScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.CitySelectionScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.ComercioDetalleScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.ComerciosScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.ConfiguracionScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.EditarPerfilScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.HistorialExploracionScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.HomeScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.LoginScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.LugaresGuardadosScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ProfileScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.RecoveryPasswordScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RegisterScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.SplashScreen
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.UserViewModel
@@ -83,6 +91,17 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onNavigateToRegister = {
                     navController.navigate(Routes.REGISTER)
+                },
+                onNavigateToRecovery = {
+                    navController.navigate(Routes.RECUPERAR_CONTRASENA)
+                }
+            )
+        }
+
+        composable(Routes.RECUPERAR_CONTRASENA) {
+            RecoveryPasswordScreen(
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -112,6 +131,12 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onAdminPanelClick = {
                     navController.navigate(Routes.ADMIN_PANEL)
+                },
+                onSavedPlacesClick = {
+                    navController.navigate(Routes.LUGARES_GUARDADOS)
+                },
+                onComerciosClick = {
+                    navController.navigate(Routes.COMERCIOS)
                 },
                 onLogout = {
                     FirebaseRepository.signOut()
@@ -143,19 +168,26 @@ fun AppNavigation(navController: NavHostController) {
 
         composable(
             route = Routes.CATALOG,
-            arguments = listOf(navArgument("cityId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("cityId") { type = NavType.StringType },
+                navArgument("monumentId") { type = NavType.StringType; defaultValue = "" }
+            )
         ) { backStackEntry ->
             val context = LocalContext.current
             val cityId = backStackEntry.arguments?.getString("cityId") ?: ""
+            val monumentId = backStackEntry.arguments?.getString("monumentId")
+                ?.takeIf { it.isNotBlank() }
             CatalogScreen(
                 cityId = cityId,
-                onArClick = { monumentId ->
+                initialMonumentId = monumentId,
+                onArClick = { arMonumentId ->
                     Intent().setClassName(
                         context.packageName,
-                        "com.unity3d.player.UnityPlayerGameActivity"
+                        "com.lospuntoycoma.nicaexplorer.ar.UnityArActivity"
                     ).also { intent ->
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.putExtra("cityId", cityId)
-                        intent.putExtra("monumentId", monumentId)
+                        intent.putExtra("monumentId", arMonumentId)
                         context.startActivity(intent)
                     }
                 },
@@ -188,6 +220,109 @@ fun AppNavigation(navController: NavHostController) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
+                onBack = {
+                    navController.popBackStack()
+                },
+                onEditProfile = {
+                    navController.navigate(Routes.EDITAR_PERFIL)
+                },
+                onSavedPlaces = {
+                    navController.navigate(Routes.LUGARES_GUARDADOS)
+                },
+                onHistory = {
+                    navController.navigate(Routes.HISTORIAL)
+                },
+                onSettings = {
+                    navController.navigate(Routes.CONFIGURACION)
+                },
+                onAbout = {
+                    navController.navigate(Routes.ACERCA_DE)
+                },
+                onComercios = {
+                    navController.navigate(Routes.COMERCIOS)
+                }
+            )
+        }
+
+        composable(Routes.COMERCIOS) {
+            ComerciosScreen(
+                onComercioClick = { comercioId ->
+                    navController.navigate(Routes.comercioDetalle(comercioId))
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Routes.COMERCIO_DETALLE,
+            arguments = listOf(
+                navArgument("comercioId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val comercioId = backStackEntry.arguments?.getString("comercioId") ?: ""
+            ComercioDetalleScreen(
+                comercioId = comercioId,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.EDITAR_PERFIL) {
+            EditarPerfilScreen(
+                userViewModel = userViewModel,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.LUGARES_GUARDADOS) {
+            LugaresGuardadosScreen(
+                onExplore = {
+                    navController.navigate(Routes.CITY_SELECTION)
+                },
+                onOpenMonument = { cityId, monumentId ->
+                    navController.navigate(Routes.catalogWithMonument(cityId, monumentId))
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.HISTORIAL) {
+            HistorialExploracionScreen(
+                onExplore = {
+                    navController.navigate(Routes.CITY_SELECTION)
+                },
+                onOpenMonument = { cityId, monumentId ->
+                    navController.navigate(Routes.catalogWithMonument(cityId, monumentId))
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.CONFIGURACION) {
+            ConfiguracionScreen(
+                onLogout = {
+                    FirebaseRepository.signOut()
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.ACERCA_DE) {
+            AcercaDeScreen(
                 onBack = {
                     navController.popBackStack()
                 }

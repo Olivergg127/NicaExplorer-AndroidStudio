@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material3.*
@@ -57,6 +58,8 @@ fun HomeScreen(
     onProfileClick: () -> Unit,
     onAssistantClick: () -> Unit,
     onAdminPanelClick: () -> Unit,
+    onSavedPlacesClick: () -> Unit,
+    onComerciosClick: () -> Unit,
     onLogout: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -126,7 +129,22 @@ fun HomeScreen(
                     icon = { Icon(Icons.Filled.Star, contentDescription = null) },
                     label = { Text("Lugares guardados") },
                     selected = false,
-                    onClick = { scope.launch { drawerState.close() } },
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        onSavedPlacesClick()
+                    },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Filled.Storefront, contentDescription = null) },
+                    label = { Text("Comercios y restaurantes") },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        onComerciosClick()
+                    },
                     colors = NavigationDrawerItemDefaults.colors(
                         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
                     )

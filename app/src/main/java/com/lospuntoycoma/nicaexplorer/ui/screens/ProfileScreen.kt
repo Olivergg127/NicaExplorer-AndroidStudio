@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,7 +57,13 @@ import com.lospuntoycoma.nicaexplorer.ui.viewmodels.UserViewModel
 fun ProfileScreen(
     userViewModel: UserViewModel,
     onLogout: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onEditProfile: () -> Unit,
+    onSavedPlaces: () -> Unit,
+    onHistory: () -> Unit,
+    onSettings: () -> Unit,
+    onAbout: () -> Unit,
+    onComercios: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val userProfile by userViewModel.userProfile.collectAsState()
@@ -163,7 +170,7 @@ fun ProfileScreen(
                     ProfileMenuItem(
                         icon = Icons.Filled.Person,
                         title = "Editar perfil",
-                        onClick = { }
+                        onClick = onEditProfile
                     )
                     Divider(
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -172,7 +179,16 @@ fun ProfileScreen(
                     ProfileMenuItem(
                         icon = Icons.Filled.Bookmark,
                         title = "Lugares guardados",
-                        onClick = { }
+                        onClick = onSavedPlaces
+                    )
+                    Divider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                    )
+                    ProfileMenuItem(
+                        icon = Icons.Filled.Storefront,
+                        title = "Comercios y restaurantes",
+                        onClick = onComercios
                     )
                     Divider(
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -181,7 +197,7 @@ fun ProfileScreen(
                     ProfileMenuItem(
                         icon = Icons.Filled.History,
                         title = "Historial de exploración",
-                        onClick = { }
+                        onClick = onHistory
                     )
                     Divider(
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -190,7 +206,7 @@ fun ProfileScreen(
                     ProfileMenuItem(
                         icon = Icons.Filled.Settings,
                         title = "Configuración",
-                        onClick = { }
+                        onClick = onSettings
                     )
                     Divider(
                         modifier = Modifier.padding(horizontal = 16.dp),
@@ -199,7 +215,7 @@ fun ProfileScreen(
                     ProfileMenuItem(
                         icon = Icons.Filled.Info,
                         title = "Acerca de NicaExplorer",
-                        onClick = { }
+                        onClick = onAbout
                     )
                 }
             }
