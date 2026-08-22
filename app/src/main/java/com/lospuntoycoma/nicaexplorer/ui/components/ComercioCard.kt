@@ -65,7 +65,7 @@ fun ComercioCard(
                 imagenUrl = comercio.imagenUrl,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(140.dp)
+                    .height(170.dp)
                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
             )
 

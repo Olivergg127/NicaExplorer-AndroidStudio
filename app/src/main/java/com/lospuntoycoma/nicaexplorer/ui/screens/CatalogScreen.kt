@@ -19,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Assistant
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -27,6 +28,8 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ViewInAr
+import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Eco
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,9 +41,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,20 +56,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
+import com.lospuntoycoma.nicaexplorer.data.UserPreferences
 import com.lospuntoycoma.nicaexplorer.model.Monument
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(
     cityId: String,
+    initialMonumentId: String? = null,
     onArClick: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val monuments = SampleData.monumentsByCity[cityId] ?: emptyList()
-    var currentIndex by remember { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
+    val uid = FirebaseRepository.getCurrentUser()?.uid ?: ""
+    val savedIds by UserPreferences.savedPlacesFlow(uid).collectAsState(initial = emptySet())
+    val initialIndex = remember(initialMonumentId) {
+        val idx = monuments.indexOfFirst { it.id == initialMonumentId }
+        if (idx < 0) 0 else idx
+    }
+    var currentIndex by remember { mutableIntStateOf(initialIndex) }
     val scrollState = rememberScrollState()
 
     val cityName = SampleData.cities.firstOrNull { it.id == cityId }?.name ?: "Ciudad"
@@ -101,6 +118,12 @@ fun CatalogScreen(
 
     val monument = monuments[currentIndex]
 
+    val isSaved = monument.id in savedIds
+
+    LaunchedEffect(monument.id) {
+        UserPreferences.recordExploration(uid, monument.id)
+    }
+
     Scaffold(
         topBar = {
             NicaTopBar(
@@ -108,6 +131,22 @@ fun CatalogScreen(
                 onBack = onBack,
                 showTitleText = false,
                 actions = {
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                UserPreferences.toggleSavedPlace(uid, monument.id)
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (isSaved) Icons.Filled.Bookmark
+                            else Icons.Outlined.BookmarkBorder,
+                            contentDescription = if (isSaved) "Quitar de guardados"
+                            else "Guardar lugar",
+                            tint = if (isSaved) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
                     IconButton(onClick = { }) {
                         Icon(Icons.Filled.Search, contentDescription = "Buscar")
                     }
@@ -309,6 +348,70 @@ fun CatalogScreen(
                             label = "Historia",
                             value = monument.history
                         )
+                    }
+                }
+
+                if (monument.consejosResponsables.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Divider(
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+
+                    Text(
+                        text = "Turismo responsable",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        )
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Eco,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = "Contribuye a preservar este lugar",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            monument.consejosResponsables.forEach { consejo ->
+                                Row(
+                                    modifier = Modifier.padding(bottom = 8.dp),
+                                    verticalAlignment = Alignment.Top
+                                ) {
+                                    Text(
+                                        text = "•",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                    Text(
+                                        text = consejo,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
 

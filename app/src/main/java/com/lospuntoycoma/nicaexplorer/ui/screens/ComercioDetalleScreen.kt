@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -151,6 +152,7 @@ fun ComercioDetalleScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(260.dp)
+                                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
                         )
 
                         Column(modifier = Modifier.padding(horizontal = 20.dp)) {

@@ -55,6 +55,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     userViewModel: UserViewModel,
     onCityClick: () -> Unit,
+    onCityCardClick: (String) -> Unit,
     onProfileClick: () -> Unit,
     onAssistantClick: () -> Unit,
     onAdminPanelClick: () -> Unit,
@@ -415,7 +416,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .width(140.dp)
                                 .height(100.dp)
-                                .clickable { onCityClick() },
+                                .clickable { onCityCardClick(city.id) },
                             shape = RoundedCornerShape(16.dp),
                             elevation = CardDefaults.cardElevation(4.dp)
                         ) {

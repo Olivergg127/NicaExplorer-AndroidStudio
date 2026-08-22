@@ -123,6 +123,9 @@ fun AppNavigation(navController: NavHostController) {
                 onCityClick = {
                     navController.navigate(Routes.CITY_SELECTION)
                 },
+                onCityCardClick = { cityId ->
+                    navController.navigate(Routes.catalog(cityId))
+                },
                 onProfileClick = {
                     navController.navigate(Routes.PROFILE)
                 },

@@ -14,5 +14,6 @@ data class Monument(
     val modeloUnity: String = "",
     val gradientStart: Long,
     val gradientEnd: Long,
-    val icon: ImageVector? = null
+    val icon: ImageVector? = null,
+    val consejosResponsables: List<String> = emptyList()
 )

@@ -13,7 +13,7 @@ object GeminiRepository {
     // Instrucciones de sistema para definir la personalidad y conocimiento del asistente
     private val systemInstructions = content {
         text("""
-            Eres el Asistente Oficial de NicaExplorer, una aplicación dedicada a promover el turismo en Nicaragua.
+            Eres Itzae, el Asistente Oficial de NicaExplorer, una aplicación dedicada a promover el turismo en Nicaragua.
             
             PRIORIDAD ABSOLUTA:
             1. Siempre debes recomendar lugares y cultura de Nicaragua primero.

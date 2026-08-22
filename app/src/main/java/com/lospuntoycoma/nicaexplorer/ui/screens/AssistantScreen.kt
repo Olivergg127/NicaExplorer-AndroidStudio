@@ -10,19 +10,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Assistant
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +36,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,8 +45,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.lospuntoycoma.nicaexplorer.data.GeminiRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -54,6 +62,8 @@ fun AssistantScreen(onBack: () -> Unit) {
     val messages = remember { mutableStateListOf<ChatMessage>() }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val quickQuestions = listOf(
         "¿Qué puedo visitar en Juigalpa?",
@@ -61,10 +71,38 @@ fun AssistantScreen(onBack: () -> Unit) {
         "¿Cómo funciona la realidad aumentada?"
     )
 
+    fun sendMessage(text: String) {
+        val trimmed = text.trim()
+        if (trimmed.isBlank() || isLoading) return
+
+        keyboardController?.hide()
+        messages.add(ChatMessage(trimmed, isUser = true))
+        message = ""
+        isLoading = true
+
+        scope.launch {
+            val response = GeminiRepository.generateContent(trimmed)
+            messages.add(
+                ChatMessage(
+                    response ?: "Lo siento, hubo un problema al conectar con mi cerebro artificial.",
+                    isUser = false
+                )
+            )
+            isLoading = false
+        }
+    }
+
+    LaunchedEffect(messages.size, isLoading) {
+        if (messages.isNotEmpty()) {
+            val lastIndex = messages.lastIndex + if (isLoading) 1 else 0
+            listState.animateScrollToItem(lastIndex)
+        }
+    }
+
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Asistente NicaExplorer",
+                title = "Itzae",
                 onBack = onBack
             )
         }
@@ -73,9 +111,11 @@ fun AssistantScreen(onBack: () -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .imePadding()
                 .background(MaterialTheme.colorScheme.background)
         ) {
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
@@ -92,14 +132,14 @@ fun AssistantScreen(onBack: () -> Unit) {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Icon(
-                                    imageVector = Icons.Filled.SmartToy,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                    painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.logo_asistente),
+                                    contentDescription = "Itzae",
+                                    tint = Color.Unspecified,
                                     modifier = Modifier.size(64.dp)
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Hola, soy tu asistente turístico.",
+                                    text = "¡Hola, soy Itzae! Tu asistente turístico.",
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
@@ -127,19 +167,8 @@ fun AssistantScreen(onBack: () -> Unit) {
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
                                     .clickable {
-                                        val questionText = question
-                                        messages.add(ChatMessage(questionText, isUser = true))
-                                        isLoading = true
-                                        scope.launch {
-                                            val response = GeminiRepository.generateContent(questionText)
-                                            messages.add(
-                                                ChatMessage(
-                                                    response ?: "Lo siento, no pude procesar tu solicitud en este momento.",
-                                                    isUser = false
-                                                )
-                                            )
-                                            isLoading = false
-                                        }
+                                        message = question
+                                        sendMessage(question)
                                     },
                                 shape = RoundedCornerShape(16.dp),
                                 colors = CardDefaults.cardColors(
@@ -162,12 +191,7 @@ fun AssistantScreen(onBack: () -> Unit) {
                     }
                     if (isLoading) {
                         item {
-                            ChatBubble(
-                                message = ChatMessage(
-                                    text = "Escribiendo...",
-                                    isUser = false
-                                )
-                            )
+                            TypingIndicator()
                         }
                     }
                 }
@@ -195,33 +219,21 @@ fun AssistantScreen(onBack: () -> Unit) {
                         focusedContainerColor = Color.Transparent,
                         unfocusedContainerColor = Color.Transparent
                     ),
-                    singleLine = true
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(
+                        onSend = { sendMessage(message) }
+                    )
                 )
 
                 IconButton(
                     onClick = {
-                        if (message.isNotBlank() && !isLoading) {
-                            val userMessage = message.trim()
-                            messages.add(ChatMessage(userMessage, isUser = true))
-                            message = ""
-                            isLoading = true
-                            
-                            scope.launch {
-                                val response = GeminiRepository.generateContent(userMessage)
-                                messages.add(
-                                    ChatMessage(
-                                        response ?: "Lo siento, hubo un problema al conectar con mi cerebro artificial.",
-                                        isUser = false
-                                    )
-                                )
-                                isLoading = false
-                            }
-                        }
+                        sendMessage(message)
                     },
                     enabled = !isLoading
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Send,
+                        imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Enviar",
                         tint = if (message.isNotBlank()) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
@@ -245,39 +257,100 @@ private fun ChatBubble(message: ChatMessage) {
             .padding(vertical = 4.dp),
         horizontalAlignment = if (message.isUser) Alignment.End else Alignment.Start
     ) {
-        Box(
-            modifier = Modifier
-                .widthIn(max = 280.dp)
-                .background(
-                    color = if (message.isUser)
-                        MaterialTheme.colorScheme.primary
-                    else
-                        MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(
-                        topStart = 16.dp,
-                        topEnd = 16.dp,
-                        bottomStart = if (message.isUser) 16.dp else 4.dp,
-                        bottomEnd = if (message.isUser) 4.dp else 16.dp
-                    )
-                )
-                .padding(14.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = if (message.isUser)
+                Arrangement.End
+            else
+                Arrangement.Start
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (!message.isUser) {
-                    Icon(
-                        imageVector = Icons.Filled.SmartToy,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp)
+            if (!message.isUser) {
+                AssistantAvatar()
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            Box(
+                modifier = Modifier
+                    .widthIn(max = 280.dp)
+                    .background(
+                        color = if (message.isUser)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomStart = if (message.isUser) 16.dp else 4.dp,
+                            bottomEnd = if (message.isUser) 4.dp else 16.dp
+                        )
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
+                    .padding(14.dp)
+            ) {
                 Text(
                     text = message.text,
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (message.isUser) Color.White
                     else MaterialTheme.colorScheme.onSurface
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AssistantAvatar() {
+    Icon(
+        painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.logo_asistente),
+        contentDescription = "Itzae",
+        tint = Color.Unspecified,
+        modifier = Modifier
+            .size(32.dp)
+            .clip(CircleShape)
+    )
+}
+
+@Composable
+private fun TypingIndicator() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            AssistantAvatar()
+            Spacer(modifier = Modifier.width(8.dp))
+            Box(
+                modifier = Modifier
+                    .widthIn(max = 280.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp,
+                            bottomStart = 4.dp,
+                            bottomEnd = 16.dp
+                        )
+                    )
+                    .padding(14.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Pensando...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         }
     }
