@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.window.OnBackInvokedDispatcher
 import com.unity3d.player.UnityPlayer
-import com.unity3d.player.UnityPlayerActivity
+import com.unity3d.player.UnityPlayerGameActivity
 
 /**
  * Actividad que aloja la experiencia Unity/AR.
@@ -26,7 +26,7 @@ import com.unity3d.player.UnityPlayerActivity
  *   confirma que el motor está listo; un reinicio solicitado antes de tiempo se
  *   reenvía en cuanto llega esa señal.
  */
-class UnityArActivity : UnityPlayerActivity() {
+class UnityArActivity : UnityPlayerGameActivity() {
 
     private var unityListo = false
     private var reinicioPendiente = false

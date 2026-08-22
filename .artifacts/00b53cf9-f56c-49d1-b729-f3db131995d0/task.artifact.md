@@ -1,0 +1,4 @@
+- [x] Modificar `GeminiRepository.kt` para recibir contexto de comercios.
+- [x] Actualizar `AssistantScreen.kt` para obtener comercios de Firestore y enviarlos al asistente.
+- [x] Verificar que Itzae responda usando datos de la base de datos.
+- [x] Generar walkthrough final.

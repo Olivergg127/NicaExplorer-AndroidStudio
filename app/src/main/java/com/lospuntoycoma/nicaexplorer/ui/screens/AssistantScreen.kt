@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.GeminiRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import kotlinx.coroutines.launch
@@ -81,7 +82,11 @@ fun AssistantScreen(onBack: () -> Unit) {
         isLoading = true
 
         scope.launch {
-            val response = GeminiRepository.generateContent(trimmed)
+            // Obtenemos los comercios dinámicamente para pasarlos como contexto a Itzae
+            val comerciosResult = FirebaseRepository.getComerciosActivos()
+            val comercios = comerciosResult.getOrDefault(emptyList())
+
+            val response = GeminiRepository.generateContent(trimmed, comercios)
             messages.add(
                 ChatMessage(
                     response ?: "Lo siento, hubo un problema al conectar con mi cerebro artificial.",
