@@ -73,8 +73,14 @@ fun AssistantScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val localMonuments = remember { SampleData.allMonuments }
 
+    val citySuggestion = monumentContext?.city
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+        ?.let { "¿Qué puedo visitar en $it?" }
+        ?: "¿Qué puedo visitar?"
+
     val quickQuestions = listOf(
-        "¿Qué puedo visitar en Juigalpa?",
+        citySuggestion,
         "Cuéntame sobre este monumento",
         "¿Cómo funciona la realidad aumentada?"
     )

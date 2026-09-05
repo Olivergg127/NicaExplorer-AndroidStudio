@@ -64,6 +64,7 @@ object GeminiRepository {
             contextSections += """
                 CONTEXTO DEL MONUMENTO ACTUAL:
                 - monumentId: ${currentMonument.id}
+                - cityId: ${currentMonument.cityId}
                 - Nombre: ${currentMonument.name}
                 - Ciudad: ${currentMonument.city}
                 - Categoría: ${currentMonument.category}
