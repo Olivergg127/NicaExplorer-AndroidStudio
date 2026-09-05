@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,7 +38,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -48,8 +46,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
-import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
-import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
+import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
+import com.lospuntoycoma.nicaexplorer.ui.theme.BrandHeaderBrush
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,8 +60,7 @@ fun ProfileScreen(
     onSavedPlaces: () -> Unit,
     onHistory: () -> Unit,
     onSettings: () -> Unit,
-    onAbout: () -> Unit,
-    onComercios: () -> Unit
+    onAbout: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val userProfile by userViewModel.userProfile.collectAsState()
@@ -82,17 +79,13 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(scrollState)
-                .background(MaterialTheme.colorScheme.background)
+                .background(nicaAppBackgroundBrush())
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp)
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(GradientStart, GradientEnd)
-                        )
-                    ),
+                    .background(BrandHeaderBrush),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -162,7 +155,7 @@ fun ProfileScreen(
                     .padding(horizontal = 20.dp),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
@@ -180,15 +173,6 @@ fun ProfileScreen(
                         icon = Icons.Filled.Bookmark,
                         title = "Lugares guardados",
                         onClick = onSavedPlaces
-                    )
-                    Divider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    )
-                    ProfileMenuItem(
-                        icon = Icons.Filled.Storefront,
-                        title = "Comercios y restaurantes",
-                        onClick = onComercios
                     )
                     Divider(
                         modifier = Modifier.padding(horizontal = 16.dp),

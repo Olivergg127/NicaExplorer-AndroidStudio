@@ -10,25 +10,27 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PurplePrimary,
+    primary = TurquoisePrimary,
     onPrimary = Color.White,
-    primaryContainer = PurpleDark,
-    onPrimaryContainer = PurpleLight,
-    secondary = TealPrimary,
+    primaryContainer = TurquoiseDark,
+    onPrimaryContainer = TurquoiseLight,
+    secondary = SkyPrimary,
     onSecondary = Color.White,
-    secondaryContainer = TealDark,
-    onSecondaryContainer = TealLight,
-    tertiary = GreenPrimary,
+    secondaryContainer = SkyDark,
+    onSecondaryContainer = SkyLight,
+    tertiary = CeramicTertiary,
     onTertiary = Color.White,
-    tertiaryContainer = Color(0xFF1B5E20),
-    onTertiaryContainer = GreenLight,
+    tertiaryContainer = CeramicDark,
+    onTertiaryContainer = CeramicLight,
     error = ErrorRed,
     background = DarkBackground,
     onBackground = TextOnDark,
@@ -41,18 +43,18 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = PurplePrimary,
+    primary = TurquoisePrimary,
     onPrimary = Color.White,
-    primaryContainer = PurpleSurface,
-    onPrimaryContainer = PurpleDark,
-    secondary = TealPrimary,
+    primaryContainer = TurquoiseSurface,
+    onPrimaryContainer = TurquoiseDark,
+    secondary = SkyPrimary,
     onSecondary = Color.White,
-    secondaryContainer = TealSurface,
-    onSecondaryContainer = TealDark,
-    tertiary = GreenPrimary,
+    secondaryContainer = SkySurface,
+    onSecondaryContainer = SkyDark,
+    tertiary = CeramicTertiary,
     onTertiary = Color.White,
-    tertiaryContainer = GreenSurface,
-    onTertiaryContainer = Color(0xFF003300),
+    tertiaryContainer = CeramicSurface,
+    onTertiaryContainer = CeramicDark,
     error = ErrorRed,
     background = LightBackground,
     onBackground = TextOnLight,
@@ -67,7 +69,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun NicaExplorerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -84,7 +86,10 @@ fun NicaExplorerTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = colorScheme.surface.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            window.navigationBarColor = colorScheme.surface.toArgb()
+            val controller = WindowCompat.getInsetsController(window, view)
+            controller.isAppearanceLightStatusBars = !darkTheme
+            controller.isAppearanceLightNavigationBars = !darkTheme
         }
     }
 
@@ -94,3 +99,27 @@ fun NicaExplorerTheme(
         content = content
     )
 }
+
+/**
+ * Degradado de fondo según el tema activo: oscuro (carbón/verde) o claro
+ * (arena cálida). Sustituye el uso directo de [AppBackgroundBrush], que solo
+ * sirve para modo oscuro.
+ */
+@Composable
+fun nicaAppBackgroundBrush(): Brush =
+    if (MaterialTheme.colorScheme.background.luminance() < 0.5f) {
+        AppBackgroundBrush
+    } else {
+        LightAppBackgroundBrush
+    }
+
+/**
+ * Degradado de la barra inferior según el tema activo.
+ */
+@Composable
+fun nicaBottomNavBarBrush(): Brush =
+    if (MaterialTheme.colorScheme.background.luminance() < 0.5f) {
+        BottomNavBarBrush
+    } else {
+        LightBottomNavBarBrush
+    }

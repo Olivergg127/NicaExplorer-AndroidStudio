@@ -1,5 +1,6 @@
 package com.lospuntoycoma.nicaexplorer.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,6 +34,7 @@ import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.model.City
 import com.lospuntoycoma.nicaexplorer.ui.components.CityCard
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
+import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,6 +62,7 @@ fun CitySelectionScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .background(nicaAppBackgroundBrush())
                 .padding(padding),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)

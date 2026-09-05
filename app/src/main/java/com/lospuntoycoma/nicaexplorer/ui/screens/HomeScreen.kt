@@ -1,5 +1,6 @@
 package com.lospuntoycoma.nicaexplorer.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,8 +29,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Storefront
-import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -39,12 +38,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.ui.components.MonumentCard
+import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
+import com.lospuntoycoma.nicaexplorer.ui.theme.nicaBottomNavBarBrush
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.UserViewModel
@@ -60,7 +63,6 @@ fun HomeScreen(
     onAssistantClick: () -> Unit,
     onAdminPanelClick: () -> Unit,
     onSavedPlacesClick: () -> Unit,
-    onComerciosClick: () -> Unit,
     onLogout: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -69,7 +71,8 @@ fun HomeScreen(
     val scrollState = rememberScrollState()
 
     val userProfile by userViewModel.userProfile.collectAsState()
-    val isAdmin = userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN
+    val canAccessAdminPanel = userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN ||
+        userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.AUDITOR
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -87,11 +90,11 @@ fun HomeScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Filled.Explore,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(48.dp)
+                        Image(
+                            painter = painterResource(id = R.drawable.nicaexplorer_isotipo),
+                            contentDescription = "Logo de NicaExplorer",
+                            modifier = Modifier.size(68.dp),
+                            contentScale = ContentScale.Fit
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -139,18 +142,6 @@ fun HomeScreen(
                     )
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Filled.Storefront, contentDescription = null) },
-                    label = { Text("Comercios y restaurantes") },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onComerciosClick()
-                    },
-                    colors = NavigationDrawerItemDefaults.colors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                )
-                NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Assistant, contentDescription = null) },
                     label = { Text("Asistente IA") },
                     selected = false,
@@ -163,7 +154,7 @@ fun HomeScreen(
                     )
                 )
 
-                if (isAdmin) {
+                if (canAccessAdminPanel) {
                     NavigationDrawerItem(
                         icon = { Icon(Icons.Filled.AdminPanelSettings, contentDescription = null) },
                         label = { Text("Panel de Admin") },
@@ -195,7 +186,13 @@ fun HomeScreen(
             }
         }
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(nicaAppBackgroundBrush())
+        ) {
         Scaffold(
+            containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
                     title = {
@@ -234,8 +231,9 @@ fun HomeScreen(
             },
             bottomBar = {
                 NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    tonalElevation = 8.dp
+                    modifier = Modifier.background(nicaBottomNavBarBrush()),
+                    containerColor = Color.Transparent,
+                    tonalElevation = 0.dp
                 ) {
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Explore, contentDescription = null) },
@@ -298,7 +296,6 @@ fun HomeScreen(
                     .fillMaxSize()
                     .padding(padding)
                     .verticalScroll(scrollState)
-                    .background(MaterialTheme.colorScheme.background)
                     .padding(horizontal = 20.dp)
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -321,9 +318,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { },
+                    modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(24.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.Transparent)
@@ -331,55 +326,52 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp)
-                            .background(
-                                Brush.linearGradient(
-                                    colors = listOf(GradientStart, GradientEnd)
-                                ),
-                                shape = RoundedCornerShape(24.dp)
-                            )
+                            .height(250.dp)
+                            .clip(RoundedCornerShape(24.dp))
                     ) {
+                        Image(
+                            painter = painterResource(
+                                id = com.lospuntoycoma.nicaexplorer.R.drawable.fondotarjeta
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.Black.copy(alpha = 0.22f),
+                                            Color.Black.copy(alpha = 0.72f)
+                                        )
+                                    )
+                                )
+                        )
+
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(24.dp),
-                            verticalArrangement = Arrangement.Center
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.ViewInAr,
-                                contentDescription = null,
-                                tint = Color.White.copy(alpha = 0.3f),
-                                modifier = Modifier.size(64.dp)
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
                             Text(
-                                text = "Experiencia de Realidad Aumentada",
+                                text = "Descubre Nicaragua con NicaExplorer",
                                 style = MaterialTheme.typography.titleLarge,
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold
                             )
+
                             Spacer(modifier = Modifier.height(8.dp))
+
                             Text(
-                                text = "Visualiza monumentos en 3D con tu cámara",
+                                text = "Explora ciudades, conoce su historia y cultura, descubre monumentos en 3D y encuentra experiencias y negocios locales en un solo lugar.",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.85f)
+                                color = Color.White.copy(alpha = 0.9f)
                             )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        Color.White.copy(alpha = 0.2f),
-                                        shape = RoundedCornerShape(12.dp)
-                                    )
-                                    .padding(horizontal = 24.dp, vertical = 12.dp)
-                            ) {
-                                Text(
-                                    text = "Iniciar experiencia",
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
                         }
                     }
                 }
@@ -423,6 +415,7 @@ fun HomeScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
+                                    .clip(RoundedCornerShape(16.dp))
                                     .background(
                                         Brush.linearGradient(
                                             colors = listOf(
@@ -430,17 +423,40 @@ fun HomeScreen(
                                                 Color(city.gradientEnd)
                                             )
                                         )
-                                    ),
+                                ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(
-                                        imageVector = Icons.Filled.LocationOn,
-                                        contentDescription = null,
-                                        tint = Color.White.copy(alpha = 0.5f),
-                                        modifier = Modifier.size(24.dp)
+                                val imageRes = city.imageRes
+                                if (imageRes != null) {
+                                    Image(
+                                        painter = painterResource(imageRes),
+                                        contentDescription = city.name,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
                                     )
-                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(
+                                                Brush.verticalGradient(
+                                                    colors = listOf(
+                                                        Color.Black.copy(alpha = 0.08f),
+                                                        Color.Black.copy(alpha = 0.58f)
+                                                    )
+                                                )
+                                            )
+                                    )
+                                }
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    if (imageRes == null) {
+                                        Icon(
+                                            imageVector = Icons.Filled.LocationOn,
+                                            contentDescription = null,
+                                            tint = Color.White.copy(alpha = 0.5f),
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                    }
                                     Text(
                                         text = city.name,
                                         style = MaterialTheme.typography.titleMedium,
@@ -478,6 +494,7 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
             }
+        }
         }
     }
 }

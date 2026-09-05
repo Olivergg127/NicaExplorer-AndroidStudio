@@ -50,12 +50,10 @@ object FirebaseRepository {
                 .build()
             user.updateProfile(profileUpdates).await()
 
-            // Asignar ADMIN automáticamente si el correo coincide con el maestro
-            val role = if (email.lowercase() == "admin@nicaexplorer.com") {
-                UserRole.ADMIN
-            } else {
-                UserRole.USUARIO
-            }
+            // Toda cuenta creada desde la aplicación comienza como USUARIO.
+            // El administrador histórico se reconoce en Firestore Rules por correo
+            // o por su documento existente, nunca desde este flujo de registro.
+            val role = UserRole.USUARIO
 
             val userMap = hashMapOf(
                 "uid" to user.uid,
@@ -92,7 +90,9 @@ object FirebaseRepository {
                         ciudad = doc.getString("ciudad") ?: "",
                         direccion = doc.getString("direccion") ?: "",
                         horario = doc.getString("horario") ?: "",
-                        imagenUrl = doc.getString("imagenUrl") ?: "",
+                        imagenUrl = doc.getString("imagenUrl")
+                            ?.takeIf { it.isNotBlank() }
+                            ?: doc.getString("imagenurl").orEmpty(),
                         latitud = doc.getDouble("latitud") ?: 0.0,
                         longitud = doc.getDouble("longitud") ?: 0.0,
                         telefono = doc.getString("telefono") ?: "",
@@ -128,7 +128,9 @@ object FirebaseRepository {
                     ciudad = doc.getString("ciudad") ?: "",
                     direccion = doc.getString("direccion") ?: "",
                     horario = doc.getString("horario") ?: "",
-                    imagenUrl = doc.getString("imagenUrl") ?: "",
+                    imagenUrl = doc.getString("imagenUrl")
+                        ?.takeIf { it.isNotBlank() }
+                        ?: doc.getString("imagenurl").orEmpty(),
                     latitud = doc.getDouble("latitud") ?: 0.0,
                     longitud = doc.getDouble("longitud") ?: 0.0,
                     telefono = doc.getString("telefono") ?: "",

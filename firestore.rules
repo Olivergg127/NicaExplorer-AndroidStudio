@@ -1,0 +1,125 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && (
+          request.auth.token.email == 'admin@nicaexplorer.com'
+          || get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'ADMIN'
+        );
+    }
+
+    function isAuditor() {
+      return signedIn()
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'AUDITOR';
+    }
+
+    match /solicitudes_comercios/{solicitudId} {
+      function requiredText(value, maxSize) {
+        return value is string
+          && value.trim().size() > 0
+          && value.size() <= maxSize;
+      }
+
+      function validPhone(value) {
+        return value is string
+          && value.size() >= 7
+          && value.size() <= 25
+          && value.matches('[0-9+() .-]+')
+          && value.replace('[^0-9]', '').size() >= 7
+          && value.replace('[^0-9]', '').size() <= 15;
+      }
+
+      function validSolicitud() {
+        return request.resource.data.keys().hasAll([
+          'nombreNegocio', 'ciudad', 'cityId', 'categoria', 'direccion',
+          'descripcion', 'telefono', 'whatsapp', 'horario',
+          'nombreResponsable', 'correoResponsable', 'redesSociales',
+          'estado', 'fechaSolicitud', 'userId'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'nombreNegocio', 'ciudad', 'cityId', 'categoria', 'direccion',
+          'descripcion', 'telefono', 'whatsapp', 'horario',
+          'nombreResponsable', 'correoResponsable', 'redesSociales',
+          'estado', 'fechaSolicitud', 'userId'
+        ])
+        && requiredText(request.resource.data.nombreNegocio, 120)
+        && requiredText(request.resource.data.ciudad, 80)
+        && requiredText(request.resource.data.cityId, 80)
+        && request.resource.data.cityId.matches('[a-z0-9_]+')
+        && requiredText(request.resource.data.categoria, 80)
+        && requiredText(request.resource.data.direccion, 240)
+        && requiredText(request.resource.data.descripcion, 2000)
+        && validPhone(request.resource.data.telefono)
+        && validPhone(request.resource.data.whatsapp)
+        && requiredText(request.resource.data.horario, 240)
+        && requiredText(request.resource.data.nombreResponsable, 120)
+        && request.resource.data.correoResponsable is string
+        && request.resource.data.correoResponsable.size() <= 254
+        && request.resource.data.correoResponsable.matches('[^@\\s]+@[^@\\s]+[.][^@\\s]+')
+        && request.resource.data.redesSociales is string
+        && request.resource.data.redesSociales.size() <= 500
+        && request.resource.data.estado == 'pendiente'
+        && request.resource.data.userId is string
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.fechaSolicitud is timestamp
+        && request.resource.data.fechaSolicitud == request.time;
+      }
+
+      allow create: if signedIn() && validSolicitud();
+      allow read, update, delete: if false;
+    }
+
+    match /mail/{mailId} {
+      allow read, write: if false;
+    }
+
+    match /usuarios/{uid} {
+      allow get: if signedIn()
+        && (request.auth.uid == uid || isAdmin() || isAuditor());
+
+      allow list: if isAdmin() || isAuditor();
+
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.rol == 'USUARIO';
+
+      allow update: if isAdmin()
+        && request.auth.uid != uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.rol in ['ADMIN', 'USUARIO', 'AUDITOR']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rol']);
+
+      allow update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.rol == resource.data.rol
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre']);
+
+      allow delete: if false;
+    }
+
+    match /ciudades/{cityId} {
+      allow read: if signedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /lugares/{monumentId} {
+      allow read: if signedIn();
+      allow create, update, delete: if false;
+    }
+
+    match /comercios/{id} {
+      allow read: if signedIn() && resource.data.activo == true;
+      allow create, update, delete: if false;
+    }
+  }
+}
+

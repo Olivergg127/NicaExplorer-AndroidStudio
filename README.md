@@ -1,187 +1,177 @@
 # NicaExplorer 🇳🇮
 
-NicaExplorer es una aplicación móvil desarrollada como proyecto académico cuyo objetivo es promover el turismo en Nicaragua mediante el uso de Realidad Aumentada (AR), modelos 3D y un asistente inteligente basado en Inteligencia Artificial.
+**Explora. Conecta. Inspira.**
 
-La aplicación permite explorar monumentos y sitios turísticos de forma interactiva, ofreciendo una experiencia inmersiva donde el usuario puede visualizar modelos 3D en su entorno utilizando la cámara del dispositivo móvil.
+NicaExplorer es una aplicación móvil Android orientada al turismo de Nicaragua. Integra información cultural de ciudades y monumentos, fotografías, modelos 3D, comercios locales, turismo responsable e inteligencia artificial mediante Itzae. Busca facilitar la exploración del patrimonio y apoyar la visibilidad de experiencias y emprendimientos locales.
 
----
+## Funcionalidades actuales
 
-# Objetivo del proyecto
+- Registro, inicio de sesión y recuperación de contraseña.
+- Perfil de usuario y edición del nombre.
+- Ciudades y catálogo de monumentos con información histórica y cultural.
+- Fotografías locales, lugares guardados e historial de exploración.
+- Visor3D con Unity: rotación, zoom, restablecimiento y salida.
+- Asistente IA Itzae con contexto de monumentos, ciudades y afluencia.
+- Comercios/restaurantes locales y formulario de solicitud de incorporación.
+- Consejos de turismo responsable.
+- Afluencia estimada/orientativa (BAJA, MODERADA, ALTA).
+- Ruta cultural/inteligente predefinida de Juigalpa.
+- Panel administrativo con roles USUARIO, ADMIN y AUDITOR.
 
-Desarrollar una plataforma móvil que incentive el turismo nacional mediante tecnologías emergentes como:
+No se ofrecen GPS, navegación GPS, rutas en tiempo real ni afluencia en tiempo real. La afluencia y los tiempos de la ruta son orientativos del prototipo.
 
-- Realidad Aumentada (AR)
-- Modelos 3D
-- Inteligencia Artificial
-- Android Nativo con Jetpack Compose
-- Firebase
+## Video demostrativo
 
----
+[Ver video demostrativo](https://drive.google.com/file/d/1Hv8G8RbysrzM5twwemFSqcf_BdQe7Fv5/view?usp=sharing)
 
-# Tecnologías utilizadas
+## Descargar NicaExplorer
 
-## Frontend
+[Descargar APK para Android](https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/latest/download/NicaExplorer.apk)
 
-- Kotlin
-- Jetpack Compose
-- Material Design 3
+## Ciudades y monumentos
 
-## Backend
+Las únicas ciudades vigentes son Juigalpa, León y Managua. El catálogo contiene exactamente ocho monumentos:
 
-- Firebase Authentication
-- Firebase Firestore
+| Ciudad | Monumento | monumentId |
+|---|---|---|
+| Juigalpa | Homenaje a la Madre Juigalpina | homenaje_madre_juigalpina |
+| Juigalpa | Toro Chontaleño | toro_chontaleno |
+| Juigalpa | Estatua Museo Juigalpa | estatua_museo_juigalpa |
+| León | Tumba de Rubén Darío | tumba_ruben_dario |
+| León | Estatua de San Benito | estatua_san_benito |
+| Managua | Árbol de la Vida | arbol_vida |
+| Managua | Estatua de Rubén Darío | ruben_dario |
+| Managua | Campana de la Paz | campana_de_la_paz |
 
-## Inteligencia Artificial
+## Tecnologías
 
-- Google Gemini API
+- Android Studio, Kotlin, Jetpack Compose y Material 3.
+- Firebase Authentication para cuentas y sesión.
+- Cloud Firestore como base de datos NoSQL orientada a documentos.
+- Google Gemini mediante GeminiRepository para Itzae.
+- Unity 6 integrado como módulo Android unityLibrary para Visor3D.
+- Blender para la preparación de modelos 3D.
+- Git y GitHub para control de versiones y entregas.
 
-## Motor 3D
+Versiones comprobadas: Android Gradle Plugin 8.13.2, Kotlin 2.3.0, Gradle 8.13, JVM 17, compileSdk/targetSdk 34, minSdk 30 y Unity 6000.5.1f1.
 
-- Unity 6
-- AR Foundation
-- Google ARCore
+## Funcionamiento y datos
 
-## Herramientas
+Android/Kotlin es la aplicación principal y Compose implementa sus interfaces. Firebase Authentication crea y autentica las cuentas. FirebaseRepository.registerUser() crea todo registro nuevo con rol = USUARIO y un documento usuarios/{uid} con uid, nombre, correo, rol y fechaRegistro.
 
-- Android Studio
-- Unity
-- Blender
-- Git
-- GitHub
-- Figma
+Firestore es la fuente principal de ciudades y lugares. SampleData.kt funciona como fallback si Firestore no está disponible o no devuelve datos válidos.
 
----
+Colecciones principales:
 
-# Arquitectura del proyecto
+- usuarios/{uid}: perfil, nombre, correo, rol y fecha de registro.
+- ciudades/{cityId}: ciudad, descripción e imagenKey.
+- lugares/{monumentId}: nombre, ciudad, descripción, historia, categoría, período/año, afluencia, consejosResponsables, imagenKey, modeloUnity y monumentId.
+- comercios/{id}: negocios activos, información de contacto y portada remota/local.
+- solicitudes_comercios/{id}: solicitudes de incorporación creadas por usuarios autenticados.
 
-Android Studio funciona como la aplicación principal.
+La colección mail está bloqueada por reglas y no es una funcionalidad activa. Las solicitudes validan campos obligatorios, teléfono, correo, cityId, usuario autenticado, estado pendiente y timestamp del servidor.
 
-Unity se encuentra integrado como **Unity as a Library**, permitiendo ejecutar experiencias de Realidad Aumentada directamente desde la aplicación Android.
+La estructura usa identificadores lógicos uid, userId, cityId y monumentId para reducir redundancia. Al ser Firestore NoSQL, las formas normales como 2FN no se aplican formalmente; el entregable utiliza un diagrama de clases Firestore/BD no relacional.
 
-La comunicación entre Android y Unity se realiza mediante **Intent Extras**, enviando información sobre la ciudad y el monumento seleccionado para cargar el modelo correspondiente.
+## Roles y seguridad
 
----
+- USUARIO: usa las funciones normales, lee su propio perfil y modifica únicamente su nombre. No puede cambiar rol ni acceder al panel administrativo.
+- AUDITOR: accede al panel, consulta/lista usuarios, busca y filtra por rol y trabaja en modo solo lectura. No cambia roles, edita otros usuarios ni elimina información.
+- ADMIN: accede al panel, consulta/lista usuarios y cambia únicamente el campo rol de otros usuarios mediante confirmación. No cambia su propio rol desde ese flujo y puede editar su propio nombre.
 
-# Funcionalidades implementadas
+La seguridad también está aplicada en firestore.rules: protege uid y rol, bloquea autoelevación, restringe la actualización personal al nombre, limita al ADMIN a cambiar rol de otro usuario y bloquea eliminaciones. Se mantiene compatibilidad con la cuenta administrativa histórica del prototipo.
 
-- Inicio de sesión con Firebase Authentication.
-- Registro de usuarios.
-- Navegación mediante Jetpack Compose.
-- Splash Screen con autenticación automática.
-- Catálogo de monumentos.
-- Perfil de usuario.
-- Integración inicial del asistente basado en Google Gemini.
-- Integración de Unity como Library.
-- Experiencia de Realidad Aumentada utilizando AR Foundation.
-- Colocación de modelos 3D.
-- Reubicación del modelo.
-- Escalado del modelo mediante gestos táctiles.
-- Sistema inicial de rotación del modelo.
-- Restablecimiento automático de posición, escala y rotación.
+El panel incluye contadores, buscador por nombre/correo, filtros Todos/Usuario/Admin/Auditor, chips de rol, diálogo de cambio, confirmación, Snackbar y modo Auditor de solo lectura. El acceso visual y la ruta admin_panel verifican ADMIN o AUDITOR; USUARIO no puede entrar.
 
----
+## Normalización de usuarios
 
-# Estado actual del proyecto
+tools/normalize_users.mjs permite auditoría dry-run y migración con --apply. Completa únicamente campos faltantes, conserva los existentes y consulta Firebase Authentication para recuperar correo y fecha de creación asociadas al UID. Los documentos actuales ya fueron normalizados con uid, nombre, correo, rol y fechaRegistro.
 
-Actualmente el proyecto se encuentra en una fase **Beta 1.0**, enfocada en validar la arquitectura general de la aplicación, la integración entre Android Studio y Unity, y el funcionamiento de la experiencia de Realidad Aumentada.
+## Unity y Visor3D
 
-La mayoría de las funcionalidades principales ya se encuentran implementadas y operativas, mientras que algunos apartados continúan en proceso de optimización para futuras versiones.
+El flujo real es:
 
----
-
-# Funcionalidades en desarrollo
-
-## Modelos 3D y texturas
-
-Los modelos utilizados actualmente corresponden a versiones preliminares destinadas a validar la integración de la Realidad Aumentada.
-
-Las texturas oficiales aún no han sido incorporadas debido a que el equipo se encuentra gestionando los permisos y recursos digitales necesarios con museos y sitios turísticos para utilizar modelos y materiales oficiales.
-
-En versiones futuras, estos modelos serán reemplazados por versiones completamente texturizadas y optimizadas que representarán fielmente cada monumento y atractivo turístico.
-
----
-
-## Sistema de interacción con modelos
-
-Actualmente el sistema permite:
-
-- Colocar modelos.
-- Reubicar modelos.
-- Escalar modelos.
-- Rotación básica mediante gestos táctiles.
-
-La interacción de rotación aún se encuentra en proceso de optimización con el objetivo de ofrecer una experiencia más intuitiva y fluida en diferentes dispositivos Android.
-
-En próximas versiones se implementará un sistema de manipulación más preciso y natural para mejorar la experiencia del usuario.
-
----
-
-# Próximas funcionalidades
-
-- Modelos 3D oficiales completamente texturizados.
-- Catálogo ampliado de ciudades y monumentos.
-- Optimización del sistema de interacción en AR.
-- Mejoras en el asistente inteligente.
-- Información histórica ampliada.
-- Sistema de favoritos.
-- Rutas turísticas.
-- Integración con mapas.
-- Optimización de rendimiento.
-
----
-
-# Equipo de desarrollo
-
-Los Punto y Coma
-
-Proyecto desarrollado para la Hackathon Universitaria.
-
----
-
-# Requisitos
-
-- Android 10 o superior.
-- Dispositivo compatible con Google ARCore.
-- Cámara trasera.
-- Conexión a Internet para autenticación e Inteligencia Artificial.
-
----
-
-# Instalación
-
-1. Clonar el repositorio.
-
-```bash
-git clone https://github.com/Olivergg127/Los-punto-y-coma.git
+```text
+Android: monumentId
+        ↓ Intent
+Unity: AndroidIntentReceiver
+        ↓
+Visor3DController
+        ↓
+prefab correspondiente → Instantiate
 ```
 
-2. Abrir el proyecto en Android Studio.
+Visor3DController relee el Intent en cada entrada, destruye la instancia anterior y rechaza IDs desconocidos sin fallback silencioso.
 
-3. Configurar Firebase.
+| monumentId | Prefab |
+|---|---|
+| homenaje_madre_juigalpina | HomenajeMadreJuigalpina |
+| toro_chontaleno | ToroChontaleno |
+| estatua_museo_juigalpa | EstatuaMuseoJuigalpa |
+| tumba_ruben_dario | TumbaRubenDario |
+| estatua_san_benito | SanBenito |
+| arbol_vida | ArbolDeLaVida |
+| ruben_dario | EstatuaRubenDario |
+| campana_de_la_paz | CampanaDeLaPaz |
 
-4. Abrir Unity para realizar modificaciones en la experiencia AR cuando sea necesario.
+La Estatua de Rubén Darío usa Assets/Models/Managua/ruben_dario.fbx y Assets/Prefabs/EstatuaRubenDario.prefab. La primera apertura de Unity puede tardar algunos segundos por la inicialización del motor; las posteriores suelen ser más rápidas.
 
-5. Ejecutar la aplicación en un dispositivo compatible con ARCore.
+## Estructura resumida
 
----
+```text
+NicaExplorer/
+├── app/
+├── unityLibrary/
+├── tools/
+│   └── normalize_users.mjs
+├── firestore.rules
+├── README.md
+├── build.gradle.kts
+└── settings.gradle.kts
+```
 
-# Video de navegacion
-https://drive.google.com/file/d/1Hv8G8RbysrzM5twwemFSqcf_BdQe7Fv5/view?usp=drivesdk
+## Instalación y ejecución
 
-Video uso de aplicación
+1. Clonar el repositorio:
+```powershell
+git clone https://github.com/Olivergg127/NicaExplorer-AndroidStudio.git
+cd NicaExplorer-AndroidStudio
+```
 
-# Estado del repositorio
+2. Abrir la carpeta en Android Studio y ejecutar Sync Project with Gradle Files.
+3. Colocar el google-services.json correspondiente en app/ y habilitar Authentication/Firestore según las reglas publicadas.
+4. Confirmar que unityLibrary/ esté presente.
+5. Compilar debug:
+```powershell
+.\gradlew.bat :app:assembleDebug
+```
 
-Actualmente el proyecto se encuentra en desarrollo activo.
+APK actual comprobado: app/build/outputs/apk/debug/app-debug.apk.
 
-Las funcionalidades principales ya son operativas y continuarán mejorándose durante las siguientes iteraciones del proyecto.
+6. Instalar en un dispositivo autorizado:
+```powershell
+adb devices
+adb install -r app\build\outputs\apk\debug\app-debug.apk
+```
 
----
+Para una release firmada se requiere un keystore.properties local configurado fuera del repositorio y .\gradlew.bat :app:assembleRelease. No se incluyen credenciales, contraseñas, keystores, ADC, tokens ni API keys privadas.
 
-# Licencia
+## GitHub y control de versiones
 
-Proyecto desarrollado con fines académicos.
+Repositorio: https://github.com/Olivergg127/NicaExplorer-AndroidStudio
 
-Todos los derechos de los modelos, imágenes, contenido turístico y recursos oficiales pertenecen a sus respectivos propietarios.
+Git se utiliza para el control de versiones mediante ramas, commits, pull y push. GitHub aloja el repositorio y GitHub Releases se utiliza para distribuir versiones de la aplicación.
 
-Los modelos, texturas y recursos gráficos oficiales serán incorporados únicamente con la autorización correspondiente de las instituciones y sitios turísticos involucrados.
+## Equipo — Los Punto y Coma
+
+- Oliver Javier Gutiérrez Castro — Desarrollo
+- Joseph Esau Centeno Urbina — Desarrollo
+- Verónica Michelle Robleto Trujillo — Diseño
+- Arlen Rodolfo Urbina Urbina — Comunicación
+- Elvis Josué Miranda Méndez — Marketing
+
+## Alcance y transparencia
+
+La ruta inteligente está desarrollada principalmente para Juigalpa porque es la ciudad con comercios cargados en el prototipo. La afluencia es orientativa. No hay GPS, navegación ni rutas en tiempo real. Las funciones administrativas y la integración Unity forman parte de un prototipo académico.
+
+Las reglas, claves privadas, tokens, contraseñas, keystores y credenciales ADC nunca deben versionarse.

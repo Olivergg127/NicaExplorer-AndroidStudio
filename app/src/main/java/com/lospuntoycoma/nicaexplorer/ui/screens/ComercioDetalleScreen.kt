@@ -59,9 +59,9 @@ import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
 import com.lospuntoycoma.nicaexplorer.ui.components.EmptyState
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
-import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GreenPrimary
 import com.lospuntoycoma.nicaexplorer.ui.theme.GreenSurface
+import com.lospuntoycoma.nicaexplorer.ui.theme.SuccessGreen
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.ComercioDetalleViewModel
 import com.lospuntoycoma.nicaexplorer.util.TelefonoUtils
 import kotlinx.coroutines.launch
@@ -148,7 +148,7 @@ fun ComercioDetalleScreen(
                             .background(MaterialTheme.colorScheme.background)
                     ) {
                         ComercioCover(
-                            imagenUrl = comercio.imagenUrl,
+                            comercio = comercio,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(260.dp)
@@ -279,7 +279,7 @@ fun ComercioDetalleScreen(
                                         }
                                     },
                                     gradient = Brush.horizontalGradient(
-                                        colors = listOf(GreenPrimary, GradientEnd)
+                                        colors = listOf(GreenPrimary, SuccessGreen)
                                     )
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
