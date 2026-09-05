@@ -6,6 +6,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
+import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.ui.screens.AcercaDeScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.AdminPanelScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ArPlaceholderScreen
@@ -31,7 +35,9 @@ import com.lospuntoycoma.nicaexplorer.ui.screens.LugaresGuardadosScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ProfileScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RecoveryPasswordScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RegisterScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.RutasInteligentesScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.SplashScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.SolicitudComercioScreen
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.UserViewModel
 
 @Composable
@@ -138,9 +144,6 @@ fun AppNavigation(navController: NavHostController) {
                 onSavedPlacesClick = {
                     navController.navigate(Routes.LUGARES_GUARDADOS)
                 },
-                onComerciosClick = {
-                    navController.navigate(Routes.COMERCIOS)
-                },
                 onLogout = {
                     FirebaseRepository.signOut()
                     navController.navigate(Routes.LOGIN) {
@@ -151,11 +154,23 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable(Routes.ADMIN_PANEL) {
-            AdminPanelScreen(
-                onBack = {
+            val profile by userViewModel.userProfile.collectAsState()
+            val loading by userViewModel.isLoading.collectAsState()
+            val authorized = profile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN ||
+                profile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.AUDITOR
+
+            LaunchedEffect(profile, loading) {
+                if (!loading && !authorized) {
                     navController.popBackStack()
                 }
-            )
+            }
+
+            if (authorized) {
+                AdminPanelScreen(
+                    userViewModel = userViewModel,
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
 
         composable(Routes.CITY_SELECTION) {
@@ -183,16 +198,52 @@ fun AppNavigation(navController: NavHostController) {
             CatalogScreen(
                 cityId = cityId,
                 initialMonumentId = monumentId,
-                onArClick = { arMonumentId ->
+                onVerEn3dClick = { visorMonumentId ->
                     Intent().setClassName(
                         context.packageName,
                         "com.lospuntoycoma.nicaexplorer.ar.UnityArActivity"
                     ).also { intent ->
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.putExtra("cityId", cityId)
-                        intent.putExtra("monumentId", arMonumentId)
+                        intent.putExtra("monumentId", visorMonumentId)
+                        intent.putExtra("escena", "visor3d")
                         context.startActivity(intent)
                     }
+                },
+                onAssistantClick = { assistantMonumentId ->
+                    navController.navigate(Routes.assistant(assistantMonumentId))
+                },
+                onComercioClick = { comercioId ->
+                    navController.navigate(Routes.comercioDetalle(comercioId))
+                },
+                onVerTodosComercios = {
+                    navController.navigate(Routes.comercios(cityId))
+                },
+                onRutasInteligentesClick = {
+                    navController.navigate(Routes.rutasInteligentes(cityId))
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Routes.RUTAS_INTELIGENTES,
+            arguments = listOf(
+                navArgument("cityId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val routeCityId = backStackEntry.arguments?.getString("cityId") ?: ""
+            RutasInteligentesScreen(
+                cityId = routeCityId,
+                onVerLugar = { monumentId ->
+                    navController.navigate(
+                        Routes.catalogWithMonument(routeCityId, monumentId)
+                    )
+                },
+                onVerComercio = { comercioId ->
+                    navController.navigate(Routes.comercioDetalle(comercioId))
                 },
                 onBack = {
                     navController.popBackStack()
@@ -240,18 +291,43 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onAbout = {
                     navController.navigate(Routes.ACERCA_DE)
-                },
-                onComercios = {
-                    navController.navigate(Routes.COMERCIOS)
                 }
             )
         }
 
-        composable(Routes.COMERCIOS) {
+        composable(
+            route = Routes.COMERCIOS_CON_FILTRO,
+            arguments = listOf(
+                navArgument("cityId") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) { backStackEntry ->
+            val cityFilter = backStackEntry.arguments?.getString("cityId")?.takeIf { it.isNotBlank() }
             ComerciosScreen(
+                cityFilter = cityFilter,
                 onComercioClick = { comercioId ->
                     navController.navigate(Routes.comercioDetalle(comercioId))
                 },
+                onSolicitarAparicion = { cityId ->
+                    navController.navigate(Routes.solicitudComercio(cityId))
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Routes.SOLICITUD_COMERCIO,
+            arguments = listOf(
+                navArgument("cityId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val requestedCityId = backStackEntry.arguments?.getString("cityId") ?: ""
+            val city = SampleData.cities.firstOrNull { it.id == requestedCityId }
+
+            SolicitudComercioScreen(
+                cityId = city?.id.orEmpty(),
+                ciudad = city?.name.orEmpty(),
                 onBack = {
                     navController.popBackStack()
                 }
@@ -332,8 +408,23 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
 
-        composable(Routes.ASSISTANT) {
+        composable(
+            route = Routes.ASSISTANT_ROUTE,
+            arguments = listOf(
+                navArgument("monumentId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) { backStackEntry ->
+            val monumentId = backStackEntry.arguments?.getString("monumentId")
+                ?.takeIf { it.isNotBlank() }
+            val monumentContext = monumentId?.let { id ->
+                SampleData.allMonuments.firstOrNull { it.id == id }
+            }
+
             AssistantScreen(
+                monumentContext = monumentContext,
                 onBack = {
                     navController.popBackStack()
                 }

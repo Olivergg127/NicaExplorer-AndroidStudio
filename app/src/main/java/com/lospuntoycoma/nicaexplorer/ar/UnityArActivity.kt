@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.window.OnBackInvokedDispatcher
 import com.unity3d.player.UnityPlayer
-import com.unity3d.player.UnityPlayerGameActivity
+import com.unity3d.player.UnityPlayerActivity
 
 /**
  * Actividad que aloja la experiencia Unity/AR.
@@ -26,13 +26,12 @@ import com.unity3d.player.UnityPlayerGameActivity
  *   confirma que el motor está listo; un reinicio solicitado antes de tiempo se
  *   reenvía en cuanto llega esa señal.
  */
-class UnityArActivity : UnityPlayerGameActivity() {
+class UnityArActivity : UnityPlayerActivity() {
 
     private var unityListo = false
     private var reinicioPendiente = false
     private var reanudado = false
     private var salirEnProceso = false
-    private var ultimoIntentReiniciado: Intent? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,13 +64,17 @@ class UnityArActivity : UnityPlayerGameActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
-        // Evita reenviar un reinicio si el mismo Intent se entrega dos veces.
-        if (intent === ultimoIntentReiniciado) {
-            return
-        }
-        ultimoIntentReiniciado = intent
+        // La clase base ya ejecuta setIntent(intent). Se vuelve a asignar de forma
+        // explícita para que toda lectura posterior de currentActivity.getIntent()
+        // observe siempre este Intent y nunca el de la apertura anterior.
+        setIntent(intent)
         salirEnProceso = false
+
+        Log.d(
+            TAG,
+            "onNewIntent actualizado: escena=${intent.getStringExtra("escena") ?: "ar"}, " +
+                "monumentId=${intent.getStringExtra("monumentId") ?: "<ausente>"}"
+        )
 
         if (reanudado) {
             // La actividad ya está en primer plano: Unity está reanudado, se envía ya.
@@ -97,14 +100,20 @@ class UnityArActivity : UnityPlayerGameActivity() {
     }
 
     /**
-     * Pide a C# que reinicie la experiencia AR. Si Unity aún no está listo,
-     * deja el reinicio pendiente para cuando llegue [notificarUnityListo].
+     * Pide a C# reiniciar/recargar según la escena activa. Se envían AMBOS mensajes:
+     * cada escena de Unity atiende el suyo y ignora el otro destino inexistente.
+     * - ExperienciaAR atiende "ARManager".ReiniciarExperiencia
+     * - Visor3D atiende "Visor3D".RecargarDesdeIntent (relee el Intent y decide
+     *   si carga el monumento o si el nuevo Intent pide volver a AR).
+     * Si Unity aún no está listo, deja el reinicio pendiente para cuando llegue
+     * [notificarUnityListo].
      */
     private fun enviarReinicio() {
         if (unityListo) {
             reinicioPendiente = false
             UnityPlayer.UnitySendMessage("ARManager", "ReiniciarExperiencia", "")
-            Log.d(TAG, "reinicio enviado a Unity")
+            UnityPlayer.UnitySendMessage("Visor3D", "RecargarDesdeIntent", "")
+            Log.d(TAG, "reinicio/recarga enviado a Unity (AR y Visor3D)")
         } else {
             reinicioPendiente = true
             Log.d(TAG, "Unity aún no listo; reinicio pendiente")
@@ -119,7 +128,7 @@ class UnityArActivity : UnityPlayerGameActivity() {
         unityListo = true
         if (reinicioPendiente) {
             reinicioPendiente = false
-            UnityPlayer.UnitySendMessage("ARManager", "ReiniciarExperiencia", "")
+            enviarReinicio()
             Log.d(TAG, "Unity listo; reinicio pendiente enviado")
         }
     }
@@ -145,7 +154,10 @@ class UnityArActivity : UnityPlayerGameActivity() {
         }
         salirEnProceso = true
         if (unityListo) {
+            // Cada escena atiende su propio mensaje de salida; el destino
+            // inexistente en la escena contraria se ignora sin efectos.
             UnityPlayer.UnitySendMessage("ARManager", "SalirExperiencia", "")
+            UnityPlayer.UnitySendMessage("Visor3D", "SalirExperiencia", "")
         } else {
             moverAlFondo()
         }

@@ -53,18 +53,25 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.GeminiRepository
+import com.lospuntoycoma.nicaexplorer.data.SampleData
+import com.lospuntoycoma.nicaexplorer.model.Monument
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
+import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AssistantScreen(onBack: () -> Unit) {
+fun AssistantScreen(
+    monumentContext: Monument? = null,
+    onBack: () -> Unit
+) {
     var message by remember { mutableStateOf("") }
     val messages = remember { mutableStateListOf<ChatMessage>() }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val localMonuments = remember { SampleData.allMonuments }
 
     val quickQuestions = listOf(
         "¿Qué puedo visitar en Juigalpa?",
@@ -86,7 +93,12 @@ fun AssistantScreen(onBack: () -> Unit) {
             val comerciosResult = FirebaseRepository.getComerciosActivos()
             val comercios = comerciosResult.getOrDefault(emptyList())
 
-            val response = GeminiRepository.generateContent(trimmed, comercios)
+            val response = GeminiRepository.generateContent(
+                prompt = trimmed,
+                comercios = comercios,
+                monument = monumentContext,
+                monuments = localMonuments
+            )
             messages.add(
                 ChatMessage(
                     response ?: "Lo siento, hubo un problema al conectar con mi cerebro artificial.",
@@ -117,7 +129,7 @@ fun AssistantScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(padding)
                 .imePadding()
-                .background(MaterialTheme.colorScheme.background)
+                .background(nicaAppBackgroundBrush())
         ) {
             LazyColumn(
                 state = listState,
@@ -154,6 +166,14 @@ fun AssistantScreen(onBack: () -> Unit) {
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                                 )
+                                monumentContext?.let { monument ->
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    Text(
+                                        text = "Estás consultando sobre: ${monument.name}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                    )
+                                }
                             }
                         }
 

@@ -9,5 +9,7 @@ data class City(
     val monumentCount: Int,
     val gradientStart: Long,
     val gradientEnd: Long,
-    val icon: ImageVector? = null
+    val icon: ImageVector? = null,
+    val imageRes: Int? = null,
+    val imageKey: String? = null
 )

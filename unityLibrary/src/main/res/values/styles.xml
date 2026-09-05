@@ -10,11 +10,4 @@
     <item name="android:windowBackground">@android:color/transparent</item>
   </style>
   <!--Avoid using the deprecated .Fullscreen extension, as it may interfere with Unity’s initialization of StatusBars insets visibility.-->
-  <style name="BaseUnityGameActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="android:windowBackground">@android:color/black</item>
-  </style>
-  <style name="BaseUnityGameActivityTheme.Translucent" parent="@style/BaseUnityGameActivityTheme">
-    <item name="android:windowIsTranslucent">true</item>
-    <item name="android:windowBackground">@android:color/transparent</item>
-  </style>
 </resources>

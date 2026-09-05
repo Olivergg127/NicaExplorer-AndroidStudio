@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,6 +9,12 @@ plugins {
 }
 
 android {
+    val signingPropertiesFile = rootProject.file("keystore.properties")
+    val signingProperties = Properties()
+    if (signingPropertiesFile.exists()) {
+        signingProperties.load(FileInputStream(signingPropertiesFile))
+    }
+
     namespace = "com.lospuntoycoma.nicaexplorer"
     compileSdk = 34
 
@@ -13,17 +22,37 @@ android {
         applicationId = "com.lospuntoycoma.nicaexplorer"
         minSdk = 30
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.1.0"
 
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        // Unity solo genera binarios arm64-v8a. Sin este filtro, los AAR de ARCore
+        // meten librerías x86/x86_64 al APK y el instalador elige esa ABI en
+        // emuladores, dejando fuera libgame.so (UnsatisfiedLinkError al abrir RA).
+        ndk {
+            abiFilters += listOf("arm64-v8a")
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            if (!signingPropertiesFile.exists()) {
+                throw GradleException("Falta keystore.properties para firmar la build release")
+            }
+            storeFile = file(signingProperties.getProperty("storeFile"))
+            storePassword = signingProperties.getProperty("storePassword")
+            keyAlias = signingProperties.getProperty("keyAlias")
+            keyPassword = signingProperties.getProperty("keyPassword")
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

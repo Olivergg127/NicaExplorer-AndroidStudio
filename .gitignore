@@ -18,6 +18,21 @@ captures/
 *.apk
 *.aab
 
+# Firma de distribución (nunca versionar secretos)
+*.jks
+*.keystore
+*.p12
+keystore.properties
+
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Dependencias locales del seed Firestore
+tools/node_modules/
+
+# Respaldos y salidas locales no versionables
+/app/release/
+/launcher/
+/NicaExplorer_BurstDebugInformation_DoNotShip/
+/unityLibrary_backup_20260904/

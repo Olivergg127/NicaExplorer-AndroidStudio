@@ -46,8 +46,8 @@
             tools:replace="android:exported,android:screenOrientation,android:hardwareAccelerated,android:configChanges,android:launchMode,android:resizeableActivity">
 
             <intent-filter tools:node="remove">
-                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
             </intent-filter>
 
         </activity>
@@ -57,11 +57,14 @@
             android:exported="false"
             android:hardwareAccelerated="false"
             android:screenOrientation="fullUser"
+            android:theme="@style/UnityThemeSelector"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:launchMode="singleTask"
             android:taskAffinity="com.lospuntoycoma.nicaexplorer.ar"
             android:excludeFromRecents="true"
-            android:resizeableActivity="true" />
+            android:resizeableActivity="true">
+
+        </activity>
 
     </application>
 

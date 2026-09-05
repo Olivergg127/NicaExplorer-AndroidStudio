@@ -3,21 +3,17 @@ apply from: '../shared/keepUnitySymbols.gradle'
 apply from: '../shared/common.gradle'
 
 dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation(name: 'arcore_client', ext:'aar')
     implementation(name: 'UnityARCore', ext:'aar')
     implementation(name: 'ARPresto', ext:'aar')
     implementation(name: 'unityandroidpermissions', ext:'aar')
     implementation project(':unityLibrary:xrmanifest.androidlib')
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.core:core:1.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    api 'androidx.games:games-activity:4.4.0'
 }
 
 android {
     namespace "com.unity3d.player"
-    // ndkPath "C:/Program Files/Unity/Hub/Editor/6000.5.1f1/Editor/Data/PlaybackEngines/AndroidPlayer/NDK"
+    ndkPath "C:/Program Files/Unity/Hub/Editor/6000.5.1f1/Editor/Data/PlaybackEngines/AndroidPlayer/NDK"
     ndkVersion "27.2.12479018"
     compileSdk 36
     buildToolsVersion "36.0.0"
@@ -36,12 +32,6 @@ android {
             abiFilters "arm64-v8a"
             debugSymbolLevel "none"
         }
-
-        externalNativeBuild {
-            cmake {
-                arguments "-DANDROID_STL=c++_shared", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
-            }
-        }
     }
 
     lint {
@@ -58,18 +48,6 @@ android {
             useLegacyPackaging true
         }
     }
-}
-
-
-android.externalNativeBuild {
-    cmake {
-        version "3.22.1"
-        path "src/main/cpp/CMakeLists.txt"
-    }
-}
-
-android.buildFeatures {
-    prefab true
 }
 
 
@@ -156,13 +134,7 @@ def buildIl2CppImpl(String workingDir, String configuration, String architecture
     commandLineArgs.add("--data-folder=${workingDir}/src/main/Il2CppOutputProject/Source/il2cppOutput/data")
     commandLineArgs.add("--generatedcppdir=${workingDir}/src/main/Il2CppOutputProject/Source/il2cppOutput")
     commandLineArgs.add("--cachedirectory=${workingDir}/build/il2cpp_${abi}_${configuration}/il2cpp_cache")
-    
-    def ndkPath = project.hasProperty("unity.androidNdkPath") ? getProperty("unity.androidNdkPath") : ""
-    if (ndkPath == null || ndkPath.isEmpty() || !new File(ndkPath).exists()) {
-        ndkPath = android.ndkDirectory.absolutePath
-    }
-    
-    commandLineArgs.add("--tool-chain-path=" + ndkPath)
+    commandLineArgs.add("--tool-chain-path=" + getProperty("unity.androidNdkPath"))
 
     staticLibraries.each { fileName ->
         commandLineArgs.add("--additional-libraries=${workingDir}/src/main/jniStaticLibs/${abi}/${fileName}")
@@ -174,20 +146,12 @@ def buildIl2CppImpl(String workingDir, String configuration, String architecture
         commandLineArgs = commandLineArgs*.replace('\"', '\\\"')
     }
 
-    def sdkPath = project.hasProperty("unity.androidSdkPath") ? getProperty("unity.androidSdkPath") : getSdkDir()
-
     def command = "${workingDir}/src/main/Il2CppOutputProject/IL2CPP/build/deploy/il2cpp${executableExtension}";
-    
-    if (!new File(command).exists()) {
-        println("WARNING: il2cpp executable not found at ${command}. Skipping native build.")
-        return
-    }
-
     execCommand(workingDir, [command, *commandLineArgs], [
-        "ANDROID_SDK_ROOT": sdkPath,
-        "ANDROID_NDK_ROOT": ndkPath,
-        "NDK_ROOT": ndkPath,
-        "ANDROID_NDK_HOME": ndkPath,
+        "ANDROID_SDK_ROOT": getProperty("unity.androidSdkPath"),
+        "ANDROID_NDK_ROOT": getProperty("unity.androidNdkPath"),
+        "NDK_ROOT": getProperty("unity.androidNdkPath"),
+        "ANDROID_NDK_HOME": getProperty("unity.androidNdkPath"),
     ])
 
     def dbgLevel = project.android.defaultConfig.ndk.debugSymbolLevel;
@@ -240,4 +204,4 @@ def execCommand(String workDir, List<String> command, Map<String, String> env = 
         println "$stdout\n$stderr"
     }
 }
-
+
