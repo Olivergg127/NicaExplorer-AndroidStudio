@@ -1,0 +1,1813 @@
+/* ==========================================================================
+   NicaExplorer · Panel de administración
+   Sistema de diseño claro/oscuro + verde/turquesa.
+   Se carga después de AdminLTE/Bootstrap para sobreescribir su apariencia.
+   ========================================================================== */
+
+/* Tema oscuro (por defecto) */
+:root,
+[data-bs-theme="dark"] {
+    color-scheme: dark;
+
+    --nica-bg: #0b0f0e;
+    --nica-surface: #111715;
+    --nica-surface-alt: #151d1a;
+    --nica-surface-raised: #18211d;
+
+    --nica-text: #f3f6f4;
+    --nica-muted: #8f9d96;
+    --nica-faint: #66736c;
+
+    --nica-accent: #39c98d;
+    --nica-accent-strong: #2fb57c;
+    --nica-accent-rgb: 57, 201, 141;
+    --nica-accent-strong-rgb: 47, 181, 124;
+    --nica-accent-soft: rgba(57, 201, 141, 0.12);
+    --nica-accent-ring: rgba(57, 201, 141, 0.32);
+    --nica-on-accent: #06110c;
+
+    --nica-border: rgba(255, 255, 255, 0.07);
+    --nica-border-strong: rgba(255, 255, 255, 0.12);
+
+    --nica-danger: #f16a6a;
+    --nica-danger-rgb: 241, 106, 106;
+    --nica-danger-strong: #e35c5c;
+    --nica-danger-soft: rgba(241, 106, 106, 0.12);
+    --nica-danger-text: #ffc9c9;
+    --nica-warning: #e8b85c;
+    --nica-warning-rgb: 232, 184, 92;
+    --nica-warning-soft: rgba(232, 184, 92, 0.12);
+    --nica-info: #63b3ed;
+    --nica-info-rgb: 99, 179, 237;
+    --nica-info-soft: rgba(99, 179, 237, 0.12);
+    --nica-success-text: #b6f0d5;
+
+    --nica-topbar-bg: rgba(11, 15, 14, 0.86);
+    --nica-hover: rgba(255, 255, 255, 0.04);
+    --nica-hover-soft: rgba(255, 255, 255, 0.02);
+    --nica-hover-strong: #1d2622;
+    --nica-subtle: rgba(255, 255, 255, 0.06);
+    --nica-progress: rgba(255, 255, 255, 0.08);
+    --nica-scrollbar: rgba(255, 255, 255, 0.14);
+    --nica-shadow: rgba(0, 0, 0, 0.03);
+    --nica-modal-shadow: rgba(0, 0, 0, 0.55);
+    --nica-menu-shadow: rgba(0, 0, 0, 0.45);
+    --nica-login-glow: rgba(57, 201, 141, 0.08);
+
+    --nica-radius-sm: 8px;
+    --nica-radius: 12px;
+    --nica-radius-lg: 14px;
+
+    --nica-sidebar-w: 252px;
+    --nica-topbar-h: 60px;
+
+    /* Ancho del sidebar de AdminLTE (el grid lo resuelve en :root) */
+    --lte-sidebar-width: var(--nica-sidebar-w);
+
+    --nica-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Tema claro */
+[data-bs-theme="light"] {
+    color-scheme: light;
+
+    --nica-bg: #f5f7f6;
+    --nica-surface: #ffffff;
+    --nica-surface-alt: #f1f4f2;
+    --nica-surface-raised: #ffffff;
+
+    --nica-text: #12211b;
+    --nica-muted: #5d6c65;
+    --nica-faint: #8b968f;
+
+    --nica-accent: #12855a;
+    --nica-accent-strong: #0c6b48;
+    --nica-accent-rgb: 18, 133, 90;
+    --nica-accent-strong-rgb: 12, 107, 72;
+    --nica-accent-soft: rgba(18, 133, 90, 0.12);
+    --nica-accent-ring: rgba(18, 133, 90, 0.26);
+    --nica-on-accent: #ffffff;
+
+    --nica-border: rgba(18, 33, 27, 0.10);
+    --nica-border-strong: rgba(18, 33, 27, 0.16);
+
+    --nica-danger: #cf3f3f;
+    --nica-danger-rgb: 207, 63, 63;
+    --nica-danger-strong: #b73535;
+    --nica-danger-soft: rgba(207, 63, 63, 0.10);
+    --nica-danger-text: #8a2a2a;
+    --nica-warning: #a9720f;
+    --nica-warning-rgb: 169, 114, 15;
+    --nica-warning-soft: rgba(169, 114, 15, 0.12);
+    --nica-info: #2b7fbf;
+    --nica-info-rgb: 43, 127, 191;
+    --nica-info-soft: rgba(43, 127, 191, 0.12);
+    --nica-success-text: #0f6b48;
+
+    --nica-topbar-bg: rgba(255, 255, 255, 0.86);
+    --nica-hover: rgba(18, 33, 27, 0.05);
+    --nica-hover-soft: rgba(18, 33, 27, 0.025);
+    --nica-hover-strong: #e7ebe9;
+    --nica-subtle: rgba(18, 33, 27, 0.05);
+    --nica-progress: rgba(18, 33, 27, 0.10);
+    --nica-scrollbar: rgba(18, 33, 27, 0.18);
+    --nica-shadow: rgba(18, 33, 27, 0.05);
+    --nica-modal-shadow: rgba(18, 33, 27, 0.18);
+    --nica-menu-shadow: rgba(18, 33, 27, 0.14);
+    --nica-login-glow: rgba(18, 133, 90, 0.07);
+}
+
+/* --------------------------------------------------------------------------
+   Tokens de Bootstrap / AdminLTE (compartidos, según el tema activo)
+   -------------------------------------------------------------------------- */
+
+[data-bs-theme] {
+    --bs-body-bg: var(--nica-bg);
+    --bs-body-color: var(--nica-text);
+    --bs-secondary-color: var(--nica-muted);
+    --bs-tertiary-color: var(--nica-faint);
+    --bs-secondary-bg: var(--nica-surface-alt);
+    --bs-tertiary-bg: var(--nica-surface);
+    --bs-border-color: var(--nica-border);
+    --bs-border-color-translucent: var(--nica-border);
+    --bs-emphasis-color: var(--nica-text);
+
+    --bs-primary: var(--nica-accent);
+    --bs-primary-rgb: var(--nica-accent-rgb);
+    --bs-link-color: var(--nica-accent);
+    --bs-link-color-rgb: var(--nica-accent-rgb);
+    --bs-link-hover-color: var(--nica-accent-strong);
+    --bs-link-hover-color-rgb: var(--nica-accent-strong-rgb);
+
+    --bs-danger: var(--nica-danger);
+    --bs-danger-rgb: var(--nica-danger-rgb);
+    --bs-warning: var(--nica-warning);
+    --bs-warning-rgb: var(--nica-warning-rgb);
+    --bs-info: var(--nica-info);
+    --bs-info-rgb: var(--nica-info-rgb);
+    --bs-success: var(--nica-accent);
+    --bs-success-rgb: var(--nica-accent-rgb);
+
+    --bs-body-font-family: var(--nica-font);
+    --bs-body-font-size: 0.9375rem;
+    --bs-border-radius: var(--nica-radius-sm);
+    --bs-border-radius-sm: 6px;
+    --bs-border-radius-lg: var(--nica-radius);
+}
+
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    font-family: var(--nica-font);
+    background: var(--nica-bg);
+    color: var(--nica-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--nica-text);
+}
+
+a {
+    text-decoration: none;
+}
+
+code {
+    color: var(--nica-accent);
+    background: var(--nica-accent-soft);
+    border-radius: 6px;
+    padding: 0.1rem 0.35rem;
+}
+
+::selection {
+    background: var(--nica-accent-ring);
+    color: var(--nica-on-accent);
+}
+
+:focus-visible {
+    outline: 2px solid var(--nica-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Scrollbar discreto */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--nica-scrollbar) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--nica-scrollbar);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+}
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+
+.app-wrapper {
+    background: var(--nica-bg);
+}
+
+.app-main {
+    background: var(--nica-bg);
+}
+
+.app-content {
+    padding: 0;
+}
+
+.app-content > .container-fluid {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 28px 32px 40px;
+}
+
+.app-footer {
+    min-height: auto;
+    padding: 16px 32px;
+    background: transparent;
+    border-top: 1px solid var(--nica-border);
+    color: var(--nica-faint);
+    font-size: 0.8125rem;
+}
+
+/* --------------------------------------------------------------------------
+   Topbar
+   -------------------------------------------------------------------------- */
+
+.app-header.nica-topbar {
+    height: var(--nica-topbar-h);
+    background: var(--nica-topbar-bg);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--nica-border);
+    padding: 0;
+}
+
+.nica-topbar-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 1440px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.nica-topbar-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--nica-muted);
+}
+
+.nica-topbar-title .nica-topbar-sep {
+    color: var(--nica-faint);
+}
+
+.nica-topbar-title strong {
+    color: var(--nica-text);
+    font-weight: 600;
+}
+
+.nica-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+}
+
+/* Switch de tema: muestra el icono del modo al que se cambia */
+.nica-theme-icon-sun {
+    display: none;
+}
+
+[data-bs-theme="dark"] .nica-theme-icon-sun {
+    display: inline;
+}
+
+[data-bs-theme="dark"] .nica-theme-icon-moon {
+    display: none;
+}
+
+.nica-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px 6px 6px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--nica-text);
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.nica-user:hover,
+.nica-user:focus {
+    color: var(--nica-text);
+    background: var(--nica-surface-alt);
+    border-color: var(--nica-border);
+}
+
+.nica-user-avatar {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: var(--nica-accent-soft);
+    color: var(--nica-accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.nica-user-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Botón icono reutilizable */
+.nica-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--nica-muted);
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.18s ease, color 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.nica-icon-btn:hover,
+.nica-icon-btn:focus-visible {
+    background: var(--nica-surface-alt);
+    border-color: var(--nica-border);
+    color: var(--nica-text);
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar
+   -------------------------------------------------------------------------- */
+
+[data-bs-theme] .app-sidebar {
+    --lte-sidebar-bg: var(--nica-surface);
+    --lte-sidebar-width: var(--nica-sidebar-w);
+    --lte-sidebar-color: var(--nica-muted);
+    --lte-sidebar-hover-color: var(--nica-text);
+    --lte-sidebar-hover-bg: var(--nica-hover);
+    --lte-sidebar-active-color: var(--nica-accent);
+    --lte-sidebar-menu-active-bg: var(--nica-accent-soft);
+    --lte-sidebar-menu-active-color: var(--nica-accent);
+    --lte-sidebar-header-color: var(--nica-faint);
+    --lte-sidebar-submenu-bg: transparent;
+    --lte-sidebar-submenu-color: var(--nica-muted);
+    --lte-sidebar-submenu-hover-color: var(--nica-text);
+    --lte-sidebar-submenu-hover-bg: var(--nica-hover);
+    --lte-sidebar-submenu-active-color: var(--nica-accent);
+    --lte-sidebar-submenu-active-bg: var(--nica-accent-soft);
+
+    background: var(--nica-surface);
+    border-right: 1px solid var(--nica-border);
+    box-shadow: none;
+}
+
+.app-sidebar .sidebar-brand {
+    height: var(--nica-topbar-h);
+    justify-content: flex-start;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--nica-border);
+    background: transparent;
+    font-size: 1rem;
+}
+
+.app-sidebar .brand-link {
+    gap: 10px;
+    width: 100%;
+    color: var(--nica-text);
+}
+
+.app-sidebar .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--nica-accent-soft);
+    color: var(--nica-accent);
+    font-size: 1rem;
+}
+
+.app-sidebar .brand-link .brand-text {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--nica-text);
+}
+
+.app-sidebar .brand-link .brand-text span {
+    color: var(--nica-accent);
+}
+
+.sidebar-wrapper {
+    padding: 12px 12px 20px;
+}
+
+.sidebar-wrapper .sidebar-menu .nav-header {
+    display: block;
+    margin: 18px 12px 6px;
+    padding: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--nica-faint);
+    background: transparent;
+}
+
+.sidebar-wrapper .sidebar-menu .nav-header:first-child {
+    margin-top: 6px;
+}
+
+.sidebar-wrapper .sidebar-menu > .nav-item {
+    margin-bottom: 2px;
+}
+
+.sidebar-wrapper .sidebar-menu > .nav-item > .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--nica-muted);
+    transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.sidebar-wrapper .sidebar-menu > .nav-item > .nav-link:hover {
+    background: var(--nica-hover);
+    color: var(--nica-text);
+}
+
+.sidebar-wrapper .sidebar-menu > .nav-item > .nav-link.active {
+    background: var(--nica-accent-soft);
+    color: var(--nica-accent);
+    font-weight: 600;
+}
+
+.sidebar-wrapper .sidebar-menu .nav-icon {
+    min-width: 1.15rem;
+    max-width: 1.15rem;
+    font-size: 1rem;
+}
+
+.sidebar-wrapper .sidebar-menu > .nav-item > .nav-link > p {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.nica-sidebar-footer {
+    margin: 8px 12px 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--nica-border);
+}
+
+.nica-sidebar-footer .nica-user {
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.nica-sidebar-footer .nica-user-name {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Cabecera de página
+   -------------------------------------------------------------------------- */
+
+.nica-page-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.nica-page-head-text {
+    min-width: 0;
+}
+
+.nica-page-eyebrow {
+    margin: 0 0 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nica-accent);
+}
+
+.nica-page-title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--nica-text);
+}
+
+.nica-page-sub {
+    margin: 8px 0 0;
+    max-width: 60ch;
+    font-size: 0.875rem;
+    color: var(--nica-muted);
+}
+
+.nica-page-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Secciones
+   -------------------------------------------------------------------------- */
+
+.nica-section {
+    margin-bottom: 28px;
+}
+
+.nica-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.nica-section-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.nica-section-hint {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--nica-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Tarjetas / paneles
+   -------------------------------------------------------------------------- */
+
+.card {
+    --bs-card-bg: var(--nica-surface);
+    --bs-card-border-color: var(--nica-border);
+    --bs-card-border-radius: var(--nica-radius-lg);
+    --bs-card-inner-border-radius: calc(var(--nica-radius-lg) - 1px);
+    --bs-card-cap-bg: transparent;
+    --bs-card-color: var(--nica-text);
+
+    border-radius: var(--nica-radius-lg);
+    box-shadow: 0 1px 2px var(--nica-shadow);
+}
+
+.card > .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--nica-border);
+    background: transparent;
+}
+
+.card > .card-header .card-title {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--nica-text);
+}
+
+.card > .card-body {
+    padding: 20px;
+}
+
+.card > .card-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--nica-border);
+    background: transparent;
+    color: var(--nica-muted);
+    font-size: 0.8125rem;
+}
+
+.nica-panel {
+    background: var(--nica-surface);
+    border: 1px solid var(--nica-border);
+    border-radius: var(--nica-radius-lg);
+    box-shadow: 0 1px 2px var(--nica-shadow);
+}
+
+.nica-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--nica-border);
+}
+
+.nica-panel-title {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.nica-panel-body {
+    padding: 20px;
+}
+
+.nica-panel-body.is-flush {
+    padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Métricas
+   -------------------------------------------------------------------------- */
+
+.nica-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+}
+
+.nica-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 20px;
+    background: var(--nica-surface);
+    border: 1px solid var(--nica-border);
+    border-radius: var(--nica-radius-lg);
+    box-shadow: 0 1px 2px var(--nica-shadow);
+    color: var(--nica-text);
+    transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+a.nica-metric:hover {
+    color: var(--nica-text);
+    border-color: var(--nica-border-strong);
+    transform: translateY(-1px);
+}
+
+.nica-metric-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.nica-metric-label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--nica-muted);
+}
+
+.nica-metric-icon {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--nica-accent-soft);
+    color: var(--nica-accent);
+    font-size: 0.9375rem;
+}
+
+.nica-metric-value {
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.nica-metric-value.is-empty {
+    color: var(--nica-faint);
+}
+
+.nica-metric-meta {
+    font-size: 0.8125rem;
+    color: var(--nica-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Lista compacta (colecciones, enlaces internos)
+   -------------------------------------------------------------------------- */
+
+.nica-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.nica-list-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    color: var(--nica-text);
+    border-top: 1px solid var(--nica-border);
+    transition: background-color 0.18s ease;
+}
+
+.nica-list-item:first-child {
+    border-top: 0;
+}
+
+.nica-list-item:hover {
+    background: var(--nica-hover-soft);
+    color: var(--nica-text);
+}
+
+.nica-list-icon {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: var(--nica-surface-alt);
+    color: var(--nica-muted);
+    font-size: 0.9375rem;
+}
+
+.nica-list-main {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.nica-list-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.nica-list-sub {
+    font-size: 0.8125rem;
+    color: var(--nica-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nica-list-aside {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    color: var(--nica-faint);
+}
+
+.nica-list-count {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--nica-text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Botones
+   -------------------------------------------------------------------------- */
+
+.btn {
+    --bs-btn-font-size: 0.875rem;
+    --bs-btn-font-weight: 500;
+    --bs-btn-padding-y: 0.5rem;
+    --bs-btn-padding-x: 0.875rem;
+    --bs-btn-border-radius: 10px;
+    --bs-btn-focus-box-shadow: 0 0 0 3px var(--nica-accent-ring);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    line-height: 1.2;
+    transition: background-color 0.18s ease, border-color 0.18s ease,
+        color 0.18s ease;
+}
+
+.btn-sm {
+    --bs-btn-font-size: 0.8125rem;
+    --bs-btn-padding-y: 0.375rem;
+    --bs-btn-padding-x: 0.7rem;
+    --bs-btn-border-radius: 8px;
+}
+
+.btn-lg {
+    --bs-btn-font-size: 0.9375rem;
+    --bs-btn-padding-y: 0.65rem;
+    --bs-btn-padding-x: 1.125rem;
+    --bs-btn-border-radius: 11px;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--nica-accent);
+    --bs-btn-border-color: var(--nica-accent);
+    --bs-btn-color: var(--nica-on-accent);
+    --bs-btn-hover-bg: var(--nica-accent-strong);
+    --bs-btn-hover-border-color: var(--nica-accent-strong);
+    --bs-btn-hover-color: var(--nica-on-accent);
+    --bs-btn-active-bg: var(--nica-accent-strong);
+    --bs-btn-active-border-color: var(--nica-accent-strong);
+    --bs-btn-active-color: var(--nica-on-accent);
+    --bs-btn-disabled-bg: rgba(var(--nica-accent-rgb), 0.4);
+    --bs-btn-disabled-border-color: transparent;
+    --bs-btn-disabled-color: var(--nica-on-accent);
+}
+
+.btn-secondary {
+    --bs-btn-bg: var(--nica-surface-raised);
+    --bs-btn-border-color: var(--nica-border-strong);
+    --bs-btn-color: var(--nica-text);
+    --bs-btn-hover-bg: var(--nica-hover-strong);
+    --bs-btn-hover-border-color: var(--nica-border-strong);
+    --bs-btn-hover-color: var(--nica-text);
+    --bs-btn-active-bg: var(--nica-hover-strong);
+    --bs-btn-active-border-color: var(--nica-border-strong);
+    --bs-btn-active-color: var(--nica-text);
+    --bs-btn-disabled-bg: var(--nica-surface-alt);
+    --bs-btn-disabled-border-color: var(--nica-border);
+    --bs-btn-disabled-color: var(--nica-faint);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--nica-accent);
+    --bs-btn-border-color: var(--nica-accent-ring);
+    --bs-btn-hover-bg: var(--nica-accent-soft);
+    --bs-btn-hover-border-color: var(--nica-accent);
+    --bs-btn-hover-color: var(--nica-accent);
+    --bs-btn-active-bg: var(--nica-accent-soft);
+    --bs-btn-active-border-color: var(--nica-accent);
+    --bs-btn-active-color: var(--nica-accent);
+    --bs-btn-disabled-color: var(--nica-faint);
+    --bs-btn-disabled-border-color: var(--nica-border);
+}
+
+.btn-outline-secondary {
+    --bs-btn-color: var(--nica-muted);
+    --bs-btn-border-color: var(--nica-border-strong);
+    --bs-btn-hover-bg: var(--nica-surface-alt);
+    --bs-btn-hover-border-color: var(--nica-border-strong);
+    --bs-btn-hover-color: var(--nica-text);
+    --bs-btn-active-bg: var(--nica-surface-alt);
+    --bs-btn-active-border-color: var(--nica-border-strong);
+    --bs-btn-active-color: var(--nica-text);
+}
+
+.btn-outline-danger {
+    --bs-btn-color: var(--nica-danger);
+    --bs-btn-border-color: rgba(var(--nica-danger-rgb), 0.35);
+    --bs-btn-hover-bg: var(--nica-danger-soft);
+    --bs-btn-hover-border-color: var(--nica-danger);
+    --bs-btn-hover-color: var(--nica-danger);
+    --bs-btn-active-bg: var(--nica-danger-soft);
+    --bs-btn-active-border-color: var(--nica-danger);
+    --bs-btn-active-color: var(--nica-danger);
+}
+
+.btn-danger {
+    --bs-btn-bg: var(--nica-danger);
+    --bs-btn-border-color: var(--nica-danger);
+    --bs-btn-color: #ffffff;
+    --bs-btn-hover-bg: var(--nica-danger-strong);
+    --bs-btn-hover-border-color: var(--nica-danger-strong);
+    --bs-btn-hover-color: #ffffff;
+}
+
+.nica-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--nica-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: background-color 0.18s ease, color 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.nica-btn-ghost:hover,
+.nica-btn-ghost:focus-visible {
+    background: var(--nica-surface-alt);
+    border-color: var(--nica-border);
+    color: var(--nica-text);
+}
+
+.btn:focus-visible,
+.nica-btn-ghost:focus-visible,
+.nica-icon-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--nica-accent-ring);
+}
+
+/* --------------------------------------------------------------------------
+   Badges
+   -------------------------------------------------------------------------- */
+
+.badge {
+    padding: 0.32em 0.6em;
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    color: var(--nica-text);
+}
+
+.text-bg-success {
+    background: var(--nica-accent-soft) !important;
+    color: var(--nica-accent) !important;
+}
+
+.text-bg-danger {
+    background: var(--nica-danger-soft) !important;
+    color: var(--nica-danger) !important;
+}
+
+.text-bg-warning {
+    background: var(--nica-warning-soft) !important;
+    color: var(--nica-warning) !important;
+}
+
+.text-bg-info {
+    background: var(--nica-info-soft) !important;
+    color: var(--nica-info) !important;
+}
+
+.text-bg-secondary {
+    background: var(--nica-subtle) !important;
+    color: var(--nica-muted) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Tablas + DataTables
+   -------------------------------------------------------------------------- */
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--nica-text);
+    --bs-table-border-color: var(--nica-border);
+    --bs-table-striped-bg: transparent;
+    --bs-table-striped-color: var(--nica-text);
+    --bs-table-hover-bg: var(--nica-hover-soft);
+    --bs-table-hover-color: var(--nica-text);
+
+    margin: 0;
+    color: var(--nica-text);
+    border-color: var(--nica-border);
+}
+
+.table > :not(caption) > * > * {
+    padding: 13px 16px;
+    background: transparent;
+    border-bottom-color: var(--nica-border);
+}
+
+.table > thead > tr > th {
+    padding-top: 11px;
+    padding-bottom: 11px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--nica-faint);
+    white-space: nowrap;
+    border-bottom: 1px solid var(--nica-border);
+}
+
+.table > tbody > tr:last-child > td {
+    border-bottom: 0;
+}
+
+.table-hover > tbody > tr:hover > * {
+    --bs-table-bg-state: var(--nica-hover-soft);
+}
+
+.table td {
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.nica-thumb {
+    width: 52px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--nica-border);
+    background: var(--nica-surface-alt);
+}
+
+#nica-table thead th:first-child,
+#nica-table tbody td:first-child {
+    padding-left: 20px;
+}
+
+#nica-table thead th:last-child,
+#nica-table tbody td:last-child {
+    padding-right: 20px;
+}
+
+#nica-table tbody .nica-icon-btn + .nica-icon-btn {
+    margin-left: 2px;
+}
+
+.nica-image-preview {
+    max-height: 150px;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: var(--nica-radius-sm);
+    border: 1px solid var(--nica-border);
+}
+
+/* Controles DataTables 2 (integración Bootstrap 5) */
+.dt-container {
+    color: var(--nica-text);
+}
+
+/* Filas de layout del dataTable (la integración usa el grid de Bootstrap) */
+.dt-container > .row {
+    align-items: center;
+    gap: 12px 16px;
+    margin: 0;
+    padding: 16px 20px;
+}
+
+.dt-container > .row:first-child {
+    padding-bottom: 14px;
+}
+
+.dt-container:not(.dt-empty-footer) > .row:last-child {
+    padding-top: 14px;
+    border-top: 1px solid var(--nica-border);
+}
+
+.dt-container > .row.dt-layout-table {
+    display: block;
+    padding: 0;
+    gap: 0;
+}
+
+.dt-container > .row > [class*="col-"] {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.dt-container .dt-length,
+.dt-container .dt-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    color: var(--nica-muted);
+}
+
+.dt-container .dt-search {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.dt-container .dt-length label,
+.dt-container .dt-search label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--nica-muted);
+}
+
+.dt-container .dt-search label:empty {
+    display: none;
+}
+
+.dt-container .dt-length select,
+.dt-container .dt-search input {
+    background-color: var(--nica-surface-alt);
+    border: 1px solid var(--nica-border);
+    border-radius: 9px;
+    color: var(--nica-text);
+    font-size: 0.8125rem;
+    padding: 7px 10px;
+    box-shadow: none;
+}
+
+.dt-container .dt-length select {
+    padding-right: 30px;
+}
+
+.dt-container .dt-search input {
+    min-width: 240px;
+}
+
+.dt-container .dt-length select:focus,
+.dt-container .dt-search input:focus {
+    border-color: var(--nica-accent);
+    box-shadow: 0 0 0 3px var(--nica-accent-ring);
+    outline: none;
+}
+
+.dt-container .dt-info {
+    font-size: 0.8125rem;
+    color: var(--nica-muted);
+}
+
+.dt-container .dt-paging {
+    margin-left: auto;
+}
+
+.dt-container .dt-paging .pagination {
+    --bs-pagination-bg: transparent;
+    --bs-pagination-color: var(--nica-muted);
+    --bs-pagination-border-color: transparent;
+    --bs-pagination-hover-bg: var(--nica-surface-alt);
+    --bs-pagination-hover-color: var(--nica-text);
+    --bs-pagination-hover-border-color: transparent;
+    --bs-pagination-focus-bg: var(--nica-surface-alt);
+    --bs-pagination-focus-color: var(--nica-text);
+    --bs-pagination-focus-box-shadow: 0 0 0 3px var(--nica-accent-ring);
+    --bs-pagination-active-bg: var(--nica-accent-soft);
+    --bs-pagination-active-color: var(--nica-accent);
+    --bs-pagination-active-border-color: transparent;
+    --bs-pagination-disabled-bg: transparent;
+    --bs-pagination-disabled-color: var(--nica-faint);
+    --bs-pagination-disabled-border-color: transparent;
+
+    gap: 2px;
+    margin: 0;
+}
+
+.dt-container .dt-paging .page-link {
+    min-width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+/* Indicadores de orden: triángulos propios, sin depender de fuentes */
+table.dataTable thead > tr > th span.dt-column-title {
+    cursor: pointer;
+}
+
+table.dataTable thead > tr > th span.dt-column-order {
+    position: relative;
+    display: inline-block;
+    width: 12px;
+    height: 15px;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+table.dataTable thead > tr > th span.dt-column-order::before,
+table.dataTable thead > tr > th span.dt-column-order::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    opacity: 0.3;
+}
+
+table.dataTable thead > tr > th span.dt-column-order::before {
+    bottom: 50%;
+    margin-bottom: 1px;
+    border-bottom: 5px solid var(--nica-faint);
+}
+
+table.dataTable thead > tr > th span.dt-column-order::after {
+    top: 50%;
+    margin-top: 1px;
+    border-top: 5px solid var(--nica-faint);
+}
+
+table.dataTable thead > tr > th.dt-ordering-asc span.dt-column-order::before {
+    opacity: 1;
+    border-bottom-color: var(--nica-accent);
+}
+
+table.dataTable thead > tr > th.dt-ordering-desc span.dt-column-order::after {
+    opacity: 1;
+    border-top-color: var(--nica-accent);
+}
+
+/* Estado vacío dentro del DataTable */
+#nica-table tbody td.dt-empty,
+#nica-table tbody td.dataTables_empty {
+    color: var(--nica-muted);
+    font-size: 0.875rem;
+}
+
+#nica-table tbody td.dt-empty:has(.nica-empty),
+#nica-table tbody td.dataTables_empty:has(.nica-empty) {
+    padding: 0;
+    border-bottom: 0;
+}
+
+#nica-table tbody td.dt-empty:hover,
+#nica-table tbody td.dataTables_empty:hover {
+    background: transparent;
+}
+
+.nica-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 56px 24px;
+    text-align: center;
+}
+
+.nica-empty-icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    background: var(--nica-accent-soft);
+    color: var(--nica-accent);
+    font-size: 1.25rem;
+}
+
+.nica-empty-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--nica-text);
+}
+
+.nica-empty-text {
+    max-width: 46ch;
+    font-size: 0.8125rem;
+    color: var(--nica-muted);
+}
+
+.nica-empty .btn {
+    margin-top: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   Formularios
+   -------------------------------------------------------------------------- */
+
+.form-label {
+    margin-bottom: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--nica-text);
+}
+
+.form-control,
+.form-select {
+    background-color: var(--nica-surface-alt);
+    border: 1px solid var(--nica-border);
+    border-radius: 10px;
+    color: var(--nica-text);
+    font-size: 0.875rem;
+    padding: 9px 12px;
+    box-shadow: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.form-control::placeholder {
+    color: var(--nica-faint);
+}
+
+.form-control:focus,
+.form-select:focus {
+    background-color: var(--nica-surface-alt);
+    border-color: var(--nica-accent);
+    color: var(--nica-text);
+    box-shadow: 0 0 0 3px var(--nica-accent-ring);
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: var(--nica-hover-soft);
+    color: var(--nica-muted);
+}
+
+.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%238f9d96'%3E%3Cpath d='M4.646 6.146a.5.5 0 0 1 .708 0L8 8.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-size: 14px;
+    background-position: right 10px center;
+}
+
+[data-bs-theme="light"] .form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%235d6c65'%3E%3Cpath d='M4.646 6.146a.5.5 0 0 1 .708 0L8 8.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+}
+
+.form-text {
+    margin-top: 6px;
+    font-size: 0.75rem;
+    color: var(--nica-faint);
+}
+
+.input-group-text {
+    background-color: var(--nica-surface-alt);
+    border: 1px solid var(--nica-border);
+    color: var(--nica-muted);
+}
+
+.form-check-input {
+    background-color: var(--nica-surface-alt);
+    border-color: var(--nica-border-strong);
+    box-shadow: none;
+}
+
+.form-check-input:checked {
+    background-color: var(--nica-accent);
+    border-color: var(--nica-accent);
+}
+
+.form-check-input:focus {
+    border-color: var(--nica-accent);
+    box-shadow: 0 0 0 3px var(--nica-accent-ring);
+}
+
+.form-check-label {
+    font-size: 0.875rem;
+    color: var(--nica-text);
+}
+
+.form-switch .form-check-input {
+    width: 2.25em;
+    height: 1.2em;
+    margin-top: 0.15em;
+}
+
+/* Bloques del formulario */
+.nica-form-block {
+    padding: 20px 0;
+    border-top: 1px solid var(--nica-border);
+}
+
+.nica-form-block:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+
+.nica-form-block-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nica-faint);
+}
+
+.nica-form-block-title::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--nica-border);
+}
+
+/* Editores dinámicos (listas, galería, paradas) */
+.nica-dynamic {
+    display: flex;
+    flex-direction: column;
+}
+
+.nica-dynamic .nica-item {
+    margin-bottom: 8px;
+    background: var(--nica-surface-alt);
+    border: 1px solid var(--nica-border);
+    border-radius: var(--nica-radius-sm);
+}
+
+.nica-dynamic .nica-item:last-child {
+    margin-bottom: 0;
+}
+
+.nica-progress {
+    height: 6px;
+    border-radius: 999px;
+    background-color: var(--nica-progress);
+}
+
+.nica-progress .progress-bar {
+    background-color: var(--nica-accent);
+    font-size: 0.625rem;
+}
+
+/* --------------------------------------------------------------------------
+   Modal
+   -------------------------------------------------------------------------- */
+
+#nica-modal .modal-content {
+    max-height: 88vh;
+    background: var(--nica-surface);
+    border: 1px solid var(--nica-border-strong);
+    border-radius: var(--nica-radius-lg);
+    box-shadow: 0 24px 70px var(--nica-modal-shadow);
+}
+
+#nica-modal form {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 88vh;
+}
+
+#nica-modal .modal-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--nica-border);
+}
+
+#nica-modal .modal-title {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+#nica-modal .modal-body {
+    overflow-y: auto;
+    padding: 22px;
+}
+
+#nica-modal .modal-footer {
+    gap: 8px;
+    padding: 16px 22px;
+    border-top: 1px solid var(--nica-border);
+}
+
+.modal-backdrop.show {
+    opacity: 0.62;
+}
+
+.btn-close {
+    filter: invert(1) grayscale(1) brightness(1.8);
+    opacity: 0.6;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+[data-bs-theme="light"] .btn-close {
+    filter: none;
+    opacity: 0.45;
+}
+
+[data-bs-theme="light"] .btn-close:hover {
+    opacity: 0.8;
+}
+
+/* --------------------------------------------------------------------------
+   Alertas / feedback
+   -------------------------------------------------------------------------- */
+
+.alert {
+    border-radius: var(--nica-radius);
+    border: 1px solid var(--nica-border);
+    font-size: 0.875rem;
+    padding: 13px 16px;
+}
+
+.alert-danger {
+    background: var(--nica-danger-soft);
+    border-color: rgba(var(--nica-danger-rgb), 0.28);
+    color: var(--nica-danger-text);
+}
+
+.alert-success {
+    background: var(--nica-accent-soft);
+    border-color: var(--nica-accent-ring);
+    color: var(--nica-success-text);
+}
+
+.alert .btn-close {
+    padding: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Dropdown (menú de usuario)
+   -------------------------------------------------------------------------- */
+
+.dropdown-menu {
+    --bs-dropdown-bg: var(--nica-surface-raised);
+    --bs-dropdown-border-color: var(--nica-border-strong);
+    --bs-dropdown-border-radius: var(--nica-radius);
+    --bs-dropdown-link-color: var(--nica-text);
+    --bs-dropdown-link-hover-bg: var(--nica-surface-alt);
+    --bs-dropdown-link-hover-color: var(--nica-text);
+    --bs-dropdown-link-active-bg: var(--nica-accent-soft);
+    --bs-dropdown-link-active-color: var(--nica-accent);
+
+    padding: 6px;
+    box-shadow: 0 16px 40px var(--nica-menu-shadow);
+}
+
+.dropdown-item {
+    border-radius: 8px;
+    font-size: 0.875rem;
+    padding: 8px 10px;
+}
+
+/* --------------------------------------------------------------------------
+   SweetAlert2 (tema oscuro)
+   -------------------------------------------------------------------------- */
+
+.swal2-popup {
+    background: var(--nica-surface-raised) !important;
+    border: 1px solid var(--nica-border-strong);
+    border-radius: var(--nica-radius-lg) !important;
+    color: var(--nica-text) !important;
+    font-family: var(--nica-font) !important;
+}
+
+.swal2-title,
+.swal2-html-container {
+    color: var(--nica-text) !important;
+}
+
+.swal2-html-container {
+    color: var(--nica-muted) !important;
+    font-size: 0.875rem !important;
+}
+
+.swal2-toast {
+    border-radius: var(--nica-radius) !important;
+    box-shadow: 0 12px 32px var(--nica-menu-shadow) !important;
+}
+
+.swal2-toast .swal2-title {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+}
+
+.swal2-timer-progress-bar {
+    background: var(--nica-accent) !important;
+}
+
+.swal2-actions .swal2-confirm {
+    background: var(--nica-accent) !important;
+    color: var(--nica-on-accent) !important;
+    border-radius: 10px !important;
+    font-weight: 500 !important;
+}
+
+.swal2-actions .swal2-cancel {
+    background: var(--nica-surface-alt) !important;
+    color: var(--nica-text) !important;
+    border: 1px solid var(--nica-border-strong) !important;
+    border-radius: 10px !important;
+    font-weight: 500 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Login
+   -------------------------------------------------------------------------- */
+
+.login-page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    position: relative;
+    background:
+        radial-gradient(1200px 600px at 50% -10%, var(--nica-login-glow), transparent 60%),
+        var(--nica-bg);
+}
+
+.nica-login-theme {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.nica-login {
+    width: 100%;
+    max-width: 400px;
+}
+
+.nica-login-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    color: var(--nica-text);
+}
+
+.nica-login-mark {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--nica-accent-soft);
+    color: var(--nica-accent);
+    font-size: 1.25rem;
+}
+
+.nica-login-brand-text {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.nica-login-brand-text span {
+    color: var(--nica-accent);
+}
+
+.nica-login-card {
+    padding: 28px;
+    background: var(--nica-surface);
+    border: 1px solid var(--nica-border);
+    border-radius: var(--nica-radius-lg);
+    box-shadow: 0 20px 60px var(--nica-modal-shadow);
+}
+
+.nica-login-title {
+    margin: 0 0 4px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.nica-login-sub {
+    margin: 0 0 22px;
+    font-size: 0.875rem;
+    color: var(--nica-muted);
+}
+
+.nica-login .form-control {
+    padding: 10px 12px;
+}
+
+.nica-login-footer {
+    margin: 20px 0 0;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--nica-faint);
+}
+
+/* --------------------------------------------------------------------------
+   Utilidades
+   -------------------------------------------------------------------------- */
+
+.nica-text-muted {
+    color: var(--nica-muted) !important;
+}
+
+.nica-text-faint {
+    color: var(--nica-faint) !important;
+}
+
+.nica-mono {
+    font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 991.98px) {
+    .app-content > .container-fluid {
+        padding: 20px 18px 32px;
+    }
+
+    .app-footer {
+        padding: 14px 18px;
+    }
+
+    .nica-topbar-inner {
+        padding: 0 12px;
+    }
+
+    .nica-topbar-title {
+        font-size: 0.8125rem;
+    }
+
+    .nica-topbar-title .nica-context-label {
+        display: none;
+    }
+
+    .nica-page-head {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+    .nica-page-actions {
+        padding-top: 0;
+    }
+
+    .nica-page-actions .btn,
+    .nica-page-actions .nica-btn-ghost {
+        flex: 1 1 auto;
+    }
+
+    .nica-user-name {
+        display: none;
+    }
+
+    .dt-container > .row:first-child {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dt-container .dt-search {
+        justify-content: flex-start;
+        margin-left: 0;
+    }
+
+    .dt-container .dt-search input {
+        min-width: 0;
+        width: 100%;
+    }
+
+    .dt-container:not(.dt-empty-footer) > .row:last-child {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dt-container .dt-paging {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .nica-page-title {
+        font-size: 1.5rem;
+    }
+
+    .nica-metrics {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .nica-metric {
+        padding: 15px 16px;
+    }
+
+    .nica-metric-value {
+        font-size: 1.5rem;
+    }
+}

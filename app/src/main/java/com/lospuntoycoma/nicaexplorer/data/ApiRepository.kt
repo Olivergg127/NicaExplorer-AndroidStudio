@@ -1,0 +1,156 @@
+package com.lospuntoycoma.nicaexplorer.data
+
+import com.lospuntoycoma.nicaexplorer.model.Afluencia
+import com.lospuntoycoma.nicaexplorer.model.City
+import com.lospuntoycoma.nicaexplorer.model.Comercio
+import com.lospuntoycoma.nicaexplorer.model.Place
+import com.lospuntoycoma.nicaexplorer.model.ReferenciaParadaRuta
+import com.lospuntoycoma.nicaexplorer.model.RutaTuristica
+import org.json.JSONArray
+import org.json.JSONObject
+
+/**
+ * Repositorio de contenido de NicaExplorer. Todo el catálogo (ciudades, lugares,
+ * rutas y comercios) se obtiene de la API del backend, que a su vez lee/escribe
+ * en la misma base de Firestore que administra el panel.
+ */
+object ApiRepository {
+
+    private const val DEFAULT_GRADIENT_START = 0xFF4A1A5C
+    private const val DEFAULT_GRADIENT_END = 0xFF7B2D8E
+
+    suspend fun getCiudades(): List<City> =
+        ApiClient.getItems("/api/v1/ciudades")
+            .mapNotNull { (id, document) -> toCity(id, document) }
+
+    /** Versión del catálogo en el backend; cambia cuando hay altas/ediciones/borrados. */
+    suspend fun getCatalogVersion(): String? = runCatching {
+        ApiClient.getObject("/api/v1/version").optString("version").takeIf { it.isNotBlank() }
+    }.getOrNull()
+
+    suspend fun getLugares(): List<Place> =
+        ApiClient.getItems("/api/v1/lugares")
+            .mapNotNull { (id, document) -> toPlace(id, document) }
+
+    suspend fun getRutas(): List<RutaTuristica> =
+        ApiClient.getItems("/api/v1/rutas")
+            .mapNotNull { (id, document) -> toRuta(id, document) }
+
+    suspend fun getComercios(): Result<List<Comercio>> = runCatching {
+        ApiClient.getItems("/api/v1/comercios")
+            .mapNotNull { (id, document) -> toComercio(id, document) }
+            .filter { it.activo }
+    }
+
+    suspend fun getComercio(id: String): Result<Comercio> = runCatching {
+        val json = ApiClient.getObject("/api/v1/comercios/$id")
+        val item = json.optJSONObject("data") ?: error("Comercio no encontrado")
+        val document = item.optJSONObject("data") ?: item
+        toComercio(item.optString("id", id), document) ?: error("Comercio no encontrado")
+    }
+
+    // ---- Mapeo JSON -> modelos ----
+
+    private fun toCity(id: String, d: JSONObject): City? {
+        if (!d.optBoolean("activo", true)) return null
+        return City(
+            id = id,
+            name = d.optString("nombre", d.optString("name", id)),
+            description = d.optString("descripcion", d.optString("description", "")),
+            // El campo en Firestore sigue siendo "monumentCount"; en la app es placeCount.
+            placeCount = d.optInt("monumentCount", 0),
+            gradientStart = d.optLong("gradientStart", DEFAULT_GRADIENT_START),
+            gradientEnd = d.optLong("gradientEnd", DEFAULT_GRADIENT_END),
+            imagenUrl = d.optString("imagenUrl").takeIf { it.isNotBlank() },
+            galeria = d.optJSONArray("galeria").toStringList(),
+            lema = d.optString("lema", ""),
+            historia = d.optString("historia", ""),
+            departamento = d.optString("departamento", ""),
+            latitud = d.optNullableDouble("latitud"),
+            longitud = d.optNullableDouble("longitud"),
+            orden = d.optInt("orden", 0),
+            activo = true
+        )
+    }
+
+    private fun toPlace(id: String, d: JSONObject): Place? {
+        if (!d.optBoolean("activo", true)) return null
+        val cityId = d.optString("cityId").ifBlank { return null }
+        val afluencia = d.optString("afluencia").uppercase()
+            .let { value -> runCatching { Afluencia.valueOf(value) }.getOrNull() }
+            ?: Afluencia.MODERADA
+
+        return Place(
+            id = id,
+            name = d.optString("nombre", d.optString("name", id)),
+            city = d.optString("ciudad", d.optString("city", "")),
+            cityId = cityId,
+            category = d.optString("categoria", d.optString("category", "")),
+            afluencia = afluencia,
+            description = d.optString("descripcion", ""),
+            history = d.optString("historia", d.optString("history", "")),
+            yearBuilt = d.optString("anioConstruccion", d.optString("yearBuilt", "")),
+            modeloUnity = d.optString("modeloUnity", ""),
+            gradientStart = d.optLong("gradientStart", DEFAULT_GRADIENT_START),
+            gradientEnd = d.optLong("gradientEnd", DEFAULT_GRADIENT_END),
+            imagenUrl = d.optString("imagenUrl").takeIf { it.isNotBlank() },
+            consejosResponsables = d.optJSONArray("consejosResponsables").toStringList()
+        )
+    }
+
+    private fun toRuta(id: String, d: JSONObject): RutaTuristica? {
+        if (!d.optBoolean("activo", true)) return null
+        val cityId = d.optString("cityId").trim().lowercase().ifBlank { return null }
+
+        return RutaTuristica(
+            id = id,
+            cityId = cityId,
+            nombre = d.optString("nombre", ""),
+            descripcion = d.optString("descripcion", ""),
+            duracionEstimada = d.optString("duracionEstimada", ""),
+            notaDuracion = d.optString("notaDuracion", ""),
+            objetivos = d.optJSONArray("objetivos").toStringList(),
+            paradas = d.optJSONArray("paradas").toStringList().mapNotNull(::parseReferenciaParada),
+            imagenUrl = d.optString("imagenUrl").takeIf { it.isNotBlank() },
+            orden = d.optInt("orden", 0),
+            activo = true
+        )
+    }
+
+    private fun toComercio(id: String, d: JSONObject): Comercio? = Comercio(
+        id = id,
+        nombre = d.optString("nombre", ""),
+        categoria = d.optString("categoria", ""),
+        descripcion = d.optString("descripcion", ""),
+        ciudad = d.optString("ciudad", ""),
+        direccion = d.optString("direccion", ""),
+        horario = d.optString("horario", ""),
+        imagenUrl = d.optString("imagenUrl").ifBlank { d.optString("imagenurl") },
+        latitud = d.optDouble("latitud", 0.0),
+        longitud = d.optDouble("longitud", 0.0),
+        telefono = d.optString("telefono", ""),
+        whatsapp = d.optString("whatsapp", ""),
+        tieneWhatsapp = d.optBoolean("tieneWhatsapp", false),
+        activo = d.optBoolean("activo", false)
+    )
+
+    private fun parseReferenciaParada(value: String): ReferenciaParadaRuta? {
+        val trimmed = value.trim()
+        return when {
+            trimmed.startsWith("lugar:", ignoreCase = true) ||
+                trimmed.startsWith("monumento:", ignoreCase = true) -> // "monumento:" es legado
+                ReferenciaParadaRuta.Lugar(trimmed.substringAfter(':').trim())
+            trimmed.startsWith("comercio:", ignoreCase = true) ->
+                ReferenciaParadaRuta.ComercioLocal(trimmed.substringAfter(':').trim())
+            else -> null
+        }
+    }
+
+    private fun JSONArray?.toStringList(): List<String> {
+        if (this == null) return emptyList()
+        return (0 until length()).mapNotNull { index -> optString(index).takeIf { it.isNotBlank() } }
+    }
+
+    private fun JSONObject.optNullableDouble(key: String): Double? =
+        if (has(key) && !isNull(key)) optDouble(key) else null
+}

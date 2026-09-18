@@ -15,6 +15,16 @@ android {
         signingProperties.load(FileInputStream(signingPropertiesFile))
     }
 
+    // Configuración del backend (no versionada): local.properties -> nica.apiBaseUrl / nica.apiKey
+    val localProperties = Properties().apply {
+        val file = rootProject.file("local.properties")
+        if (file.exists()) {
+            file.inputStream().use { load(it) }
+        }
+    }
+    val nicaApiBaseUrl = localProperties.getProperty("nica.apiBaseUrl") ?: "http://192.168.123.39:8080"
+    val nicaApiKey = localProperties.getProperty("nica.apiKey") ?: ""
+
     namespace = "com.lospuntoycoma.nicaexplorer"
     compileSdk = 34
 
@@ -24,6 +34,11 @@ android {
         targetSdk = 34
         versionCode = 3
         versionName = "1.1.1"
+
+        // Backend NicaExplorer (CI4 + Firestore). Se configura en local.properties.
+        buildConfigField("String", "API_BASE_URL", "\"$nicaApiBaseUrl\"")
+        buildConfigField("String", "API_KEY", "\"$nicaApiKey\"")
+
 
         vectorDrawables {
             useSupportLibrary = true
@@ -67,6 +82,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -95,11 +111,17 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material")
     implementation("androidx.compose.material:material-icons-extended")
 
     implementation("io.coil-kt:coil-compose:2.7.0")
 
     implementation("androidx.navigation:navigation-compose:2.7.6")
+
+    // Backend OpenGL ES para mayor compatibilidad con dispositivos Android.
+    // La variante android-sdk usa Vulkan por defecto y provoca un crash nativo
+    // en el dispositivo de prueba al renderizar el MapView.
+    implementation("org.maplibre.gl:android-sdk-opengl:12.3.1")
 
     implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
     implementation("com.google.firebase:firebase-auth")

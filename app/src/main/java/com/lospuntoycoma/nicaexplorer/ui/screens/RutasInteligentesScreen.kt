@@ -50,13 +50,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.lospuntoycoma.nicaexplorer.data.RutasTuristicasData
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.model.Afluencia
 import com.lospuntoycoma.nicaexplorer.model.Comercio
-import com.lospuntoycoma.nicaexplorer.model.Monument
+import com.lospuntoycoma.nicaexplorer.model.Place
 import com.lospuntoycoma.nicaexplorer.model.ReferenciaParadaRuta
 import com.lospuntoycoma.nicaexplorer.model.RutaTuristica
+import com.lospuntoycoma.nicaexplorer.ui.components.CoverImage
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -75,7 +75,7 @@ fun RutasInteligentesScreen(
     onVerComercio: (String) -> Unit,
     onBack: () -> Unit
 ) {
-    val ruta = remember(cityId) { RutasTuristicasData.rutaParaCiudad(cityId) }
+    val ruta = remember(cityId) { SampleData.rutasDeCiudad(cityId).firstOrNull() }
 
     Scaffold(
         topBar = {
@@ -146,8 +146,8 @@ private fun RutaDisponible(
     // Se crea solo para ciudades con una ruta publicada; León y Managua no consultan Firestore.
     val comerciosViewModel: ComerciosViewModel = viewModel()
     val comerciosState by comerciosViewModel.uiState.collectAsState()
-    val monumentosPorId = remember {
-        SampleData.allMonuments.associateBy { monumento -> monumento.id }
+    val lugarsPorId = remember {
+        SampleData.allPlaces.associateBy { lugar -> lugar.id }
     }
     val nombreCiudad = remember(ruta.cityId) {
         SampleData.cities
@@ -185,17 +185,17 @@ private fun RutaDisponible(
             val numeroParada = index + 1
 
             when (referencia) {
-                is ReferenciaParadaRuta.Monumento -> {
-                    val monumento = monumentosPorId[referencia.monumentId]
+                is ReferenciaParadaRuta.Lugar -> {
+                    val lugar = lugarsPorId[referencia.placeId]
                         ?.takeIf { candidate ->
                             candidate.cityId.equals(ruta.cityId, ignoreCase = true)
                         }
 
-                    if (monumento != null) {
-                        ParadaMonumento(
+                    if (lugar != null) {
+                        ParadaLugar(
                             numero = numeroParada,
-                            monumento = monumento,
-                            onVerLugar = { onVerLugar(monumento.id) }
+                            lugar = lugar,
+                            onVerLugar = { onVerLugar(lugar.id) }
                         )
                     } else {
                         ParadaLugarNoDisponible(numero = numeroParada)
@@ -378,9 +378,9 @@ private fun InteligenciaRuta(objetivos: List<String>) {
 }
 
 @Composable
-private fun ParadaMonumento(
+private fun ParadaLugar(
     numero: Int,
-    monumento: Monument,
+    lugar: Place,
     onVerLugar: () -> Unit
 ) {
     Card(
@@ -397,29 +397,22 @@ private fun ParadaMonumento(
                     .background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(monumento.gradientStart),
-                                Color(monumento.gradientEnd)
+                                Color(lugar.gradientStart),
+                                Color(lugar.gradientEnd)
                             )
                         )
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                val imageRes = monumento.imageRes
-                if (imageRes != null) {
-                    Image(
-                        painter = painterResource(imageRes),
-                        contentDescription = monumento.name,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.12f))
-                    )
-                } else {
+                val hasImage = CoverImage(
+                    url = lugar.imagenUrl,
+                    imageRes = lugar.imageRes,
+                    contentDescription = lugar.name,
+                    modifier = Modifier.fillMaxSize()
+                )
+                if (!hasImage) {
                     Icon(
-                        imageVector = monumento.icon ?: Icons.Filled.LocationOn,
+                        imageVector = lugar.icon ?: Icons.Filled.LocationOn,
                         contentDescription = null,
                         tint = Color.White.copy(alpha = 0.55f),
                         modifier = Modifier.size(58.dp)
@@ -433,20 +426,20 @@ private fun ParadaMonumento(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    TipoParada(texto = "Monumento")
+                    TipoParada(texto = "Lugar")
                     Spacer(modifier = Modifier.height(8.dp))
-                    AfluenciaEstimada(afluencia = monumento.afluencia)
+                    AfluenciaEstimada(afluencia = lugar.afluencia)
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = monumento.name,
+                    text = lugar.name,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
-                    text = monumento.category,
+                    text = lugar.category,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
                 )
@@ -687,7 +680,7 @@ private fun ParadaLugarNoDisponible(numero: Int) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 NumeroParada(numero = numero, compacto = true)
                 Spacer(modifier = Modifier.width(10.dp))
-                TipoParada(texto = "Monumento")
+                TipoParada(texto = "Lugar")
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(

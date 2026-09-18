@@ -64,14 +64,13 @@ fun CityCard(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            val imageRes = city.imageRes
-            if (imageRes != null) {
-                Image(
-                    painter = painterResource(imageRes),
-                    contentDescription = city.name,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+            val hasImage = CoverImage(
+                url = city.imagenUrl,
+                imageRes = city.imageRes,
+                contentDescription = city.name,
+                modifier = Modifier.fillMaxSize()
+            )
+            if (hasImage) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -125,7 +124,7 @@ fun CityCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${city.monumentCount} lugares",
+                        text = "${city.placeCount} lugares",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )

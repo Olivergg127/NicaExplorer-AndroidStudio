@@ -1,0 +1,135 @@
+# ROADMAP.md — Estado real y próximos pasos
+
+> Regla: una función **solo** aparece en "Implementado" si existe en el código y es
+> alcanzable. Una idea, un diseño o una captura no cuentan.
+> Prioridad: **P0** estabilidad, **P1** funcionalidad principal, **P2** mejora, **P3** futuro.
+
+## Implementado
+
+### Autenticación y cuenta (P1)
+- Registro, inicio de sesión y recuperación de contraseña con Firebase Auth
+  (`FirebaseRepository`, `LoginScreen`, `RegisterScreen`, `RecoveryPasswordScreen`).
+- Decisión de sesión en `SplashScreen` según `FirebaseAuth.currentUser`.
+- Perfil con nombre, correo y rol; edición de nombre (`EditarPerfilScreen` +
+  `updateUserName`).
+- Cierre de sesión (`signOut`) desde Home, Perfil y Configuración.
+
+### Catálogo y exploración (P1)
+- 3 ciudades y 8 monumentos, con carga desde Firestore y **fallback local** (`SampleData`).
+- Selección de ciudad con búsqueda (`CitySelectionScreen`).
+- Detalle de monumento (`CatalogScreen`): descripción, historia, año, categoría,
+  afluencia estimada, consejos de turismo responsable, guardar lugar.
+- Registro automático de exploración (historial) al abrir un monumento.
+- Lugares guardados e historial (`LugaresGuardadosScreen`, `HistorialExploracionScreen`),
+  persistidos en DataStore por `uid`.
+
+### Visor 3D con Unity (P1)
+- Botón "Ver en 3D" habilitado según `Monument.modeloUnity`.
+- `UnityArActivity` + contrato de Intent (`cityId`, `monumentId`, `escena=visor3d`).
+- Mapeo `monumentId` → prefab vía Unity (`Visor3DController`).
+- Salida con `moveTaskToBack` sin destruir el motor; reinicio por `onNewIntent`.
+
+### Asistente Itzae (P1)
+- Chat con Firebase AI Logic (`gemini-3.5-flash-lite`), `GeminiRepository`.
+- Contexto de monumento, catálogo local (afluencia) y comercios reales de Firestore.
+- Preguntas rápidas contextuales según la ciudad del monumento.
+
+### Comercios locales (P1)
+- Listado de comercios activos con filtro por ciudad (`ComerciosScreen`).
+- Detalle con horario, dirección, copiar teléfono, WhatsApp y Google Maps
+  (`ComercioDetalleScreen`, `TelefonoUtils`).
+- Formulario de solicitud de incorporación (`SolicitudComercioScreen` →
+  `solicitudes_comercios`, estado `pendiente`).
+
+### Rutas turísticas (P1, solo Juigalpa)
+- Ruta cultural de Juigalpa predefinida (`RutasTuristicasData`), con paradas de monumentos y
+  un comercio; resuelve datos de Firestore/SampleData y muestra estado "Rutas próximamente"
+  para otras ciudades.
+
+### Administración y roles (P2)
+- Roles `USUARIO`, `ADMIN`, `AUDITOR` (`UserRole`).
+- Panel con contadores, búsqueda, filtros y cambio de rol confirmado por ADMIN
+  (`AdminPanelScreen`, `getAllUsers`, `updateUserRole`).
+- Guardas de acceso en `AppNavigation` (rojo si no es ADMIN/AUDITOR) y reglas en
+  `firestore.rules`.
+
+### Mapa (P1)
+- Mapa nativo funcional con **MapLibre OpenGL 12.3.1** y teselas raster de OSM
+  (`MapaActivity` + `MapaConfig`). Verificado en teléfono real: carga Nicaragua, zoom,
+  desplazamiento, sin crash, APK instala.
+- Acceso desde el drawer de Home ("Mapa").
+
+### Base / infraestructura (P0)
+- Tema Compose claro/oscuro con paleta "Guardabarranco"; preferencia de tema en DataStore.
+- Degradados de fondo/barra según tema.
+- `firestore.rules` con protección de `uid`/`rol`, bloqueo de autoelevación, nombre
+  propio, cambio de rol por ADMIN, `mail` bloqueada y borrado bloqueado.
+- Herramientas de mantenimiento en `tools/` (seed, verify, normalize).
+
+### Backend de administración (P2)
+- Proyecto `nicaexp_web/` en **CodeIgniter 4 + Cloud Firestore** (misma base que la app).
+- **API REST v1** con API key y CRUD de `ciudades`, `lugares`, `comercios`,
+  `solicitudes_comercios` y `usuarios`.
+- **Panel web AdminLTE 4** (sidebar, login) con tablas **DataTables** y **modales** para
+  crear/editar/eliminar, usando **jQuery + AJAX**.
+- **Subida de imágenes** (portada de ciudad, imagen de lugar/comercio) servidas desde
+  `public/uploads/`; la app Android las consume por `imagenUrl` con Coil.
+- La app acepta todo el catálogo publicado en Firestore (se pueden agregar ciudades/lugares
+  desde el panel).
+- Pendiente: paginación/búsqueda del lado del servidor, almacenamiento de imágenes para
+  producción (HTTPS) y despliegue.
+
+## En progreso
+
+- **Mapa con marcadores y detalle de comercio (P1).** `MapaScreen.kt` y `MapaViewModel.kt`
+  implementan `AndroidView` con `renderSurfaceOnTop(true)`, iconos por categoría
+  (`MapaMarkerFactory`) y `ModalBottomSheet`. **No están cableados** en el Navigation Graph
+  (la ruta `mapa` lanza `MapaActivity`). Falta decidir si se conectan o se retiran.
+- **Centrado por ciudad/monumento (P2).** `MapaConfig.NICARAGUA` tiene un comentario que
+  indica que el enfoque en Juigalpa se incorporará en la fase de comercios/marcadores.
+- **Rutas para León y Managua (P2).** La UI ya muestra "Rutas próximamente"; solo Juigalpa
+  tiene datos.
+- **Búsqueda en catálogo (P3).** El icono de búsqueda en `CatalogScreen`/`NicaTopBar` es un
+  `IconButton(onClick = { })` sin implementación.
+- **Notificaciones (P3).** Existe preferencia `notifications_enabled` y el switch en
+  Configuración, pero **no hay implementación** de notificaciones; el icono de campana en
+  Home no hace nada.
+- **App Check (P2).** La dependencia `firebase-appcheck-playintegrity` está incluida, pero
+  **no hay inicialización/`installAppCheckProviderFactory` en el código**; falta cablearlo.
+- **Limpieza de AR legado (P3).** `ArPlaceholderScreen` y la ruta `ar_placeholder` siguen
+  registradas pero no reciben navegación; el paquete `ar/` conserva ARCore/AAR.
+
+## Próximos pasos
+
+Ordenados por prioridad aproximada. **Ninguno está implementado** salvo que se indique.
+
+- **P0 — Estabilidad y deuda técnica**
+  - Decidir y ejecutar el destino de `MapaScreen`/`MapaViewModel` (cablear o eliminar).
+  - Inicializar App Check o retirar la dependencia si no se usará.
+- **P1 — Mapa turístico**
+  - Centrado dinámico del mapa en Juigalpa/León/Managua.
+  - Marcadores turísticos de monumentos y comercios.
+  - Botón "Ver en el mapa" en `CatalogScreen`/`ComercioDetalleScreen`.
+  - Destacar el monumento/comercio seleccionado.
+  - Tarjetas inferiores de información.
+  - "Explorar alrededor" de un punto.
+- **P2 — Descubrimiento**
+  - Categorías y filtros de comercios/monumentos.
+  - Rutas turísticas para León y Managua.
+  - Búsqueda real en catálogo y comercios.
+- **P2 — Ubicación (requiere permisos)**
+  - Flujo de permisos GPS (hoy eliminados del manifest) y ubicación del usuario.
+- **P3 — Integración avanzada**
+  - Itzae contextual al mapa (recomendaciones según lo visible/seleccionado).
+  - Notificaciones (recordatorios, novedades).
+  - Recomendaciones personalizadas.
+- **P3 — Futuro de producto**
+  - Favoritos de comercios, reseñas, apertura de WhatsApp Business mejorada.
+  - Analítica/moderación de solicitudes de comercios desde Android (con claims de admin).
+
+## Notas de honestidad
+
+- No se ofrecen GPS, navegación GPS, rutas en tiempo real ni afluencia en tiempo real.
+- La afluencia y la duración de la ruta son **orientativas del prototipo**.
+- La ruta inteligente está desarrollada principalmente para Juigalpa porque es la ciudad
+  con comercios cargados en el prototipo.

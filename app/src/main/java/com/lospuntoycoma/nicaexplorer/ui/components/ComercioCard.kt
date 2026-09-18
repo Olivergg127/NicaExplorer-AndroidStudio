@@ -1,7 +1,6 @@
 package com.lospuntoycoma.nicaexplorer.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,14 +31,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
-import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
@@ -167,9 +164,8 @@ fun ComercioCard(
 }
 
 /**
- * Portada de un comercio. Prioriza la imagen remota de Firestore.
- * Si la URL está vacía o falla la carga, usa la portada local del comercio;
- * para comercios sin portada local conserva el placeholder actual.
+ * Portada de un comercio. Usa la imagen remota gestionada desde el panel/backend
+ * (Firestore -> imagenUrl). Si no hay imagen, muestra el placeholder.
  */
 @Composable
 fun ComercioCover(
@@ -193,44 +189,12 @@ fun ComercioCover(
             ) {
                 when (painter.state) {
                     is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent()
-                    is AsyncImagePainter.State.Loading -> ComercioCoverIcon()
-                    else -> ComercioLocalCover(comercio.localCoverRes())
+                    else -> ComercioCoverIcon()
                 }
             }
         } else {
-            ComercioLocalCover(comercio.localCoverRes())
+            ComercioCoverIcon()
         }
-    }
-}
-
-@Composable
-private fun ComercioLocalCover(imageRes: Int?) {
-    if (imageRes != null) {
-        Image(
-            painter = painterResource(imageRes),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
-    } else {
-        ComercioCoverIcon()
-    }
-}
-
-private fun Comercio.localCoverRes(): Int? {
-    val normalizedName = nombre
-        .filter { it.isLetterOrDigit() }
-        .lowercase()
-
-    return when {
-        id.equals("Restaurantes-1", ignoreCase = true) || normalizedName == "amerripizza" -> {
-            R.drawable.amerripizza
-        }
-        normalizedName == "coffeebreak" -> R.drawable.coffee_break
-        normalizedName == "michoza" || normalizedName == "restaurantemichoza" -> {
-            R.drawable.mi_choza
-        }
-        else -> null
     }
 }
 

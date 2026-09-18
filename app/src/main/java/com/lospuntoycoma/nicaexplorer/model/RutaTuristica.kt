@@ -2,15 +2,15 @@ package com.lospuntoycoma.nicaexplorer.model
 
 /**
  * Referencia a una parada cuyos datos se resuelven desde las fuentes existentes.
- * Así la ruta no duplica información de [Monument] ni de [Comercio].
+ * Así la ruta no duplica información de [Place] ni de [Comercio].
  */
 sealed interface ReferenciaParadaRuta {
     val referenciaId: String
 
-    data class Monumento(
-        val monumentId: String
+    data class Lugar(
+        val placeId: String
     ) : ReferenciaParadaRuta {
-        override val referenciaId: String = monumentId
+        override val referenciaId: String = placeId
     }
 
     data class ComercioLocal(
@@ -21,10 +21,13 @@ sealed interface ReferenciaParadaRuta {
 }
 
 /**
- * Definición local de una ruta turística predefinida.
+ * Ruta turística de una ciudad.
  *
- * Las distancias no forman parte del modelo porque esta primera versión no usa
- * GPS, mapas ni navegación en tiempo real.
+ * En Firestore vive en la colección `rutas` y sus paradas se guardan como
+ * cadenas ("lugar:<id>" o "comercio:<id>"), que se resuelven contra las
+ * fuentes existentes para no duplicar información.
+ *
+ * Esta versión no usa GPS, mapas ni navegación en tiempo real.
  */
 data class RutaTuristica(
     val id: String,
@@ -34,7 +37,10 @@ data class RutaTuristica(
     val duracionEstimada: String,
     val notaDuracion: String,
     val objetivos: List<String>,
-    val paradas: List<ReferenciaParadaRuta>
+    val paradas: List<ReferenciaParadaRuta>,
+    val imagenUrl: String? = null,
+    val orden: Int = 0,
+    val activo: Boolean = true
 ) {
     val numeroParadas: Int
         get() = paradas.size

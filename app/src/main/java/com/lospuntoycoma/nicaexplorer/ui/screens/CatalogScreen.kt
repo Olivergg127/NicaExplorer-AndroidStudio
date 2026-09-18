@@ -1,6 +1,7 @@
 package com.lospuntoycoma.nicaexplorer.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +49,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
+import com.lospuntoycoma.nicaexplorer.ui.components.NicaRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -67,13 +71,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
-import com.lospuntoycoma.nicaexplorer.data.RutasTuristicasData
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
 import com.lospuntoycoma.nicaexplorer.model.Afluencia
+import com.lospuntoycoma.nicaexplorer.model.City
 import com.lospuntoycoma.nicaexplorer.model.Comercio
-import com.lospuntoycoma.nicaexplorer.model.Monument
+import com.lospuntoycoma.nicaexplorer.model.Place
+import com.lospuntoycoma.nicaexplorer.ui.components.CoverImage
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -84,7 +90,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CatalogScreen(
     cityId: String,
-    initialMonumentId: String? = null,
+    initialPlaceId: String? = null,
     onVerEn3dClick: (String) -> Unit,
     onAssistantClick: (String) -> Unit,
     onComercioClick: (String) -> Unit,
@@ -92,27 +98,28 @@ fun CatalogScreen(
     onRutasInteligentesClick: () -> Unit,
     onBack: () -> Unit
 ) {
-    val monuments = SampleData.monumentsByCity[cityId] ?: emptyList()
+    val places = SampleData.placesByCity[cityId] ?: emptyList()
     val scope = rememberCoroutineScope()
     val uid = FirebaseRepository.getCurrentUser()?.uid ?: ""
     val savedIds by UserPreferences.savedPlacesFlow(uid).collectAsState(initial = emptySet())
     val comerciosViewModel: ComerciosViewModel = viewModel()
     val comerciosState by comerciosViewModel.uiState.collectAsState()
-    val initialIndex = remember(initialMonumentId) {
-        val idx = monuments.indexOfFirst { it.id == initialMonumentId }
+    val initialIndex = remember(initialPlaceId) {
+        val idx = places.indexOfFirst { it.id == initialPlaceId }
         if (idx < 0) 0 else idx
     }
     var currentIndex by remember { mutableIntStateOf(initialIndex) }
     val scrollState = rememberScrollState()
 
-    val cityName = SampleData.cities.firstOrNull { it.id == cityId }?.name ?: "Ciudad"
+    val city = SampleData.cities.firstOrNull { it.id == cityId }
+    val cityName = city?.name ?: "Ciudad"
 
     val comerciosCiudad = comerciosState.comercios.filter {
         it.ciudad.trim().equals(cityId.trim(), ignoreCase = true) ||
             it.ciudad.trim().equals(cityName.trim(), ignoreCase = true)
     }
 
-    if (monuments.isEmpty()) {
+    if (places.isEmpty()) {
         Scaffold(
             topBar = {
                 NicaTopBar(
@@ -134,7 +141,7 @@ fun CatalogScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "No hay monumentos disponibles",
+                    text = "No hay lugars disponibles",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -143,13 +150,13 @@ fun CatalogScreen(
         return
     }
 
-    val monument = monuments[currentIndex]
-    val quieterAlternative = if (monument.afluencia == Afluencia.ALTA) {
-        monuments
+    val place = places[currentIndex]
+    val quieterAlternative = if (place.afluencia == Afluencia.ALTA) {
+        places
             .asSequence()
             .filter { candidate ->
-                candidate.id != monument.id &&
-                    candidate.cityId == monument.cityId &&
+                candidate.id != place.id &&
+                    candidate.cityId == place.cityId &&
                     candidate.afluencia != Afluencia.ALTA
             }
             .minByOrNull { it.afluencia.quietnessPriority }
@@ -157,11 +164,11 @@ fun CatalogScreen(
         null
     }
 
-    val isSaved = monument.id in savedIds
+    val isSaved = place.id in savedIds
 
-    LaunchedEffect(monument.id) {
-        scrollState.animateScrollTo(0)
-        UserPreferences.recordExploration(uid, monument.id)
+    LaunchedEffect(place.id) {
+        // Cambiar de lugar (flechas del carrusel) no debe saltar al tope.
+        UserPreferences.recordExploration(uid, place.id)
     }
 
     Scaffold(
@@ -174,7 +181,7 @@ fun CatalogScreen(
                     IconButton(
                         onClick = {
                             scope.launch {
-                                UserPreferences.toggleSavedPlace(uid, monument.id)
+                                UserPreferences.toggleSavedPlace(uid, place.id)
                             }
                         }
                     ) {
@@ -194,13 +201,25 @@ fun CatalogScreen(
             )
         }
     ) { padding ->
-        Column(
+        NicaRefreshBox(
+            isRefreshing = SampleData.isRefreshing,
+            onRefresh = { scope.launch { SampleData.refresh() } },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+        ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
                 .verticalScroll(scrollState)
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            // Estructura de la vista de ciudad: portada + carrusel + información.
+            if (city != null) {
+                CiudadHero(city = city)
+                CiudadInfoCard(city = city)
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -208,28 +227,27 @@ fun CatalogScreen(
                     .background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(monument.gradientStart),
-                                Color(monument.gradientEnd)
+                                Color(place.gradientStart),
+                                Color(place.gradientEnd)
                             )
                         )
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                val imageRes = monument.imageRes
-                if (imageRes != null) {
-                    Image(
-                        painter = painterResource(imageRes),
-                        contentDescription = monument.name,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                val hasImage = CoverImage(
+                    url = place.imagenUrl,
+                    imageRes = place.imageRes,
+                    contentDescription = place.name,
+                    modifier = Modifier.fillMaxSize()
+                )
+                if (hasImage) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.Black.copy(alpha = 0.18f))
                     )
                 } else {
-                    monument.icon?.let {
+                    place.icon?.let {
                         Icon(
                             imageVector = it,
                             contentDescription = null,
@@ -248,9 +266,9 @@ fun CatalogScreen(
                 ) {
                     IconButton(
                         onClick = {
-                            currentIndex = if (currentIndex > 0) currentIndex - 1 else monuments.size - 1
+                            currentIndex = if (currentIndex > 0) currentIndex - 1 else places.size - 1
                         },
-                        enabled = monuments.size > 1
+                        enabled = places.size > 1
                     ) {
                         Icon(
                             Icons.Filled.ChevronLeft,
@@ -264,9 +282,9 @@ fun CatalogScreen(
 
                     IconButton(
                         onClick = {
-                            currentIndex = if (currentIndex < monuments.size - 1) currentIndex + 1 else 0
+                            currentIndex = if (currentIndex < places.size - 1) currentIndex + 1 else 0
                         },
-                        enabled = monuments.size > 1
+                        enabled = places.size > 1
                     ) {
                         Icon(
                             Icons.Filled.ChevronRight,
@@ -284,7 +302,7 @@ fun CatalogScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "${currentIndex + 1} de ${monuments.size}",
+                    text = "${currentIndex + 1} de ${places.size}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                     modifier = Modifier
@@ -298,7 +316,7 @@ fun CatalogScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = monument.name,
+                    text = place.name,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -315,7 +333,7 @@ fun CatalogScreen(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = monument.city,
+                        text = place.city,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
@@ -328,7 +346,7 @@ fun CatalogScreen(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = monument.category,
+                        text = place.category,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
@@ -337,7 +355,7 @@ fun CatalogScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = monument.description,
+                    text = place.description,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                 )
@@ -345,10 +363,10 @@ fun CatalogScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 AfluenciaCard(
-                    afluencia = monument.afluencia,
+                    afluencia = place.afluencia,
                     quieterAlternative = quieterAlternative,
                     onAlternativeClick = { alternative ->
-                        val alternativeIndex = monuments.indexOfFirst { it.id == alternative.id }
+                        val alternativeIndex = places.indexOfFirst { it.id == alternative.id }
                         if (alternativeIndex >= 0) {
                             currentIndex = alternativeIndex
                         }
@@ -359,8 +377,8 @@ fun CatalogScreen(
 
                 NicaButton(
                     text = "Ver en 3D",
-                    onClick = { onVerEn3dClick(monument.id) },
-                    enabled = monument.modeloUnity.isNotBlank(),
+                    onClick = { onVerEn3dClick(place.id) },
+                    enabled = place.modeloUnity.isNotBlank(),
                     gradient = Brush.horizontalGradient(
                         colors = listOf(
                             MaterialTheme.colorScheme.secondary,
@@ -373,7 +391,7 @@ fun CatalogScreen(
 
                 NicaButton(
                     text = "Hablar con el asistente IA",
-                    onClick = { onAssistantClick(monument.id) },
+                    onClick = { onAssistantClick(place.id) },
                     gradient = Brush.horizontalGradient(
                         colors = listOf(
                             MaterialTheme.colorScheme.secondary,
@@ -407,18 +425,18 @@ fun CatalogScreen(
                         InfoRow(
                             icon = Icons.Filled.CalendarMonth,
                             label = "Año de construcción",
-                            value = monument.yearBuilt
+                            value = place.yearBuilt
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InfoRow(
                             icon = Icons.Filled.Info,
                             label = "Historia",
-                            value = monument.history
+                            value = place.history
                         )
                     }
                 }
 
-                if (monument.consejosResponsables.isNotEmpty()) {
+                if (place.consejosResponsables.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Divider(
@@ -426,7 +444,7 @@ fun CatalogScreen(
                         modifier = Modifier.padding(vertical = 8.dp)
                     )
 
-                    var consejosExpandidos by remember(monument.id) { mutableStateOf(false) }
+                    var consejosExpandidos by remember(place.id) { mutableStateOf(false) }
 
                     Card(
                         onClick = { consejosExpandidos = !consejosExpandidos },
@@ -473,7 +491,7 @@ fun CatalogScreen(
 
                             AnimatedVisibility(visible = consejosExpandidos) {
                                 Column(modifier = Modifier.padding(top = 4.dp)) {
-                                    monument.consejosResponsables.forEach { consejo ->
+                                    place.consejosResponsables.forEach { consejo ->
                                         Row(
                                             modifier = Modifier.padding(bottom = 8.dp),
                                             verticalAlignment = Alignment.Top
@@ -552,6 +570,176 @@ fun CatalogScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
             }
+            }
+        }
+    }
+}
+
+/**
+ * Cabecera de la ciudad: portada/carrusel de imágenes (galeria) con el nombre y el lema.
+ * Si la ciudad no tiene imágenes remotas, usa el drawable local o el degradado.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun CiudadHero(city: City) {
+    val pages = remember(city.id, city.galeria, city.imagenUrl) {
+        city.galeria.ifEmpty { listOfNotNull(city.imagenUrl) }
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(240.dp)
+    ) {
+        if (pages.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(Color(city.gradientStart), Color(city.gradientEnd))
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = city.icon ?: Icons.Filled.LocationOn,
+                    contentDescription = null,
+                    tint = Color.White.copy(alpha = 0.35f),
+                    modifier = Modifier.size(72.dp)
+                )
+            }
+        } else {
+            val pagerState = rememberPagerState { pages.size }
+            val localRes = city.imageRes
+
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                AsyncImage(
+                    model = pages[page],
+                    contentDescription = city.name,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    error = localRes?.let { painterResource(it) },
+                    fallback = localRes?.let { painterResource(it) }
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                repeat(pages.size) { index ->
+                    Box(
+                        modifier = Modifier
+                            .size(if (index == pagerState.currentPage) 10.dp else 7.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (index == pagerState.currentPage) Color.White
+                                else Color.White.copy(alpha = 0.5f)
+                            )
+                    )
+                }
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f))
+                    )
+                )
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+        ) {
+            Text(
+                text = city.name,
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+            if (city.lema.isNotBlank()) {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = city.lema,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Información de la ciudad: departamento, descripción e historia (expandible).
+ */
+@Composable
+private fun CiudadInfoCard(city: City) {
+    if (city.description.isBlank() && city.historia.isBlank() && city.departamento.isBlank()) {
+        return
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 16.dp)
+    ) {
+        if (city.departamento.isNotBlank()) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = city.departamento,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+
+        if (city.description.isNotBlank()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = city.description,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f)
+            )
+        }
+
+        if (city.historia.isNotBlank()) {
+            var expanded by remember(city.id) { mutableStateOf(false) }
+            val preview = if (expanded || city.historia.length <= 180) {
+                city.historia
+            } else {
+                city.historia.take(180) + "…"
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = preview,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+            )
+
+            if (city.historia.length > 180) {
+                TextButton(onClick = { expanded = !expanded }) {
+                    Text(if (expanded) "Ver menos" else "Ver más")
+                }
+            }
         }
     }
 }
@@ -562,7 +750,7 @@ private fun RutasInteligentesAccessCard(
     onClick: () -> Unit
 ) {
     val ruta = remember(cityId) {
-        RutasTuristicasData.rutaParaCiudad(cityId)
+        SampleData.rutasDeCiudad(cityId).firstOrNull()
     }
     val containerColor = if (ruta != null) {
         MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)
@@ -638,8 +826,8 @@ private fun RutasInteligentesAccessCard(
 @Composable
 private fun AfluenciaCard(
     afluencia: Afluencia,
-    quieterAlternative: Monument?,
-    onAlternativeClick: (Monument) -> Unit
+    quieterAlternative: Place?,
+    onAlternativeClick: (Place) -> Unit
 ) {
     val levelColor = when (afluencia) {
         Afluencia.BAJA -> Color(0xFF2E7D32)

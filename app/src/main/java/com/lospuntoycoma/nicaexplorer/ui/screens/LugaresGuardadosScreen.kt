@@ -25,7 +25,7 @@ import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
 import com.lospuntoycoma.nicaexplorer.ui.components.EmptyState
-import com.lospuntoycoma.nicaexplorer.ui.components.MonumentRow
+import com.lospuntoycoma.nicaexplorer.ui.components.PlaceRow
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import kotlinx.coroutines.launch
 
@@ -33,15 +33,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun LugaresGuardadosScreen(
     onExplore: () -> Unit,
-    onOpenMonument: (String, String) -> Unit,
+    onOpenPlace: (String, String) -> Unit,
     onBack: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val uid = FirebaseRepository.getCurrentUser()?.uid ?: ""
     val savedIds by UserPreferences.savedPlacesFlow(uid).collectAsState(initial = emptySet())
 
-    val monuments = remember(savedIds) {
-        SampleData.allMonuments.filter { it.id in savedIds }
+    val places = remember(savedIds) {
+        SampleData.allPlaces.filter { it.id in savedIds }
     }
 
     Scaffold(
@@ -52,7 +52,7 @@ fun LugaresGuardadosScreen(
             )
         }
     ) { padding ->
-        if (monuments.isEmpty()) {
+        if (places.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -74,15 +74,15 @@ fun LugaresGuardadosScreen(
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(monuments, key = { it.id }) { monument ->
-                    MonumentRow(
-                        monument = monument,
-                        onClick = { onOpenMonument(monument.cityId, monument.id) },
+                items(places, key = { it.id }) { place ->
+                    PlaceRow(
+                        place = place,
+                        onClick = { onOpenPlace(place.cityId, place.id) },
                         trailingContent = {
                             IconButton(
                                 onClick = {
                                     scope.launch {
-                                        UserPreferences.toggleSavedPlace(uid, monument.id)
+                                        UserPreferences.toggleSavedPlace(uid, place.id)
                                     }
                                 }
                             ) {

@@ -51,10 +51,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
+import com.lospuntoycoma.nicaexplorer.data.ApiRepository
 import com.lospuntoycoma.nicaexplorer.data.GeminiRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
-import com.lospuntoycoma.nicaexplorer.model.Monument
+import com.lospuntoycoma.nicaexplorer.model.Place
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 import kotlinx.coroutines.launch
@@ -62,7 +62,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AssistantScreen(
-    monumentContext: Monument? = null,
+    placeContext: Place? = null,
     onBack: () -> Unit
 ) {
     var message by remember { mutableStateOf("") }
@@ -71,9 +71,9 @@ fun AssistantScreen(
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
-    val localMonuments = remember { SampleData.allMonuments }
+    val localPlaces = remember { SampleData.allPlaces }
 
-    val citySuggestion = monumentContext?.city
+    val citySuggestion = placeContext?.city
         ?.trim()
         ?.takeIf { it.isNotEmpty() }
         ?.let { "¿Qué puedo visitar en $it?" }
@@ -81,7 +81,7 @@ fun AssistantScreen(
 
     val quickQuestions = listOf(
         citySuggestion,
-        "Cuéntame sobre este monumento",
+        "Cuéntame sobre este lugar",
         "¿Cómo funciona la realidad aumentada?"
     )
 
@@ -96,14 +96,14 @@ fun AssistantScreen(
 
         scope.launch {
             // Obtenemos los comercios dinámicamente para pasarlos como contexto a Itzae
-            val comerciosResult = FirebaseRepository.getComerciosActivos()
+            val comerciosResult = ApiRepository.getComercios()
             val comercios = comerciosResult.getOrDefault(emptyList())
 
             val response = GeminiRepository.generateContent(
                 prompt = trimmed,
                 comercios = comercios,
-                monument = monumentContext,
-                monuments = localMonuments
+                place = placeContext,
+                places = localPlaces
             )
             messages.add(
                 ChatMessage(
@@ -172,10 +172,10 @@ fun AssistantScreen(
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                                 )
-                                monumentContext?.let { monument ->
+                                placeContext?.let { place ->
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(
-                                        text = "Estás consultando sobre: ${monument.name}",
+                                        text = "Estás consultando sobre: ${place.name}",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
                                     )

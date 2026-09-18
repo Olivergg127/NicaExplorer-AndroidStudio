@@ -5,7 +5,7 @@ import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.GenerativeBackend
 import com.google.firebase.ai.type.content
 import com.lospuntoycoma.nicaexplorer.model.Comercio
-import com.lospuntoycoma.nicaexplorer.model.Monument
+import com.lospuntoycoma.nicaexplorer.model.Place
 
 /**
  * Repositorio para interactuar con Gemini a través de Firebase AI Logic.
@@ -23,7 +23,7 @@ object GeminiRepository {
             3. NO USES ASTERISCOS ni formato negrita (markdown). Escribe exclusivamente en texto plano.
             
             PRIORIDAD DE CONOCIMIENTO:
-            1. Tu prioridad son Juigalpa, Managua y León. El catálogo local incluido en cada solicitud es la fuente de verdad para sus monumentos.
+            1. Tu prioridad son Juigalpa, Managua y León. El catálogo local incluido en cada solicitud es la fuente de verdad para sus lugars.
             2. COMERCIOS Y RESTAURANTES: Si el usuario pide recomendaciones de comercios, restaurantes u hoteles en Nicaragua, usa tu conocimiento general para dar opciones reales y específicas de estas ciudades. Respeta la cultura local y no inventes datos inexistentes.
             3. Si el usuario pregunta de forma general, prioriza siempre el turismo en Nicaragua.
             4. SOLO responde sobre otros países si el usuario lo pide explícitamente.
@@ -32,9 +32,9 @@ object GeminiRepository {
             REGLAS DE AFLUENCIA ESTIMADA:
             1. Los niveles BAJA, MODERADA y ALTA son estimaciones orientativas del prototipo; no son datos de afluencia en tiempo real.
             2. Llámalos siempre "afluencia estimada". Nunca afirmes "actualmente hay mucha gente", "en este momento está lleno" ni equivalentes.
-            3. Para evitar mucha gente o encontrar tranquilidad, recomienda monumentos de la misma ciudad y prioriza BAJA, después MODERADA y por último ALTA.
-            4. Si el usuario pregunta por un monumento con nivel ALTA, indícalo como estimación y ofrece una alternativa BAJA o MODERADA de la misma ciudad cuando exista.
-            5. Si la pregunta no nombra una ciudad y hay un monumento actual, usa la ciudad de ese monumento.
+            3. Para evitar mucha gente o encontrar tranquilidad, recomienda lugars de la misma ciudad y prioriza BAJA, después MODERADA y por último ALTA.
+            4. Si el usuario pregunta por un lugar con nivel ALTA, indícalo como estimación y ofrece una alternativa BAJA o MODERADA de la misma ciudad cuando exista.
+            5. Si la pregunta no nombra una ciudad y hay un lugar actual, usa la ciudad de ese lugar.
         """.trimIndent())
     }
 
@@ -49,45 +49,45 @@ object GeminiRepository {
      * Genera una respuesta basada en un mensaje de texto.
      * @param prompt El mensaje del usuario.
      * @param comercios Lista de comercios obtenidos de Firestore para dar contexto.
-     * @param monument Monumento desde el que se abrió Itzae, si existe.
-     * @param monuments Catálogo local usado para comparar afluencia por ciudad.
+     * @param place Lugar desde el que se abrió Itzae, si existe.
+     * @param places Catálogo local usado para comparar afluencia por ciudad.
      */
     suspend fun generateContent(
         prompt: String,
         comercios: List<Comercio> = emptyList(),
-        monument: Monument? = null,
-        monuments: List<Monument> = emptyList()
+        place: Place? = null,
+        places: List<Place> = emptyList()
     ): String? {
         val contextSections = mutableListOf<String>()
 
-        monument?.let { currentMonument ->
+        place?.let { currentPlace ->
             contextSections += """
-                CONTEXTO DEL MONUMENTO ACTUAL:
-                - monumentId: ${currentMonument.id}
-                - cityId: ${currentMonument.cityId}
-                - Nombre: ${currentMonument.name}
-                - Ciudad: ${currentMonument.city}
-                - Categoría: ${currentMonument.category}
-                - Afluencia estimada: ${currentMonument.afluencia.name}
-                - Descripción: ${currentMonument.description}
-                - Historia: ${currentMonument.history}
+                CONTEXTO DEL LUGAR ACTUAL:
+                - placeId: ${currentPlace.id}
+                - cityId: ${currentPlace.cityId}
+                - Nombre: ${currentPlace.name}
+                - Ciudad: ${currentPlace.city}
+                - Categoría: ${currentPlace.category}
+                - Afluencia estimada: ${currentPlace.afluencia.name}
+                - Descripción: ${currentPlace.description}
+                - Historia: ${currentPlace.history}
 
-                El usuario abrió Itzae desde este monumento. Usa estos datos como referencia
+                El usuario abrió Itzae desde este lugar. Usa estos datos como referencia
                 cuando haga preguntas breves como "Cuéntame más", "¿Dónde está?",
-                "¿Por qué es importante?" o mencione "este monumento".
+                "¿Por qué es importante?" o mencione "este lugar".
             """.trimIndent()
         }
 
-        if (monuments.isNotEmpty()) {
-            val cityCrowdingContext = monuments
+        if (places.isNotEmpty()) {
+            val cityCrowdingContext = places
                 .distinctBy { it.id }
                 .groupBy { it.city }
                 .entries
-                .joinToString("\n\n") { (city, cityMonuments) ->
-                    val monumentLines = cityMonuments.joinToString("\n") { cityMonument ->
-                        "- ${cityMonument.name} — afluencia ${cityMonument.afluencia.name}"
+                .joinToString("\n\n") { (city, cityPlaces) ->
+                    val placeLines = cityPlaces.joinToString("\n") { cityPlace ->
+                        "- ${cityPlace.name} — afluencia ${cityPlace.afluencia.name}"
                     }
-                    "Ciudad: $city\nMonumentos:\n$monumentLines"
+                    "Ciudad: $city\nLugars:\n$placeLines"
                 }
 
             contextSections += """

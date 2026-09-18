@@ -12,19 +12,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import org.maplibre.android.MapLibre
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
 import com.lospuntoycoma.nicaexplorer.data.SampleData
+import com.lospuntoycoma.nicaexplorer.data.CatalogSync
 import com.lospuntoycoma.nicaexplorer.navigation.AppNavigation
 import com.lospuntoycoma.nicaexplorer.ui.theme.NicaExplorerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Inicializa MapLibre una sola vez antes de crear cualquier MapView.
+        MapLibre.getInstance(applicationContext)
         UserPreferences.init(this)
         enableEdgeToEdge()
         setContent {
             LaunchedEffect(Unit) {
-                SampleData.loadFromFirestore()
+                SampleData.loadCatalog()
+                CatalogSync.watch()
             }
             val darkThemePref by UserPreferences.darkThemeFlow().collectAsState(initial = null)
             NicaExplorerTheme(darkTheme = darkThemePref ?: isSystemInDarkTheme()) {

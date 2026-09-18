@@ -131,7 +131,7 @@ fun AcercaDeScreen(onBack: () -> Unit) {
                     Spacer(modifier = Modifier.height(12.dp))
                     AboutRow(
                         icon = Icons.Filled.Category,
-                        text = "Catálogo de lugares y monumentos"
+                        text = "Catálogo de lugares y lugars"
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     AboutRow(

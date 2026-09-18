@@ -104,7 +104,7 @@ class UnityArActivity : UnityPlayerActivity() {
      * cada escena de Unity atiende el suyo y ignora el otro destino inexistente.
      * - ExperienciaAR atiende "ARManager".ReiniciarExperiencia
      * - Visor3D atiende "Visor3D".RecargarDesdeIntent (relee el Intent y decide
-     *   si carga el monumento o si el nuevo Intent pide volver a AR).
+     *   si carga el lugar o si el nuevo Intent pide volver a AR).
      * Si Unity aún no está listo, deja el reinicio pendiente para cuando llegue
      * [notificarUnityListo].
      */

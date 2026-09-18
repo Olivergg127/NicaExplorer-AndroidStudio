@@ -25,12 +25,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Assistant
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material3.*
+import com.lospuntoycoma.nicaexplorer.ui.components.NicaRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +47,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SampleData
-import com.lospuntoycoma.nicaexplorer.ui.components.MonumentCard
+import com.lospuntoycoma.nicaexplorer.ui.components.CoverImage
+import com.lospuntoycoma.nicaexplorer.ui.components.PlaceCard
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaBottomNavBarBrush
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
@@ -61,6 +64,7 @@ fun HomeScreen(
     onCityCardClick: (String) -> Unit,
     onProfileClick: () -> Unit,
     onAssistantClick: () -> Unit,
+    onMapClick: () -> Unit,
     onAdminPanelClick: () -> Unit,
     onSavedPlacesClick: () -> Unit,
     onLogout: () -> Unit
@@ -148,6 +152,18 @@ fun HomeScreen(
                     onClick = {
                         scope.launch { drawerState.close() }
                         onAssistantClick()
+                    },
+                    colors = NavigationDrawerItemDefaults.colors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                )
+                NavigationDrawerItem(
+                    icon = { Icon(Icons.Filled.Map, contentDescription = null) },
+                    label = { Text("Mapa") },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        onMapClick()
                     },
                     colors = NavigationDrawerItemDefaults.colors(
                         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
@@ -291,10 +307,16 @@ fun HomeScreen(
                 }
             }
         ) { padding ->
-            Column(
+            NicaRefreshBox(
+                isRefreshing = SampleData.isRefreshing,
+                onRefresh = { scope.launch { SampleData.refresh() } },
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
+            ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
                     .verticalScroll(scrollState)
                     .padding(horizontal = 20.dp)
             ) {
@@ -368,7 +390,7 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
-                                text = "Explora ciudades, conoce su historia y cultura, descubre monumentos en 3D y encuentra experiencias y negocios locales en un solo lugar.",
+                                text = "Explora ciudades, conoce su historia y cultura, descubre lugars en 3D y encuentra experiencias y negocios locales en un solo lugar.",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.White.copy(alpha = 0.9f)
                             )
@@ -426,14 +448,13 @@ fun HomeScreen(
                                 ),
                                 contentAlignment = Alignment.Center
                             ) {
-                                val imageRes = city.imageRes
-                                if (imageRes != null) {
-                                    Image(
-                                        painter = painterResource(imageRes),
-                                        contentDescription = city.name,
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop
-                                    )
+                                val hasImage = CoverImage(
+                                    url = city.imagenUrl,
+                                    imageRes = city.imageRes,
+                                    contentDescription = city.name,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                                if (hasImage) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
@@ -448,7 +469,7 @@ fun HomeScreen(
                                     )
                                 }
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    if (imageRes == null) {
+                                    if (!hasImage) {
                                         Icon(
                                             imageVector = Icons.Filled.LocationOn,
                                             contentDescription = null,
@@ -484,15 +505,16 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp)
                 ) {
-                    items(SampleData.recommendedMonuments) { monument ->
-                        MonumentCard(
-                            monument = monument,
+                    items(SampleData.recommendedPlaces) { place ->
+                        PlaceCard(
+                            place = place,
                             onClick = { }
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+            }
             }
         }
         }

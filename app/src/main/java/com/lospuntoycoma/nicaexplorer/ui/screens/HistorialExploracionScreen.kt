@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.dp
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
-import com.lospuntoycoma.nicaexplorer.model.Monument
+import com.lospuntoycoma.nicaexplorer.model.Place
 import com.lospuntoycoma.nicaexplorer.ui.components.EmptyState
-import com.lospuntoycoma.nicaexplorer.ui.components.MonumentRow
+import com.lospuntoycoma.nicaexplorer.ui.components.PlaceRow
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -32,7 +32,7 @@ import java.util.Locale
 @Composable
 fun HistorialExploracionScreen(
     onExplore: () -> Unit,
-    onOpenMonument: (String, String) -> Unit,
+    onOpenPlace: (String, String) -> Unit,
     onBack: () -> Unit
 ) {
     val uid = FirebaseRepository.getCurrentUser()?.uid ?: ""
@@ -40,9 +40,9 @@ fun HistorialExploracionScreen(
 
     val entries = remember(history) {
         history.entries
-            .mapNotNull { (monumentId, timestamp) ->
-                SampleData.allMonuments.find { it.id == monumentId }
-                    ?.let { monument -> HistoryEntry(monument, timestamp) }
+            .mapNotNull { (placeId, timestamp) ->
+                SampleData.allPlaces.find { it.id == placeId }
+                    ?.let { place -> HistoryEntry(place, timestamp) }
             }
             .sortedByDescending { it.timestamp }
     }
@@ -77,11 +77,11 @@ fun HistorialExploracionScreen(
                 contentPadding = PaddingValues(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(entries, key = { it.monument.id }) { entry ->
-                    MonumentRow(
-                        monument = entry.monument,
+                items(entries, key = { it.place.id }) { entry ->
+                    PlaceRow(
+                        place = entry.place,
                         subtitle = "Visto por última vez: ${formatTimestamp(entry.timestamp)}",
-                        onClick = { onOpenMonument(entry.monument.cityId, entry.monument.id) }
+                        onClick = { onOpenPlace(entry.place.cityId, entry.place.id) }
                     )
                 }
             }
@@ -90,7 +90,7 @@ fun HistorialExploracionScreen(
 }
 
 private data class HistoryEntry(
-    val monument: Monument,
+    val place: Place,
     val timestamp: Long
 )
 

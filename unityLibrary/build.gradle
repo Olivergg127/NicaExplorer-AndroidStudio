@@ -160,7 +160,15 @@ def buildIl2CppImpl(String workingDir, String configuration, String architecture
     def extensionToKeep = usePublicSymbols ? ".sym.so" : ".dbg.so"
 
     delete "${workingDir}/src/main/jniLibs/${abi}/libil2cpp${extensionToRemove}"
-    ant.move(file: "${workingDir}/src/main/jniLibs/${abi}/libil2cpp${extensionToKeep}", tofile: "${workingDir}/symbols/${abi}/libil2cpp.so")
+    // Si IL2CPP no regeneró los símbolos (0 items actualizados y binarios ya
+    // precompilados en el repo), se conserva el símbolo existente en lugar de
+    // fallar. Fix de build; puede regenerarse al reexportar desde Unity.
+    def symbolFile = new File("${workingDir}/src/main/jniLibs/${abi}/libil2cpp${extensionToKeep}")
+    if (symbolFile.exists()) {
+        ant.move(file: symbolFile.absolutePath, tofile: "${workingDir}/symbols/${abi}/libil2cpp.so")
+    } else {
+        println("buildIl2Cpp: no se regeneró ${symbolFile.name}; se conservan los símbolos existentes.")
+    }
 
 }
 

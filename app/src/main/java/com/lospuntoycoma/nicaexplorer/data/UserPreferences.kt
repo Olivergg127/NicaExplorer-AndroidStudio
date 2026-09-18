@@ -54,11 +54,11 @@ object UserPreferences {
     fun savedPlacesFlow(uid: String): Flow<Set<String>> =
         appContext.dataStore.data.map { it[savedPlacesKey(uid)] ?: emptySet() }
 
-    suspend fun toggleSavedPlace(uid: String, monumentId: String) {
+    suspend fun toggleSavedPlace(uid: String, placeId: String) {
         appContext.dataStore.edit { prefs ->
             val key = savedPlacesKey(uid)
             val current = prefs[key] ?: emptySet()
-            prefs[key] = if (monumentId in current) current - monumentId else current + monumentId
+            prefs[key] = if (placeId in current) current - placeId else current + placeId
         }
     }
 
@@ -76,12 +76,12 @@ object UserPreferences {
                 .toMap()
         }
 
-    suspend fun recordExploration(uid: String, monumentId: String) {
+    suspend fun recordExploration(uid: String, placeId: String) {
         val timestamp = System.currentTimeMillis()
         appContext.dataStore.edit { prefs ->
             val key = historyKey(uid)
             val current = prefs[key] ?: emptySet()
-            val updated = (current.filterNot { it.startsWith("$monumentId|") } + "$monumentId|$timestamp").toSet()
+            val updated = (current.filterNot { it.startsWith("$placeId|") } + "$placeId|$timestamp").toSet()
             prefs[key] = updated
         }
     }

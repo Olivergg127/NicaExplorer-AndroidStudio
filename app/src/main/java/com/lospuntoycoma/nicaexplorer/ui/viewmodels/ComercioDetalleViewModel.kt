@@ -2,7 +2,7 @@ package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
+import com.lospuntoycoma.nicaexplorer.data.ApiRepository
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +38,7 @@ class ComercioDetalleViewModel(
     fun loadComercio() {
         viewModelScope.launch {
             _uiState.value = ComercioDetalleUiState(isLoading = true)
-            val result = FirebaseRepository.getComercioById(comercioId)
+            val result = ApiRepository.getComercio(comercioId)
             result.onSuccess { comercio ->
                 _uiState.value = ComercioDetalleUiState(
                     isLoading = false,

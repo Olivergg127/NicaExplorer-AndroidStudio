@@ -32,6 +32,8 @@ import com.lospuntoycoma.nicaexplorer.ui.screens.HistorialExploracionScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.HomeScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.LoginScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.LugaresGuardadosScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.MapaScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.MapaActivity
 import com.lospuntoycoma.nicaexplorer.ui.screens.ProfileScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RecoveryPasswordScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RegisterScreen
@@ -138,6 +140,9 @@ fun AppNavigation(navController: NavHostController) {
                 onAssistantClick = {
                     navController.navigate(Routes.ASSISTANT)
                 },
+                onMapClick = {
+                    navController.navigate(Routes.MAPA)
+                },
                 onAdminPanelClick = {
                     navController.navigate(Routes.ADMIN_PANEL)
                 },
@@ -151,6 +156,14 @@ fun AppNavigation(navController: NavHostController) {
                     }
                 }
             )
+        }
+
+        composable(Routes.MAPA) {
+            val context = LocalContext.current
+            LaunchedEffect(Unit) {
+                context.startActivity(Intent(context, MapaActivity::class.java))
+                navController.popBackStack()
+            }
         }
 
         composable(Routes.ADMIN_PANEL) {
@@ -188,30 +201,31 @@ fun AppNavigation(navController: NavHostController) {
             route = Routes.CATALOG,
             arguments = listOf(
                 navArgument("cityId") { type = NavType.StringType },
-                navArgument("monumentId") { type = NavType.StringType; defaultValue = "" }
+                navArgument("placeId") { type = NavType.StringType; defaultValue = "" }
             )
         ) { backStackEntry ->
             val context = LocalContext.current
             val cityId = backStackEntry.arguments?.getString("cityId") ?: ""
-            val monumentId = backStackEntry.arguments?.getString("monumentId")
+            val placeId = backStackEntry.arguments?.getString("placeId")
                 ?.takeIf { it.isNotBlank() }
             CatalogScreen(
                 cityId = cityId,
-                initialMonumentId = monumentId,
-                onVerEn3dClick = { visorMonumentId ->
+                initialPlaceId = placeId,
+                onVerEn3dClick = { visorPlaceId ->
                     Intent().setClassName(
                         context.packageName,
                         "com.lospuntoycoma.nicaexplorer.ar.UnityArActivity"
                     ).also { intent ->
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.putExtra("cityId", cityId)
-                        intent.putExtra("monumentId", visorMonumentId)
+                        // La clave "monumentId" es el contrato con Unity (visor 3D).
+                        intent.putExtra("monumentId", visorPlaceId)
                         intent.putExtra("escena", "visor3d")
                         context.startActivity(intent)
                     }
                 },
-                onAssistantClick = { assistantMonumentId ->
-                    navController.navigate(Routes.assistant(assistantMonumentId))
+                onAssistantClick = { assistantPlaceId ->
+                    navController.navigate(Routes.assistant(assistantPlaceId))
                 },
                 onComercioClick = { comercioId ->
                     navController.navigate(Routes.comercioDetalle(comercioId))
@@ -237,9 +251,9 @@ fun AppNavigation(navController: NavHostController) {
             val routeCityId = backStackEntry.arguments?.getString("cityId") ?: ""
             RutasInteligentesScreen(
                 cityId = routeCityId,
-                onVerLugar = { monumentId ->
+                onVerLugar = { placeId ->
                     navController.navigate(
-                        Routes.catalogWithMonument(routeCityId, monumentId)
+                        Routes.catalogWithPlace(routeCityId, placeId)
                     )
                 },
                 onVerComercio = { comercioId ->
@@ -255,7 +269,7 @@ fun AppNavigation(navController: NavHostController) {
             route = Routes.AR_PLACEHOLDER,
             arguments = listOf(
                 navArgument("cityId") { type = NavType.StringType },
-                navArgument("monumentId") { type = NavType.StringType }
+                navArgument("placeId") { type = NavType.StringType }
             )
         ) {
             ArPlaceholderScreen(
@@ -363,8 +377,8 @@ fun AppNavigation(navController: NavHostController) {
                 onExplore = {
                     navController.navigate(Routes.CITY_SELECTION)
                 },
-                onOpenMonument = { cityId, monumentId ->
-                    navController.navigate(Routes.catalogWithMonument(cityId, monumentId))
+                onOpenPlace = { cityId, placeId ->
+                    navController.navigate(Routes.catalogWithPlace(cityId, placeId))
                 },
                 onBack = {
                     navController.popBackStack()
@@ -377,8 +391,8 @@ fun AppNavigation(navController: NavHostController) {
                 onExplore = {
                     navController.navigate(Routes.CITY_SELECTION)
                 },
-                onOpenMonument = { cityId, monumentId ->
-                    navController.navigate(Routes.catalogWithMonument(cityId, monumentId))
+                onOpenPlace = { cityId, placeId ->
+                    navController.navigate(Routes.catalogWithPlace(cityId, placeId))
                 },
                 onBack = {
                     navController.popBackStack()
@@ -411,20 +425,20 @@ fun AppNavigation(navController: NavHostController) {
         composable(
             route = Routes.ASSISTANT_ROUTE,
             arguments = listOf(
-                navArgument("monumentId") {
+                navArgument("placeId") {
                     type = NavType.StringType
                     defaultValue = ""
                 }
             )
         ) { backStackEntry ->
-            val monumentId = backStackEntry.arguments?.getString("monumentId")
+            val placeId = backStackEntry.arguments?.getString("placeId")
                 ?.takeIf { it.isNotBlank() }
-            val monumentContext = monumentId?.let { id ->
-                SampleData.allMonuments.firstOrNull { it.id == id }
+            val placeContext = placeId?.let { id ->
+                SampleData.allPlaces.firstOrNull { it.id == id }
             }
 
             AssistantScreen(
-                monumentContext = monumentContext,
+                placeContext = placeContext,
                 onBack = {
                     navController.popBackStack()
                 }
