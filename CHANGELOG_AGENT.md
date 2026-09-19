@@ -72,6 +72,28 @@
   - Desplegar en Render vía API y apuntar la app a la URL pública.
   - Reemplazar el token de `gh` por un PAT *fine-grained* limitado al repo de assets.
 
+### Agent / task — Despliegue en Render (API) y verificación end-to-end
+- Objetivo: desplegar el backend en Render y dejarlo operativo sin depender de localhost.
+- Hecho vía API de Render (`POST /v1/services`) con la API key del workspace:
+  - Servicio `nicaexplorer-backend` (`srv-dand1gh42hec73e3eju0`, free, Docker, root
+    `nicaexp_web`, health check `/panel/login`, auto-deploy en `main`).
+  - URL pública: <https://nicaexplorer-backend.onrender.com>.
+  - Variables de entorno (`nica_*`), Secret File `firebase.json` y credenciales del panel
+    generadas (guardadas fuera del repo en `%TEMP%\opencode\nicaexp-secrets\`).
+- Incidencias corregidas (commits `f6b41af`, `0ad5a67`, `ceedd46`):
+  - Build fallaba por `mbstring` → se añadió `libonig-dev`.
+  - Firestore no leía el Secret File (permisos de `www-data`) → el entrypoint lo copia a
+    `writable/firebase.json`.
+  - `Call to undefined function bccomp()` → se añadió la extensión `bcmath`.
+- Verificado:
+  - `/api/v1/health` → `ok`, `nica-explore`, `rest`, 4 ciudades.
+  - `/api/v1/version` y `/api/v1/ciudades/juigalpa` con `imagenUrl`/`galeria` en GitHub.
+  - Login del panel (`POST /panel/login`) → 200 y panel cargado.
+  - `local.properties` actualizado: `nica.apiBaseUrl` → Render y `nica.apiKey` nueva.
+- Pendiente:
+  - PAT *fine-grained* para el repo de assets; rotar API key/password; quitar
+    `usesCleartextTraffic`.
+
 ## 2026-09-17
 
 ### Agent / task

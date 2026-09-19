@@ -32,10 +32,11 @@ escrito en el repositorio (los cambios sin commitear también persisten en disco
   y registra lo hecho en `CHANGELOG_AGENT.md`.
 - Al **empezar**: revisa `CHANGELOG_AGENT.md` y la sección de pendientes de `ROADMAP.md`
   antes de proponer trabajo nuevo.
-- **Pendiente abierto (2026-09-19):** completar el despliegue del backend en **Render**
-  (Web Service, Secret File `firebase.json` y variables). Las imágenes ya se migraron al
-  repo público **`Olivergg127/NicaExplorer-assets`** (`ImageStorage`, en vez de Firebase
-  Storage, que requiere plan Blaze) → ver "Backend en la nube" en `ROADMAP.md`.
+- **Backend desplegado (2026-09-19):** `nicaexplorer-backend` en Render (free, Docker),
+  público en <https://nicaexplorer-backend.onrender.com>, con auto-deploy en `main`. La
+  app Android apunta ahí (`local.properties`). Las imágenes viven en el repo público
+  **`Olivergg127/NicaExplorer-assets`** (`ImageStorage`, no Firebase Storage: el proyecto
+  no tiene facturación) → ver "Backend en la nube" en `ROADMAP.md`.
 
 ## # Golden rules
 

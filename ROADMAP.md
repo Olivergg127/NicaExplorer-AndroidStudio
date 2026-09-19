@@ -144,14 +144,22 @@ Hecho:
 - `nicaexp_web/Dockerfile` + `docker/entrypoint.sh` + `docker/write-env.php` (PHP 8.3 +
   Apache, puerto de Render y `.env` con claves `nica.*` en minúsculas) y `render.yaml`.
 
-Pendiente:
+Desplegado y verificado (2026-09-19):
 
-- **P1 — Crear en Render** el Web Service (root `nicaexp_web`), el **Secret File**
-  `firebase.json` y las variables de entorno; activar auto-deploy.
-- **P2 — Apuntar la app** (`nica.apiBaseUrl` en `local.properties`) a la URL de Render y
-  quitar `usesCleartextTraffic`.
-- **P2 — Token dedicado**: hoy se usa el token de `gh` para escribir en el repo de assets;
-  conviene reemplazarlo por un PAT *fine-grained* limitado a ese repositorio.
+- **Servicio Render:** `nicaexplorer-backend` (free, Docker) →
+  <https://nicaexplorer-backend.onrender.com>. Auto-deploy activado en cada push a `main`.
+- `/api/v1/health` → `status: ok`, `project: nica-explore`, `transport: rest`.
+- Login del panel verificado; `/panel/login` responde 200.
+- Secret File `firebase.json` montado y accesible por `www-data` (el entrypoint lo copia a
+  `writable/`).
+- La app Android (`local.properties`) apunta a la URL de Render.
+
+Pendiente (P2):
+
+- Reemplazar el token de `gh` (usado para escribir en el repo de assets) por un PAT
+  *fine-grained* limitado a `Olivergg127/NicaExplorer-assets`.
+- Quitar `usesCleartextTraffic` del manifest (ya todo es HTTPS).
+- Rotar la API key/admin password del panel y guardarlos en un gestor de secretos.
 
 Notas del plan free: el servicio duerme tras 15 min sin tráfico (despierta en ~1 min) y
 concede 750 h/mes (un servicio siempre activo usa ~730 h). La app consulta
