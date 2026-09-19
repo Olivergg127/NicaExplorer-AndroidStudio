@@ -1,0 +1,16 @@
+.git
+.env
+vendor
+builds
+tests
+phpunit.dist.xml
+Dockerfile
+.dockerignore
+
+writable/cache/*
+writable/logs/*
+writable/session/*
+writable/debugbar/*
+writable/uploads/*
+
+public/uploads/*

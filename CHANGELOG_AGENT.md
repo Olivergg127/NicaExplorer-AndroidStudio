@@ -4,6 +4,74 @@
 > cambios importantes. No sustituye al historial de Git; lo complementa con contexto.
 > Formato: fecha, objetivo, archivos, cambios, build, resultado, riesgos y pendientes.
 
+## 2026-09-19
+
+### Agent / task — Preparar el backend para desplegar en Render + Firebase Storage
+- Objetivo: dejar el backend `nicaexp_web` listo para desplegarse en un hosting gratuito
+  (Render, Web Service Docker) y sacar las imágenes del disco local (efímero en la nube)
+  usando Firebase Storage. No se desplegó: faltan cuentas/credenciales del equipo.
+- Archivos creados:
+  - `nicaexp_web/app/Libraries/ImageStorage.php` — subida a Firebase Storage (URL de
+    descarga con token) con fallback local.
+  - `nicaexp_web/app/Commands/StorageMigrate.php` — comando `nica:storage-migrate`.
+  - `nicaexp_web/Dockerfile`, `nicaexp_web/.dockerignore`,
+    `nicaexp_web/docker/entrypoint.sh`, `nicaexp_web/docker/write-env.php`.
+  - `render.yaml` (Blueprint del servicio en la raíz del repo).
+- Archivos actualizados:
+  - `app/Config/Nica.php` (nuevo `storageBucket`), `app/Libraries/FirebaseFactory.php`
+    (`storage()`/`bucket()`), `app/Controllers/Panel/Resources.php` (upload),
+    `app/Commands/SeedImagenes.php` y `SeedPlantilla.php` (usan `ImageStorage`).
+  - `nicaexp_web/.env.example` (claves `nica.*` en minúsculas + `nica.storageBucket`).
+  - `nicaexp_web/README.md`, `ARCHITECTURE.md`, `ROADMAP.md`, `AGENTS.md` (este log).
+- Cambios:
+  - `ImageStorage` sube a `uploads/<archivo>` del bucket y devuelve la URL
+    `firebasestorage.googleapis.com/...`; con `nica.storageBucket` vacío se conserva el
+    modo local `public/uploads`.
+  - `nica:storage-migrate` sube las imágenes locales y reescribe en Firestore las URLs
+    `.../uploads/...` por las de Storage (sin borrar archivos locales).
+  - Docker: PHP 8.3 + Apache, docroot `public`, `AllowOverride All`, puerto tomado de
+    `PORT`; el `.env` se genera al arrancar desde variables de entorno.
+  - **Hallazgo importante:** CI4 resuelve las claves de config por el nombre corto de la
+    clase en minúsculas. En Windows `Nica.publicBaseUrl` funciona por `getenv()`
+    (case-insensitive), pero en Linux **no se leería**; el contenedor genera el `.env`
+    con `nica.*`.
+- Build:
+  - `php -l` en los 8 archivos PHP tocados → sin errores de sintaxis.
+  - `php spark list` y `php spark nica:storage-migrate` → comando registrado y
+    `ImageStorage` carga correctamente (avisa que falta `nica.storageBucket`).
+  - No se pudo construir la imagen Docker: `docker` no está instalado en esta máquina.
+- Resultado: código y despliegue preparados; funcionalidad local intacta (fallback).
+- Riesgos/notas:
+  - Sin `docker` local no se validó la imagen; el primer deploy en Render debe revisarse.
+  - El bucket real (`*.firebasestorage.app` vs `*.appspot.com`) y los permisos de la
+    cuenta de servicio deben confirmarse en el proyecto `nica-explore`.
+- Pendiente:
+  - Crear el servicio en Render, el Secret File `firebase.json` y las variables de entorno.
+  - Ejecutar `php spark nica:storage-migrate` y apuntar la app a la URL de Render.
+
+### Agent / task — Migración real de imágenes a GitHub y credenciales de Firestore
+- Objetivo: ejecutar la migración de imágenes con un proveedor viable (Firebase Storage
+  está bloqueado: `billingEnabled: false` en `nica-explore`).
+- Decisiones:
+  - Imágenes → repo público **`Olivergg127/NicaExplorer-assets`**; `ImageStorage` ahora
+    prioriza **GitHub > Firebase Storage > local**.
+  - Firestore → cuenta de servicio **`nicaexp-backend@nica-explore.iam.gserviceaccount.com`**
+    con `roles/datastore.user` y clave JSON (guardada fuera del repo, en
+    `%TEMP%\opencode\nicaexp-secrets\`).
+- Cambios de código:
+  - `app/Libraries/ImageStorage.php`: subida por GitHub Contents API (`raw.githubusercontent.com`).
+  - `app/Config/Nica.php`: `githubRepo`, `githubToken`, `githubBranch`, `githubPath`.
+  - `docker/write-env.php`, `.env.example` y `render.yaml`: variables `nica_github*`.
+- Ejecutado:
+  - `php spark nica:storage-migrate` → **20 imágenes subidas** y **16 documentos** de
+    Firestore actualizados a URLs de GitHub.
+  - Verificado: `https://raw.githubusercontent.com/.../uploads/juigalpa.jpg` → HTTP 200
+    `image/jpeg`.
+  - `php -l` en los PHP tocados → sin errores.
+- Pendiente:
+  - Desplegar en Render vía API y apuntar la app a la URL pública.
+  - Reemplazar el token de `gh` por un PAT *fine-grained* limitado al repo de assets.
+
 ## 2026-09-17
 
 ### Agent / task

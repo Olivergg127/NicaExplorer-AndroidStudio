@@ -76,8 +76,8 @@
   `public/uploads/`; la app Android las consume por `imagenUrl` con Coil.
 - La app acepta todo el catálogo publicado en Firestore (se pueden agregar ciudades/lugares
   desde el panel).
-- Pendiente: paginación/búsqueda del lado del servidor, almacenamiento de imágenes para
-  producción (HTTPS) y despliegue.
+- Pendiente: paginación/búsqueda del lado del servidor y completar el despliegue
+  (ver "Backend en la nube" más abajo). Las imágenes ya pueden ir a Firebase Storage.
 
 ## En progreso
 
@@ -126,6 +126,36 @@ Ordenados por prioridad aproximada. **Ninguno está implementado** salvo que se 
 - **P3 — Futuro de producto**
   - Favoritos de comercios, reseñas, apertura de WhatsApp Business mejorada.
   - Analítica/moderación de solicitudes de comercios desde Android (con claims de admin).
+
+## Backend en la nube — Render + imágenes en GitHub (2026-09-19)
+
+Se despliega el backend en **Render (Web Service Docker, plan free)**. Las imágenes van a
+un **repositorio público de GitHub** (`Olivergg127/NicaExplorer-assets`), porque Firebase
+Storage requiere plan Blaze (tarjeta) y el proyecto `nica-explore` **no tiene facturación**.
+
+Hecho:
+
+- `App\Libraries\ImageStorage`: prioridad **GitHub > Firebase Storage > modo local**.
+- `Panel\Resources::upload()`, `SeedImagenes` y `SeedPlantilla` usan `ImageStorage`.
+- `php spark nica:storage-migrate`: sube `public/uploads` y reescribe las URLs en Firestore.
+  **Ejecutado**: 20 imágenes subidas al repo de assets y 16 documentos actualizados.
+- Cuenta de servicio **`nicaexp-backend@nica-explore.iam.gserviceaccount.com`**
+  (rol `roles/datastore.user`) y su clave JSON para Render.
+- `nicaexp_web/Dockerfile` + `docker/entrypoint.sh` + `docker/write-env.php` (PHP 8.3 +
+  Apache, puerto de Render y `.env` con claves `nica.*` en minúsculas) y `render.yaml`.
+
+Pendiente:
+
+- **P1 — Crear en Render** el Web Service (root `nicaexp_web`), el **Secret File**
+  `firebase.json` y las variables de entorno; activar auto-deploy.
+- **P2 — Apuntar la app** (`nica.apiBaseUrl` en `local.properties`) a la URL de Render y
+  quitar `usesCleartextTraffic`.
+- **P2 — Token dedicado**: hoy se usa el token de `gh` para escribir en el repo de assets;
+  conviene reemplazarlo por un PAT *fine-grained* limitado a ese repositorio.
+
+Notas del plan free: el servicio duerme tras 15 min sin tráfico (despierta en ~1 min) y
+concede 750 h/mes (un servicio siempre activo usa ~730 h). La app consulta
+`/api/v1/version` cada 15 s, lo que en la práctica mantiene el servicio despierto.
 
 ## Notas de honestidad
 

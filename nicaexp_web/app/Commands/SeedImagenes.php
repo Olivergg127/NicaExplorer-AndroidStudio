@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Libraries\FirebaseFactory;
+use App\Libraries\ImageStorage;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use Throwable;
@@ -29,6 +30,11 @@ class SeedImagenes extends BaseCommand
     private string $destDir = '';
     private string $baseUrl = '';
 
+    private ?ImageStorage $storage = null;
+
+    /** @var array<string, string> nombre de archivo => URL publicada en Storage */
+    private array $published = [];
+
     public function run(array $params)
     {
         $source = realpath(ROOTPATH . '../app/src/main/res/drawable');
@@ -39,6 +45,7 @@ class SeedImagenes extends BaseCommand
         }
         $this->sourceDir = $source;
         $this->destDir   = FCPATH . 'uploads';
+        $this->storage   = new ImageStorage();
         if (! is_dir($this->destDir) && ! mkdir($this->destDir, 0755, true) && ! is_dir($this->destDir)) {
             CLI::error('No se pudo crear ' . $this->destDir);
 
@@ -175,7 +182,12 @@ class SeedImagenes extends BaseCommand
             $origin = $this->sourceDir . DIRECTORY_SEPARATOR . $key . '.' . $extension;
             if (is_file($origin)) {
                 $file = $key . '.' . $extension;
-                copy($origin, $this->destDir . DIRECTORY_SEPARATOR . $file);
+
+                if ($this->storage !== null && $this->storage->enabled()) {
+                    $this->published[$file] = $this->storage->upload($origin, $file);
+                } else {
+                    copy($origin, $this->destDir . DIRECTORY_SEPARATOR . $file);
+                }
 
                 return $file;
             }
@@ -188,6 +200,6 @@ class SeedImagenes extends BaseCommand
 
     private function url(string $file): string
     {
-        return $this->baseUrl . '/uploads/' . $file;
+        return $this->published[$file] ?? $this->baseUrl . '/uploads/' . $file;
     }
 }

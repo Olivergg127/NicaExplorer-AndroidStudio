@@ -23,6 +23,20 @@ Contexto detallado en `INIT.md`, arquitectura en `ARCHITECTURE.md`, visión de p
 en `PROJECT_CONTEXT.md`, entorno y build en `DEVELOPMENT.md`, reglas de estilo en
 `CONVENTIONS.md`, estado y pendientes en `ROADMAP.md`.
 
+## # Continuidad entre sesiones
+
+Los agentes **no tienen memoria entre sesiones**: el contexto solo sobrevive si queda
+escrito en el repositorio (los cambios sin commitear también persisten en disco).
+
+- Al **terminar** una sesión con trabajo pendiente: agrega el pendiente a `ROADMAP.md`
+  y registra lo hecho en `CHANGELOG_AGENT.md`.
+- Al **empezar**: revisa `CHANGELOG_AGENT.md` y la sección de pendientes de `ROADMAP.md`
+  antes de proponer trabajo nuevo.
+- **Pendiente abierto (2026-09-19):** completar el despliegue del backend en **Render**
+  (Web Service, Secret File `firebase.json` y variables). Las imágenes ya se migraron al
+  repo público **`Olivergg127/NicaExplorer-assets`** (`ImageStorage`, en vez de Firebase
+  Storage, que requiere plan Blaze) → ver "Backend en la nube" en `ROADMAP.md`.
+
 ## # Golden rules
 
 1. **Inspeccionar antes de editar.** Lee los archivos afectados y su contexto/imports.

@@ -31,6 +31,29 @@ class Nica extends BaseConfig
      */
     public string $publicBaseUrl = '';
 
+    /**
+     * Bucket de Firebase Storage donde se guardan las imágenes del panel.
+     * Ej.: nica-explore.firebasestorage.app (o nica-explore.appspot.com).
+     * Vacío = no usar Firebase Storage.
+     */
+    public string $storageBucket = '';
+
+    /**
+     * Repositorio público de GitHub usado como almacén de imágenes.
+     * Ej.: Olivergg127/NicaExplorer-assets. Si está definido junto con el
+     * token, tiene prioridad sobre Firebase Storage y el modo local.
+     */
+    public string $githubRepo = '';
+
+    /** Token de GitHub con permiso de escritura de contenido sobre githubRepo. */
+    public string $githubToken = '';
+
+    /** Rama del repositorio de assets. */
+    public string $githubBranch = 'main';
+
+    /** Carpeta dentro del repositorio de assets. */
+    public string $githubPath = 'uploads';
+
     /** API key exigida por los endpoints /api/v1/* (header X-API-KEY). */
     public string $apiKey = '';
 

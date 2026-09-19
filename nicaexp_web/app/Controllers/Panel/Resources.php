@@ -5,6 +5,7 @@ namespace App\Controllers\Panel;
 use App\Controllers\BaseController;
 use App\Libraries\CatalogSignal;
 use App\Libraries\FirestoreRepository;
+use App\Libraries\ImageStorage;
 use App\Libraries\ResourceManager;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\ResponseInterface;
@@ -133,12 +134,26 @@ class Resources extends BaseController
             ]);
         }
 
+        $name    = $file->getRandomName();
+        $storage = new ImageStorage();
+
+        if ($storage->enabled()) {
+            try {
+                $url = $storage->upload($file->getTempName(), $name, $file->getMimeType());
+            } catch (Throwable $e) {
+                return $this->response->setStatusCode(500)->setJSON([
+                    'error' => 'No se pudo subir la imagen a Firebase Storage: ' . $e->getMessage(),
+                ]);
+            }
+
+            return $this->response->setJSON(['ok' => true, 'url' => $url]);
+        }
+
         $destination = FCPATH . 'uploads';
         if (! is_dir($destination) && ! mkdir($destination, 0755, true) && ! is_dir($destination)) {
             return $this->response->setStatusCode(500)->setJSON(['error' => 'No se pudo crear el directorio de subidas.']);
         }
 
-        $name = $file->getRandomName();
         $file->move($destination, $name);
 
         return $this->response->setJSON([

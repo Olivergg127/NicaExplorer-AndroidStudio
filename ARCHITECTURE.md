@@ -224,8 +224,10 @@ que administra las mismas colecciones de Firestore y además gestiona **imágene
 ```text
 Panel web (tema claro/oscuro NicaExplorer sobre AdminLTE 4 + DataTables + modales, jQuery/AJAX)
   ├── CRUD -> Firestore (misma base que la app, proyecto nica-explore)
-  └── Subir imagen -> public/uploads/<archivo>
-                       └── URL guardada en imagenUrl del documento
+  └── Subir imagen -> repo público de GitHub de assets (uploads/<archivo>)  [producción]
+                       ├── URL raw.githubusercontent.com guardada en imagenUrl del documento
+                       ├── alternativa: Firebase Storage (nica.storageBucket)
+                       └── local de desarrollo: public/uploads/<archivo>
 
 App Android
   ├── Lee ciudades/lugares/comercios desde Firestore (misma base)
@@ -284,12 +286,19 @@ Se mantienen, con `cityId`, `orden`, `activo`, `imagenUrl`, `galeria` y (en luga
 
 ### Flujo de imágenes
 ```text
-Panel web -> subir imagen -> public/uploads/<archivo>
-                            -> URL absoluta (Nica.publicBaseUrl) guardada en:
+Panel web -> subir imagen -> repo GitHub de assets (uploads/<archivo>)  [producción]
+                          -> Firebase Storage si nica.storageBucket     [alternativa]
+                          -> public/uploads/<archivo>                    [local]
+                            -> URL guardada en:
                                ciudades.imagenUrl (portada) + ciudades.galeria (carrusel)
                                rutas.imagenUrl, lugares/comercios.imagenUrl
 App Android -> Coil carga esas URLs; si fallan, usa el drawable local (imagenKey)
 ```
+
+- `App\Libraries\ImageStorage` centraliza la subida con prioridad
+  **GitHub > Firebase Storage > modo local**.
+- `php spark nica:storage-migrate` sube las imágenes locales existentes al repo de
+  assets y reescribe en Firestore las URLs `.../uploads/...` por las nuevas.
 
 ### Carga dinámica en la app
 `SampleData.loadFromFirestore()` lee `ciudades`, `lugares` y `rutas`, y expone

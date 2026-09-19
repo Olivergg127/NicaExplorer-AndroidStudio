@@ -1,0 +1,45 @@
+# Render Blueprint — backend de administración de NicaExplorer.
+#
+# Crea un Web Service gratuito (Docker) a partir de nicaexp_web/.
+# Los valores marcados con `sync: false` se definen en el panel de Render
+# (Environment) y NO se versionan aquí.
+#
+# Nota: la cuenta de servicio de Firebase debe subirse como "Secret File"
+# con el nombre `firebase.json` (Render la monta en /etc/secrets/firebase.json).
+services:
+  - type: web
+    name: nicaexplorer-backend
+    runtime: docker
+    plan: free
+    region: oregon
+    rootDir: nicaexp_web
+    healthCheckPath: /panel/login
+    envVars:
+      - key: CI_ENVIRONMENT
+        value: production
+      - key: app_indexPage
+        value: ""
+      - key: app_forceGlobalSecureRequests
+        value: "false"
+      - key: nica_projectId
+        value: nica-explore
+      - key: nica_firestoreTransport
+        value: rest
+      - key: nica_credentialsFile
+        value: /etc/secrets/firebase.json
+      - key: nica_githubRepo
+        value: Olivergg127/NicaExplorer-assets
+      - key: nica_githubToken
+        sync: false
+      - key: nica_githubBranch
+        value: main
+      - key: nica_githubPath
+        value: uploads
+      - key: nica_apiKey
+        sync: false
+      - key: nica_adminUser
+        value: admin
+      - key: nica_adminPassword
+        sync: false
+      - key: encryption_key
+        sync: false

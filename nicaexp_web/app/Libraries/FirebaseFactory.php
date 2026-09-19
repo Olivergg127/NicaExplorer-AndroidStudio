@@ -4,6 +4,8 @@ namespace App\Libraries;
 
 use Config\Nica;
 use Google\Cloud\Firestore\FirestoreClient;
+use Google\Cloud\Storage\Bucket;
+use Kreait\Firebase\Contract\Storage as StorageContract;
 use Kreait\Firebase\Factory;
 use RuntimeException;
 
@@ -26,6 +28,8 @@ class FirebaseFactory
     private ?Factory $factory = null;
 
     private ?FirestoreClient $database = null;
+
+    private ?StorageContract $storage = null;
 
     public function __construct(?Nica $config = null)
     {
@@ -65,5 +69,24 @@ class FirebaseFactory
     public function database(): FirestoreClient
     {
         return $this->database ??= $this->factory()->createFirestore()->database();
+    }
+
+    /**
+     * Cliente de Firebase Storage (mismo service account que Firestore).
+     */
+    public function storage(): StorageContract
+    {
+        return $this->storage ??= $this->factory()->createStorage();
+    }
+
+    /**
+     * Bucket configurado en Nica.storageBucket; si está vacío, usa el bucket
+     * por defecto del proyecto (<projectId>.appspot.com).
+     */
+    public function bucket(): Bucket
+    {
+        return $this->storage()->getBucket(
+            $this->config->storageBucket !== '' ? $this->config->storageBucket : null
+        );
     }
 }

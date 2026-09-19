@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Libraries\FirebaseFactory;
+use App\Libraries\ImageStorage;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 use Google\Cloud\Firestore\FieldValue;
@@ -34,20 +35,18 @@ class SeedPlantilla extends BaseCommand
         }
 
         try {
-            $images = $this->copyImages();
+            $images = $this->copyImages($base);
         } catch (Throwable $e) {
             CLI::error('No se pudieron copiar las imágenes: ' . $e->getMessage());
 
             return EXIT_ERROR;
         }
 
-        $url = static fn (string $file): string => $base . '/uploads/' . $file;
-
-        $portada = isset($images['portada']) ? $url($images['portada']) : null;
+        $portada = $images['portada'] ?? null;
         $galeria = [];
         foreach (['galeria_1', 'galeria_2', 'galeria_3'] as $key) {
             if (isset($images[$key])) {
-                $galeria[] = $url($images[$key]);
+                $galeria[] = $images[$key];
             }
         }
 
@@ -107,7 +106,7 @@ class SeedPlantilla extends BaseCommand
             foreach ($lugares as $id => $data) {
                 $payload = ['activo' => true, 'orden' => $data['orden']];
                 if (isset($images[$data['img']])) {
-                    $payload['imagenUrl'] = $url($images[$data['img']]);
+                    $payload['imagenUrl'] = $images[$data['img']];
                 }
                 $db->collection('lugares')->document($id)->set($payload, ['merge' => true]);
             }
@@ -126,19 +125,22 @@ class SeedPlantilla extends BaseCommand
     }
 
     /**
-     * Copia las imágenes locales de la app al directorio público del backend.
+     * Publica las imágenes locales de la app (en Firebase Storage si está
+     * configurado, o en public/uploads en modo local).
      *
-     * @return array<string, string> clave => nombre de archivo
+     * @return array<string, string> clave => URL pública
      */
-    private function copyImages(): array
+    private function copyImages(string $base): array
     {
         $sourceDir = realpath(ROOTPATH . '../app/src/main/res/drawable');
         if ($sourceDir === false) {
             throw new \RuntimeException('No se encontró el directorio de drawables de la app: ' . ROOTPATH . '../app/src/main/res/drawable');
         }
 
+        $storage = new ImageStorage();
+
         $destinationDir = FCPATH . 'uploads';
-        if (! is_dir($destinationDir) && ! mkdir($destinationDir, 0755, true) && ! is_dir($destinationDir)) {
+        if (! $storage->enabled() && ! is_dir($destinationDir) && ! mkdir($destinationDir, 0755, true) && ! is_dir($destinationDir)) {
             throw new \RuntimeException('No se pudo crear ' . $destinationDir);
         }
 
@@ -160,8 +162,13 @@ class SeedPlantilla extends BaseCommand
 
             $extension       = pathinfo($fileName, PATHINFO_EXTENSION);
             $destinationName = 'ciudad_juigalpa_' . $key . '.' . $extension;
-            copy($origin, $destinationDir . DIRECTORY_SEPARATOR . $destinationName);
-            $result[$key] = $destinationName;
+
+            if ($storage->enabled()) {
+                $result[$key] = $storage->upload($origin, $destinationName);
+            } else {
+                copy($origin, $destinationDir . DIRECTORY_SEPARATOR . $destinationName);
+                $result[$key] = $base . '/uploads/' . $destinationName;
+            }
         }
 
         return $result;

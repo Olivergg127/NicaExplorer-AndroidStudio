@@ -35,12 +35,16 @@ php spark key:generate
 Edita `.env` y define al menos:
 
 ```ini
-Nica.projectId        = nica-explore
-Nica.apiKey           = <clave para la API>
-Nica.adminUser        = admin
-Nica.adminPassword    = <clave del panel>
-Nica.firestoreTransport = rest
+nica.projectId        = nica-explore
+nica.apiKey           = <clave para la API>
+nica.adminUser        = admin
+nica.adminPassword    = <clave del panel>
+nica.firestoreTransport = rest
 ```
+
+> Usa el prefijo en **minúsculas** (`nica.`). CodeIgniter 4 resuelve las claves por el
+> nombre corto de la clase en minúsculas; `Nica.` solo funciona en Windows por una
+> particularidad de `getenv()` y **falla en Linux** (por ejemplo, en Render).
 
 ## Credenciales de Firebase
 
@@ -48,7 +52,7 @@ El backend necesita acceso a Firestore con privilegios de administrador (las reg
 seguridad del cliente no aplican al backend). Dos opciones:
 
 1. **Application Default Credentials (ADC)** — recomendado para desarrollo. Deja
-   `Nica.credentialsFile` vacío y ejecuta una vez:
+   `nica.credentialsFile` vacío y ejecuta una vez:
 
    ```powershell
    gcloud auth application-default login
@@ -56,12 +60,12 @@ seguridad del cliente no aplican al backend). Dos opciones:
 
    El SDK de Google Cloud ya está instalado en este equipo.
 
-2. **Cuenta de servicio** — apunta `Nica.credentialsFile` a un JSON descargado de
+2. **Cuenta de servicio** — apunta `nica.credentialsFile` a un JSON descargado de
    Firebase/Google Cloud. **Nunca** lo subas al repositorio.
 
 ### Transporte
 
-`Nica.firestoreTransport = rest` porque este PHP **no** tiene la extensión `grpc`.
+`nica.firestoreTransport = rest` porque este PHP **no** tiene la extensión `grpc`.
 `google/cloud-firestore` se instaló con `--ignore-platform-req=ext-grpc`. Si algún día
 se instala `grpc`, puede cambiarse a `grpc`.
 
@@ -90,14 +94,73 @@ Requisitos para el acceso desde el móvil:
 
 4. En el móvil, abre `http://192.168.123.39:8080/panel` y verifica que carga.
 
+## Despliegue en Render (gratis)
+
+El backend se despliega como **Web Service Docker** en Render. Las imágenes van a un
+**repositorio público de GitHub** (`Olivergg127/NicaExplorer-assets`), porque el disco del
+plan gratuito es efímero y Firebase Storage requiere plan Blaze (tarjeta).
+
+Requisitos (una sola vez):
+
+1. Cuenta de Render (gratis, sin tarjeta) conectada al repositorio de GitHub.
+2. Repositorio de assets (público) y un token de GitHub con permiso de escritura de
+   contenido sobre ese repo.
+3. Cuenta de servicio con permiso **Cloud Datastore User** (Firestore).
+
+Pasos:
+
+1. Crea la cuenta de servicio y descarga el JSON.
+2. En Render: **New → Web Service**, elige el repositorio, runtime **Docker** y
+   **Root Directory** = `nicaexp_web`. El archivo `render.yaml` de la raíz ya describe
+   el servicio (puedes usar **New → Blueprint**).
+3. Sube el JSON como **Secret File** llamado `firebase.json`; Render lo monta en
+   `/etc/secrets/firebase.json`.
+4. Define las variables de entorno:
+
+   | Variable | Valor |
+   |---|---|
+   | `nica_credentialsFile` | `/etc/secrets/firebase.json` |
+   | `nica_githubRepo` | `Olivergg127/NicaExplorer-assets` |
+   | `nica_githubToken` | token de GitHub (escritura de contenido) |
+   | `nica_githubBranch` | `main` |
+   | `nica_githubPath` | `uploads` |
+   | `nica_apiKey` | clave de la API REST |
+   | `nica_adminUser` / `nica_adminPassword` | credenciales del panel |
+   | `encryption_key` | salida de `php spark key:generate` |
+   | `app_baseURL` (opcional) | se detecta sola con `RENDER_EXTERNAL_URL` |
+
+5. Activa el **auto-deploy** (cada `git push` redespliega) o copia el **Deploy Hook**
+   para disparar el deploy por URL.
+6. Migra las imágenes locales al repo de assets (se ejecuta en local, no en Render):
+
+   ```powershell
+   php spark nica:storage-migrate
+   ```
+
+   Requiere `nica.githubRepo` y `nica.githubToken` en tu `.env` local.
+
+7. En la app Android, apunta `nica.apiBaseUrl` (en `local.properties`) a la URL de
+   Render. Al ser HTTPS, ya no hace falta `usesCleartextTraffic`.
+
+Notas del plan gratuito:
+
+- El servicio **duerme tras 15 minutos sin tráfico** y despierta en ~1 minuto.
+- Un servicio siempre activo consume ~730 h/mes; el plan free concede 750 h/mes.
+- El contenedor genera el `.env` al arrancar desde las variables de entorno
+  (ver `docker/write-env.php`), usando claves `nica.*` en minúsculas.
+
 ## Imágenes
 
 El panel permite **subir imágenes** para los campos de tipo `image` (por ejemplo, la
 imagen de portada de una ciudad o la imagen de un lugar/comercio):
 
-- Los archivos se guardan en `public/uploads/` (ignorado por Git).
-- El panel devuelve la URL y la guarda en el campo `imagenUrl` del documento.
-- La URL se construye con `base_url()`, por lo que apunta a la IP de `app.baseURL`.
+- Con `nica.githubRepo` + `nica.githubToken`, los archivos se suben al **repo de assets**
+  (`uploads/<archivo>`) y la URL es
+  `https://raw.githubusercontent.com/<repo>/<rama>/uploads/<archivo>`.
+- Si no, con `nica.storageBucket` se suben a **Firebase Storage**.
+- Si no hay ninguno, se guardan en `public/uploads/` (ignorado por Git) y la URL se
+  construye con `nica.publicBaseUrl`.
+- Para migrar las imágenes locales ya existentes: `php spark nica:storage-migrate`.
 
 Los campos de imagen se definen en `app/Config/NicaResources.php` con `'type' => 'image'`:
 `ciudades.imagenUrl`, `lugares.imagenUrl` y `comercios.imagenUrl`.
@@ -135,13 +198,13 @@ Colecciones: `ciudades`, `lugares`, `comercios`, `solicitudes_comercios`, `usuar
 Ejemplo:
 
 ```powershell
-$key = (Select-String 'nicaexp_web\.env' '^Nica.apiKey').Line.Split('=')[1].Trim()
+$key = (Select-String 'nicaexp_web\.env' '^nica.apiKey').Line.Split('=')[1].Trim()
 Invoke-RestMethod http://localhost:8080/api/v1/lugares -Headers @{ 'X-API-KEY' = $key }
 ```
 
 ## Panel web
 
-- Login en `/panel/login` con `Nica.adminUser` / `Nica.adminPassword`.
+- Login en `/panel/login` con `nica.adminUser` / `nica.adminPassword`.
 - Dashboard con contadores por colección.
 - Cada colección tiene su pantalla con **DataTable** (búsqueda, orden y paginación en
   cliente) y botones **Nuevo / Editar / Eliminar** que abren **modales**.
@@ -163,14 +226,18 @@ nicaexp_web/
 │   ├── Controllers/
 │   │   ├── Api/                Health y CRUD REST genérico.
 │   │   └── Panel/              Auth, Dashboard y CRUD del panel.
+│   ├── Commands/               Seeds y nica:storage-migrate (subida a Storage).
 │   ├── Filters/                ApiKeyFilter y PanelAuthFilter.
 │   ├── Libraries/
-│   │   ├── FirebaseFactory.php      Cliente de Firestore (ADC o service account).
+│   │   ├── FirebaseFactory.php      Cliente de Firestore/Storage (ADC o service account).
 │   │   ├── FirestoreRepository.php  CRUD genérico + validación + formato.
+│   │   ├── ImageStorage.php         Subida de imágenes a Firebase Storage.
 │   │   └── ResourceManager.php      Acceso a repositorios por clave.
 │   └── Views/
 │       ├── layout/panel.php    Layout del panel (tema oscuro, sidebar y topbar).
 │       └── panel/              login, dashboard y resource (DataTable + modales).
+├── docker/                    entrypoint.sh (puerto de Render) y write-env.php.
+├── Dockerfile                 Imagen PHP 8.3 + Apache para Render.
 └── public/assets/             panel.js (DataTables/AJAX), panel.css (tema claro/oscuro) y theme.js (switch).
 ```
 
@@ -202,7 +269,7 @@ php spark nica:seed-plantilla
 ```
 
 El comando copia las imágenes locales de la app a `public/uploads/` y escribe los
-documentos en Firestore (usa `Nica.publicBaseUrl` para las URLs).
+documentos en Firestore (usa `nica.publicBaseUrl` para las URLs).
 
 Para enlazar **todas** las imágenes de la app (ciudades, lugares y comercios) en Firestore:
 
