@@ -302,8 +302,8 @@ class Resources extends BaseController
                 continue;
             }
 
-            // Los identificadores no se muestran en las tablas.
-            if ($idField !== null && $name === $idField) {
+            // Los identificadores y campos internos no se muestran en las tablas.
+            if (! empty($field['internal']) || ($idField !== null && $name === $idField)) {
                 continue;
             }
 
@@ -337,8 +337,8 @@ class Resources extends BaseController
                 continue;
             }
 
-            // Los identificadores (p. ej. uid) no se editan desde el formulario.
-            if ($idField !== null && $name === $idField) {
+            // Los identificadores y campos internos no se editan desde el formulario.
+            if (! empty($field['internal']) || ($idField !== null && $name === $idField)) {
                 continue;
             }
 
