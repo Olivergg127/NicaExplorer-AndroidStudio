@@ -221,6 +221,71 @@
   - Lugares/comercios sin coordenadas no aparecen; cargarlas desde el panel (mapa).
   - Auto-scroll para dejar visible el chip de la ciudad seleccionada (mejora menor).
 
+### Agent / task — Jerarquía en "Categorías de lugares" (categoría superior + subcategorías)
+- Objetivo: que `categorias_lugares` soporte una categoría superior y subcategorías.
+- Backend:
+  - `Config/NicaResources`: nuevo campo `categoriaPadre` (tipo `reference` a
+    `categorias_lugares`, guarda el **nombre**). La tabla muestra la columna
+    "Categoría superior" y el modal un select (mismo CRUD genérico).
+  - `php spark nica:seed-categorias-lugares-jerarquia` (idempotente): crea la raíz
+    **"Lugares turísticos"** (`lugares_turisticos`) y anida las 7 categorías existentes.
+    Ejecutado en local.
+  - Desplegado en Render (`64fc9ce`).
+- Verificado: la raíz queda sin padre, las 7 subcategorías con "Lugares turísticos" y la
+  tabla/modal del módulo muestran el nuevo campo.
+- Nota: se guarda el nombre del padre (no el id) para que la tabla sea legible; si se
+  renombra la categoría superior, las subcategorías no se actualizan solas.
+
+### Agent / task — Selects dependientes: categoría superior vs. subcategoría
+- Objetivo: en los modales, separar categorías (raíz) de subcategorías y que la subcategoría
+  dependa de la categoría superior elegida (antes se mezclaban).
+- Backend:
+  - `Panel\Resources::referenceOptions()`: cada opción incluye su `parent` y soporta
+    `only_root` (solo categorías raíz).
+  - `Panel\Resources::formFields()`: expone `dependsOn`.
+  - `Views/panel/resource.php`: el JSON `NICA_RESOURCE` ahora incluye `references`.
+  - `Config/NicaResources`: `categorias_lugares.categoriaPadre` con `only_root`; `lugares`
+    con `categoriaPadre` (solo raíz) y `categoria` ("Subcategoría") con
+    `'depends_on' => 'categoriaPadre'`.
+- Frontend `panel.js`: selects dependientes (las subcategorías se filtran por la categoría
+  superior), infiere la superior al editar a partir de la subcategoría guardada, y no ofrece
+  la raíz como subcategoría.
+- Desplegado en Render (`8e19e1c`).
+- Verificado (config): `categoriaPadre` muestra solo "Lugares turísticos"; `categoria` trae
+  las 7 subcategorías con su `parent` y `dependsOn = categoriaPadre`.
+- Nota: `categorias_comercios` todavía **no** tiene jerarquía, por lo que sus selects no se
+  ven afectados. Falta probar la interacción en el navegador.
+
+### Agent / task — Jerarquía y selects dependientes en Categorías de comercios
+- Objetivo: replicar en `categorias_comercios` la jerarquía de lugares (categoría superior +
+  subcategorías) y adaptar el modal de comercios.
+- Backend:
+  - `Config/NicaResources`: `categorias_comercios.categoriaPadre` (`only_root`, `list`);
+    `comercios` con `categoriaPadre` (solo raíz) y `categoria` ("Subcategoría") con
+    `'depends_on' => 'categoriaPadre'`.
+  - `php spark nica:seed-categorias-comercios-jerarquia` (idempotente): crea la raíz
+    **"Comercios locales"** (`comercios_locales`) y anida las 2 categorías existentes.
+    Ejecutado en local.
+  - Se reutiliza el mecanismo genérico de selects dependientes (`referenceOptions` con
+    `parent`/`only_root`, `formFields` con `dependsOn`, `panel.js`).
+  - Desplegado en Render (`1a84430`).
+- Verificado (config): `categoriaPadre` muestra solo "Comercios locales"; `categoria` trae
+  "cafeteria y restaurante" y "Restaurante" con padre "Comercios locales" y
+  `dependsOn = categoriaPadre`.
+- Nota: `solicitudes_comercios.categoria` sigue siendo texto libre (no se tocó).
+
+### Agent / task — Taxonomía de categorías de comercios
+- Se insertó la taxonomía pedida: **7 categorías superiores** y **38 subcategorías**:
+  - Restaurantes y comida, Hospedaje, Comercios locales, Entretenimiento,
+    Naturaleza y aventura, Servicios, Transporte.
+  - El orden de las superiores usa la numeración indicada (2..8).
+- Comando idempotente `php spark nica:seed-taxonomia-comercios`
+  (`app/Commands/SeedTaxonomiaComercios.php`); ejecutado en local.
+- Verificado: `categorias_comercios` tiene 45 documentos (7 raíz + 38 hijas).
+- Nota: los comercios de prueba siguen con `categoria` = "Restaurante" / "cafeteria y
+  restaurante" (nombres que ya no existen en el catálogo); al editarlos en el panel se
+  reasignan con el nuevo selector de categoría superior/subcategoría.
+
 ## 2026-09-17
 
 ### Agent / task

@@ -99,6 +99,14 @@
 - **Selector de ubicación:** los formularios con `latitud`/`longitud` incluyen un mapa
   (Leaflet + OSM) donde se fija el punto con clic/arrastre o buscando una dirección
   (Nominatim). La imagen de portada tiene botón para quitarla y subir otra.
+- **Categorías jerárquicas (lugares y comercios):** ambos catálogos tienen `categoriaPadre`;
+  una categoría superior ("Lugares turísticos", "Comercios locales") agrupa subcategorías
+  (`php spark nica:seed-categorias-lugares-jerarquia` y
+  `nica:seed-categorias-comercios-jerarquia`). Los modales separan categoría superior (solo
+  raíz) y **subcategoría** (dependiente de la superior elegida).
+- **Taxonomía de comercios:** 7 categorías superiores (Restaurantes y comida, Hospedaje,
+  Comercios locales, Entretenimiento, Naturaleza y aventura, Servicios, Transporte) con 38
+  subcategorías (`php spark nica:seed-taxonomia-comercios`).
 - Pendiente: paginación/búsqueda del lado del servidor y completar el despliegue
   (ver "Backend en la nube" más abajo).
 
