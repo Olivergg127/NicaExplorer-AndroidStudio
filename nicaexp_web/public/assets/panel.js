@@ -353,8 +353,11 @@
                 }
 
                 const current = ($select.val() || '').toString().trim();
-                const options = referenceOptionsFor(field.name)
-                    .filter((option) => (option.parent || '') === parentValue);
+                // Sin categoría superior no se ofrecen subcategorías (ni la raíz).
+                const options = parentValue === ''
+                    ? []
+                    : referenceOptionsFor(field.name)
+                        .filter((option) => (option.parent || '') === parentValue);
 
                 fillReferenceSelect($select, options, null);
                 if (current && options.some((option) => option.value === current)) {
