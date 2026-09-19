@@ -76,8 +76,14 @@
   `public/uploads/`; la app Android las consume por `imagenUrl` con Coil.
 - La app acepta todo el catálogo publicado en Firestore (se pueden agregar ciudades/lugares
   desde el panel).
+- **IDs automáticos y formularios limpios:** ciudades, lugares, rutas, comercios y
+  categorías generan su id por slug del nombre (`toro_chontaleno`); los identificadores y
+  campos internos (`uid`, `imagenKey`) ya no se muestran en formularios ni tablas.
+- **Selector de ubicación:** los formularios con `latitud`/`longitud` incluyen un mapa
+  (Leaflet + OSM) donde se fija el punto con clic/arrastre o buscando una dirección
+  (Nominatim). La imagen de portada tiene botón para quitarla y subir otra.
 - Pendiente: paginación/búsqueda del lado del servidor y completar el despliegue
-  (ver "Backend en la nube" más abajo). Las imágenes ya pueden ir a Firebase Storage.
+  (ver "Backend en la nube" más abajo).
 
 ## En progreso
 

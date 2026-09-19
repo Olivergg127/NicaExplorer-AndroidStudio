@@ -94,6 +94,29 @@
   - PAT *fine-grained* para el repo de assets; rotar API key/password; quitar
     `usesCleartextTraffic`.
 
+### Agent / task — Panel: IDs automáticos, selector de ubicación en mapa y quitar imagen
+- Objetivo: simplificar los formularios del panel (sin identificadores visibles),
+  permitir fijar latitud/longitud con un mapa y quitar la portada para reemplazarla.
+- Cambios:
+  - `app/Config/NicaResources.php`: `ciudades` y `lugares` pasan de `id` manual a
+    `auto` con `slug_source => 'nombre'`; también `rutas`, `comercios` y
+    `categorias_lugares`. `imagenKey` se marca `internal`.
+  - `app/Libraries/FirestoreRepository.php`: genera el id como slug (`toro_chontaleno`)
+    y evita colisiones con sufijo `_2`, `_3`… cuando no se envía `_id`.
+  - `Panel\Resources`: `formFields()` y `columns()` ocultan identificadores y campos
+    `internal`; se pasa `hasLocation` a la vista.
+  - `app/Views/panel/resource.php`: se elimina el bloque "Identificador"; se añade el
+    selector de ubicación (Leaflet + Nominatim) y el botón "Quitar imagen".
+  - `public/assets/panel.js` / `panel.css`: mapa que fija lat/lng al hacer clic o
+    arrastrar el marcador, búsqueda por dirección, y limpieza del preview de imagen.
+  - `app/Views/layout/panel.php`: carga de Leaflet 1.9.4 (CSS/JS) desde CDN.
+- Verificado en Render (commit `c3c905d`):
+  - `lugares`, `ciudades` y `comercios` muestran el mapa; `usuarios` no (sin coords).
+  - Sin bloque de ID, sin `monumentId` ni `imagenKey` en formularios/tablas.
+  - Creación real vía panel sin `_id` → id `prueba_slug_qa`; documento leído y eliminado.
+- Pendiente:
+  - Revisar en pantalla (visual) el mapa y el botón de quitar imagen.
+
 ## 2026-09-17
 
 ### Agent / task
