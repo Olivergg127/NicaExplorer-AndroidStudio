@@ -117,6 +117,110 @@
 - Pendiente:
   - Revisar en pantalla (visual) el mapa y el botón de quitar imagen.
 
+### Agent / task — App: mapa de la ruta turística con paradas numeradas
+- Objetivo: mostrar en `RutasInteligentesScreen` un mapa con pines numerados por parada
+  y el camino que las une; al pulsar un pin, desplazar la lista a esa parada.
+- Cambios (app Android):
+  - `model/Place.kt`: nuevos campos `latitud`/`longitud` (nullable).
+  - `data/ApiRepository.kt`: mapea `latitud`/`longitud` de los lugares.
+  - `map/MapaMarkerFactory.kt`: `numeroIcon()` dibuja un marcador circular con el número
+    (texto adaptado a 1/2/3 dígitos).
+  - `ui/components/RutaMapa.kt` (nuevo): `MapView` de MapLibre en `AndroidView`,
+    pines numerados, `Polyline` con el trazado por carretera de OSRM (respaldo: líneas
+    rectas) y encuadre automático de las paradas.
+  - **Clave del renderizado (importante para no repetir el problema):** gestionar el
+    ciclo de vida del `MapView` a mano dentro de Compose (llamar `onCreate`/`onStart`/
+    `onResume` desde efectos) dejaba la vista en **negro** porque `getMapAsync` nunca
+    devolvía el mapa. El patrón que SÍ funciona es crear el `MapView` dentro del
+    `factory` del `AndroidView`, llamar `MapLibre.getInstance(viewContext)` y
+    `getMapAsync` ahí mismo, y dejar que el `MapView` se gestione solo (sin
+    `onCreate`/`onStart` manuales).
+  - El mapa es el **primer ítem del `LazyColumn`** (alto `360.dp`, con `key`) para que
+    haga scroll con el contenido. Se usa `textureMode(true)` (TextureView) para que se
+    desplace y recorte bien dentro de un contenedor con scroll.
+  - Encuadre solo una vez: `rememberSaveable` guarda si ya se encuadró y la última cámara
+    (capturada con `addOnCameraIdleListener`); al salir y volver a la vista se **restaura**
+    la cámara sin repetir el zoom. Se limita el zoom máximo a `16.5` para que no se acerque
+    demasiado cuando las paradas están juntas.
+  - Gestos del mapa: el `MapView` llama `requestDisallowInterceptTouchEvent(true)` al
+    tocarlo, para que el scroll de la lista no le robe el arrastre/zoom.
+  - Ruta por calles: `RutaMapaRepository` consulta OSRM y **exige el header
+    `User-Agent`** (sin él el servidor devolvía vacío y quedaban líneas rectas).
+  - `ui/screens/RutasInteligentesScreen.kt`: el mapa es el primer ítem del `LazyColumn`
+    y hace scroll con la lista de paradas (`LazyListState`); el clic en un pin hace
+    `animateScrollToItem` a su tarjeta.
+- Nota de dinamismo: el número de paradas es el que devuelve el backend por ciudad
+  (`rutas.paradas`); se generan tantos pines como paradas con coordenadas existan.
+- Build/instalación: `:app:assembleDebug` → **BUILD SUCCESSFUL**; `adb install -r` → Success.
+- Pendiente:
+  - Los pines solo aparecen si el lugar/comercio tiene `latitud`/`longitud` en Firestore;
+    cargar coordenadas desde el panel (selector de mapa) o seeds.
+
+### Agent / task — Categorías de comercios + sección "Comercios recomendados" en la ruta
+- Objetivo: poder clasificar los comercios por categorías y mostrar en la vista de ruta
+  una sección de comercios recomendados con un selector de categorías.
+- Backend (`nicaexp_web`):
+  - Nueva colección `categorias_comercios` con CRUD en el panel (menú *Ecosistema local*),
+    generada desde `Config\NicaResources` (mismo patrón que `categorias_lugares`).
+  - `comercios.categoria` pasa de texto libre a **selector** (`reference` a
+    `categorias_comercios`, guarda el `nombre`).
+  - Comando `php spark nica:seed-categorias-comercios` (idempotente); ejecutado en local:
+    creó `restaurante` y `cafeteria_y_restaurante`.
+  - Desplegado en Render (commit `e7fc258`); `/api/v1/categorias_comercios` operativo.
+- App:
+  - `model/CategoriaComercio.kt` y `ApiRepository.getCategoriasComercios()`.
+  - `ComerciosViewModel` ahora carga también las categorías (`ComerciosUiState.categorias`).
+  - `RutasInteligentesScreen`: al final, sección **"Comercios recomendados"** con un
+    carrusel de chips de categorías (`LazyRow` + `FilterChip`, "Todos" por defecto) que
+    filtra los comercios activos de la ciudad; se reutiliza `ComercioCard`.
+- Verificado en el dispositivo: la sección aparece; al elegir "cafeteria y restaurante"
+  queda solo Coffee Break.
+- Pendiente:
+  - Revisar el resto de pantallas donde se muestre/edite `categoria` (SolicitudComercioScreen
+    sigue usando texto libre).
+
+### Agent / task — "Comercios recomendados" al detalle de ciudad y renombre a "Rutas Creativas"
+- Objetivo: sacar los comercios recomendados de la vista de rutas, llevarlos al final del
+  detalle de ciudad, con nube de categorías + carrusel, y renombrar "Rutas inteligentes".
+- Cambios:
+  - `RutasInteligentesScreen`: se elimina la sección "Comercios recomendados"; el título
+    pasa a **"Rutas Creativas"** (también el acceso `RutasInteligentesAccessCard` en
+    `CatalogScreen` y la tarjeta "Cómo funciona esta ruta").
+  - `CatalogScreen` (detalle de ciudad): al final, **"Comercios recomendados"** con **nube
+    de categorías** (`FlowRow` de `FilterChip`) y **carrusel** (`LazyRow` de
+    `ComercioMiniCard`) de los comercios de la categoría elegida. Por defecto se selecciona
+    **"Restaurante"** (comparación ignorando mayúsculas y espacios).
+- Verificado en el dispositivo: Juigalpa muestra la nube y, con "Restaurante" por defecto,
+  el carrusel lista AmerriPizza y mi choza; la vista de ruta ya no tiene esa sección.
+- Nota: solo cambió el texto visible; las clases/rutas internas conservan su nombre
+  (`RutasInteligentesScreen`, `Routes.RUTAS_INTELIGENTES`) para no tocar la navegación.
+
+### Agent / task — Mapa principal: pines, selector de ciudad, GPS y recomendaciones
+- Objetivo: mapa principal con pines de lugares/comercios, selector de ciudad, filtro por
+  tipo y detección de la ciudad actual.
+- App:
+  - Nueva `ui/screens/MapaPrincipalScreen.kt` (Compose) con MapLibre (`textureMode`):
+    pines de **lugares** (azul) y **comercios** (turquesa), encuadre por ciudad y clic en
+    pin → detalle del lugar/comercio.
+  - Panel inferior: chips de ciudades ("Todas" + ciudades + **Mi ubicación**) y filtro por
+    tipo (**Todos / Lugares / Comercios**); botón **"Inicio"** para limpiar la selección.
+  - GPS con **`LocationManager`** (sin dependencia nueva): `data/UbicacionHelper.kt`
+    (permiso, última ubicación conocida, ciudad más cercana por Haversine a ≤ 25 km).
+  - `map/MapaMarkerFactory.kt`: `puntoIcon()` (pin circular por color).
+  - `AndroidManifest.xml`: se **re-habilitan** `ACCESS_COARSE/FINE_LOCATION` (antes se
+    eliminaban con `tools:node="remove"`).
+  - `navigation/AppNavigation.kt`: el ítem "Mapa" abre `MapaPrincipalScreen` (ya no lanza
+    la `MapaActivity` nativa, que queda como legado).
+  - `MapaViewModel` (antes sin usar) se reutiliza para cargar comercios con coordenadas.
+- Backend:
+  - `php spark nica:seed-coordenadas-ciudades` (idempotente): asigna lat/lng a Juigalpa,
+    León, Managua y Matagalpa. Ejecutado: solo Juigalpa tenía coordenadas.
+- Verificado en el dispositivo: pines visibles; seleccionar **Managua** centra el mapa;
+  **"Mi ubicación"** detecta Juigalpa y muestra sus pines.
+- Pendiente:
+  - Lugares/comercios sin coordenadas no aparecen; cargarlas desde el panel (mapa).
+  - Auto-scroll para dejar visible el chip de la ciudad seleccionada (mejora menor).
+
 ## 2026-09-17
 
 ### Agent / task

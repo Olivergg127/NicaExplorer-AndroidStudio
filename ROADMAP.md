@@ -40,11 +40,22 @@
   (`ComercioDetalleScreen`, `TelefonoUtils`).
 - Formulario de solicitud de incorporación (`SolicitudComercioScreen` →
   `solicitudes_comercios`, estado `pendiente`).
+- **Categorías de comercios** (colección `categorias_comercios`) administradas desde el
+  panel; al crear/editar un comercio la categoría se elige de un **selector**.
+  `php spark nica:seed-categorias-comercios` crea el catálogo desde los comercios
+  existentes.
+- **Comercios recomendados en el detalle de ciudad:** al final de la vista de la ciudad,
+  una **nube de categorías** (tags) y un **carrusel** que muestra los comercios de la
+  categoría elegida ("Restaurante" por defecto).
 
-### Rutas turísticas (P1, solo Juigalpa)
-- Ruta cultural de Juigalpa predefinida (`RutasTuristicasData`), con paradas de monumentos y
-  un comercio; resuelve datos de Firestore/SampleData y muestra estado "Rutas próximamente"
-  para otras ciudades.
+### Rutas turísticas (P1)
+- Rutas cargadas desde el backend por ciudad (`rutas.paradas`); la cantidad de paradas es
+  dinámica. Resuelve cada parada contra los lugares y comercios existentes y muestra
+  "Rutas próximamente" para ciudades sin ruta publicada.
+- **Mapa de la ruta** (`ui/components/RutaMapa.kt`): pines numerados por parada y el camino
+  que las une (trazado por carretera de OSRM, con líneas rectas como respaldo). Al pulsar un
+  pin, la lista se desplaza a la tarjeta de esa parada. Solo aparecen las paradas que tengan
+  `latitud`/`longitud`.
 
 ### Administración y roles (P2)
 - Roles `USUARIO`, `ADMIN`, `AUDITOR` (`UserRole`).
@@ -54,10 +65,16 @@
   `firestore.rules`.
 
 ### Mapa (P1)
-- Mapa nativo funcional con **MapLibre OpenGL 12.3.1** y teselas raster de OSM
-  (`MapaActivity` + `MapaConfig`). Verificado en teléfono real: carga Nicaragua, zoom,
-  desplazamiento, sin crash, APK instala.
+- **Mapa principal** (`MapaPrincipalScreen`, Compose + MapLibre `textureMode` con teselas
+  OSM): pines de **lugares** y **comercios**, **selector de ciudad**, filtro por tipo
+  (Todos/Lugares/Comercios) y botón "Inicio".
+- **Detección de ciudad con GPS** (`LocationManager`, sin dependencia nueva): el chip
+  "Mi ubicación" ubica la ciudad conocida más cercana (≤ 25 km) y centra el mapa.
+- Coordenadas de ciudades: `php spark nica:seed-coordenadas-ciudades` (Juigalpa, León,
+  Managua, Matagalpa).
+- `MapaActivity` nativa (MapLibre OpenGL) queda como legado; ya no se abre desde la Home.
 - Acceso desde el drawer de Home ("Mapa").
+- Pendiente: clustering si hay muchos pines; lugares/comercios sin coordenadas no aparecen.
 
 ### Base / infraestructura (P0)
 - Tema Compose claro/oscuro con paleta "Guardabarranco"; preferencia de tema en DataStore.
@@ -87,10 +104,9 @@
 
 ## En progreso
 
-- **Mapa con marcadores y detalle de comercio (P1).** `MapaScreen.kt` y `MapaViewModel.kt`
-  implementan `AndroidView` con `renderSurfaceOnTop(true)`, iconos por categoría
-  (`MapaMarkerFactory`) y `ModalBottomSheet`. **No están cableados** en el Navigation Graph
-  (la ruta `mapa` lanza `MapaActivity`). Falta decidir si se conectan o se retiran.
+- **Limpieza de mapa legado (P0).** `MapaScreen.kt` sigue **sin cablear** (la ruta `mapa`
+  ahora abre `MapaPrincipalScreen`); `MapaViewModel.kt` sí se reutiliza. Decidir si se
+  elimina `MapaScreen` y la `MapaActivity` nativa.
 - **Centrado por ciudad/monumento (P2).** `MapaConfig.NICARAGUA` tiene un comentario que
   indica que el enfoque en Juigalpa se incorporará en la fase de comercios/marcadores.
 - **Rutas para León y Managua (P2).** La UI ya muestra "Rutas próximamente"; solo Juigalpa
