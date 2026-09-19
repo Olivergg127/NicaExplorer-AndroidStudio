@@ -85,6 +85,25 @@ class NicaResources
                 ],
             ],
 
+            'categorias_comercios' => [
+                'collection'   => 'categorias_comercios',
+                'label'        => 'Categorías de comercios',
+                'singular'     => 'Categoría',
+                'icon'         => 'bi-tags-fill',
+                'description'  => 'Catálogo de categorías usadas por los comercios locales.',
+                'id'           => ['strategy' => 'auto', 'slug_source' => 'nombre', 'label' => 'ID', 'editable' => false],
+                'title_field'  => 'nombre',
+                'search_fields' => ['nombre', 'descripcion'],
+                'order_by'     => ['nombre', 'asc'],
+                'fields'       => [
+                    'nombre'      => ['label' => 'Nombre', 'type' => 'string', 'required' => true, 'list' => true],
+                    'descripcion' => ['label' => 'Descripción', 'type' => 'text'],
+                    'icono'       => ['label' => 'Icono (clase Bootstrap Icons)', 'type' => 'string'],
+                    'orden'       => ['label' => 'Orden', 'type' => 'int', 'default' => 0, 'list' => true],
+                    'activo'      => ['label' => 'Activa', 'type' => 'bool', 'list' => true, 'default' => true],
+                ],
+            ],
+
             'lugares' => [
                 'collection'   => 'lugares',
                 'label'        => 'Lugares',
@@ -154,7 +173,7 @@ class NicaResources
                 'order_by'     => ['nombre', 'asc'],
                 'fields'       => [
                     'nombre'        => ['label' => 'Nombre', 'type' => 'string', 'required' => true, 'list' => true],
-                    'categoria'     => ['label' => 'Categoría', 'type' => 'string', 'list' => true],
+                    'categoria'     => ['label' => 'Categoría', 'type' => 'reference', 'collection' => 'categorias_comercios', 'value_field' => 'nombre', 'label_field' => 'nombre', 'list' => true],
                     'ciudad'        => ['label' => 'Ciudad (texto visible)', 'type' => 'string', 'list' => true],
                     'cityId'        => ['label' => 'Ciudad', 'type' => 'reference', 'collection' => 'ciudades', 'value_field' => 'id', 'label_field' => 'nombre'],
                     'descripcion'   => ['label' => 'Descripción', 'type' => 'text'],

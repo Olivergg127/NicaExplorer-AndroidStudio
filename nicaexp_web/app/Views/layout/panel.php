@@ -38,7 +38,7 @@ $apiHealth   = site_url('api/v1/health?api_key=' . rawurlencode((string) config(
 $navGroups   = [
     'General'          => ['dashboard'],
     'Contenido'        => ['ciudades', 'lugares', 'categorias_lugares', 'rutas'],
-    'Ecosistema local' => ['comercios', 'solicitudes_comercios'],
+    'Ecosistema local' => ['comercios', 'categorias_comercios', 'solicitudes_comercios'],
     'Administración'   => ['usuarios'],
 ];
 $navItems = [
