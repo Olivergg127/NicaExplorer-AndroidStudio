@@ -286,6 +286,22 @@
   restaurante" (nombres que ya no existen en el catálogo); al editarlos en el panel se
   reasignan con el nuevo selector de categoría superior/subcategoría.
 
+### Agent / task — Nuevas subcategorías de "Lugares turísticos" y remapeo de huérfanos
+- Se eliminaron las 7 subcategorías viejas y se insertaron estas 8: **Museos, Parques,
+  Monumentos, Sitios históricos, Miradores, Reservas naturales, Iglesias, Sitios culturales**.
+- Se analizaron los lugares con categorías huérfanas (10) y se remapearon a la subcategoría
+  adecuada:
+  - **Monumentos:** Árbol de la Vida, Campana de la Paz, Homenaje a la Madre Juigalpina,
+    Estatua de Rubén Darío, Toro Chontaleño.
+  - **Sitios históricos:** Palacio Municipal de la Cultura, Tumba de Rubén Darío.
+  - **Museos:** Estatua del Museo de Juigalpa.
+  - **Iglesias:** Estatua de San Benito.
+  - **Parques:** Parque Central de Juigalpa.
+- Comando `php spark nica:seed-subcategorias-lugares` (borra las viejas, inserta las nuevas
+  y remapea los lugares), idempotente. Ejecutado en local.
+- Verificado: `categorias_lugares` = 1 raíz + 8 subcategorías; los 10 lugares quedaron con
+  categoría válida (sin huérfanos).
+
 ## 2026-09-17
 
 ### Agent / task

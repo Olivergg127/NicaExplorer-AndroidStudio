@@ -107,6 +107,9 @@
 - **Taxonomía de comercios:** 7 categorías superiores (Restaurantes y comida, Hospedaje,
   Comercios locales, Entretenimiento, Naturaleza y aventura, Servicios, Transporte) con 38
   subcategorías (`php spark nica:seed-taxonomia-comercios`).
+- **Subcategorías de lugares:** bajo "Lugares turísticos": Museos, Parques, Monumentos,
+  Sitios históricos, Miradores, Reservas naturales, Iglesias y Sitios culturales; los
+  lugares existentes se remapearon (`php spark nica:seed-subcategorias-lugares`).
 - Pendiente: paginación/búsqueda del lado del servidor y completar el despliegue
   (ver "Backend en la nube" más abajo).
 
