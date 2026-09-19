@@ -23,7 +23,32 @@ function nica_env(string $name, string $default = ''): string
 $baseUrl = rtrim(nica_env('APP_BASE_URL', nica_env('RENDER_EXTERNAL_URL')), '/');
 
 // Cuenta de servicio montada como Secret File; si no existe, se usa ADC.
-$credentials = nica_env('nica_credentialsFile', '/etc/secrets/firebase.json');
+$credentials = nica_prepare_credentials(nica_env('nica_credentialsFile', '/etc/secrets/firebase.json'));
+
+/**
+ * Los Secret Files de Render se montan con permisos que www-data no puede
+ * leer. Se copian a writable/ y se ceden al usuario de Apache.
+ */
+function nica_prepare_credentials(string $path): string
+{
+    if ($path === '' || ! is_file($path)) {
+        return '';
+    }
+
+    $target = '/var/www/html/writable/firebase.json';
+
+    if ($path !== $target) {
+        if (! @copy($path, $target)) {
+            return '';
+        }
+
+        @chmod($target, 0640);
+        @chown($target, 'www-data');
+        @chgrp($target, 'www-data');
+    }
+
+    return is_file($target) ? $target : '';
+}
 
 $config = [
     'CI_ENVIRONMENT'                => nica_env('CI_ENVIRONMENT', 'production'),
