@@ -249,8 +249,10 @@ class Resources extends BaseController
                 continue;
             }
 
-            $valueField = (string) ($field['value_field'] ?? 'id');
-            $labelField = (string) ($field['label_field'] ?? 'nombre');
+            $valueField  = (string) ($field['value_field'] ?? 'id');
+            $labelField  = (string) ($field['label_field'] ?? 'nombre');
+            $parentField = (string) ($field['parent_field'] ?? 'categoriaPadre');
+            $onlyRoot    = ! empty($field['only_root']);
 
             try {
                 $options = [];
@@ -263,13 +265,21 @@ class Resources extends BaseController
                         continue;
                     }
 
+                    $parent = trim((string) ($row[$parentField] ?? ''));
+
+                    // Los selectores de categoría superior solo muestran categorías raíz.
+                    if ($onlyRoot && $parent !== '') {
+                        continue;
+                    }
+
                     $label = $labelField === 'id'
                         ? (string) $row['id']
                         : trim((string) ($row[$labelField] ?? ''));
 
                     $options[] = [
-                        'value' => $value,
-                        'label' => $label !== '' ? $label : $value,
+                        'value'  => $value,
+                        'label'  => $label !== '' ? $label : $value,
+                        'parent' => $parent,
                     ];
                 }
 
@@ -343,12 +353,13 @@ class Resources extends BaseController
             }
 
             $fields[] = [
-                'name'     => $name,
-                'label'    => $field['label'] ?? $name,
-                'type'     => $field['type'] ?? 'string',
-                'required' => ! empty($field['required']),
-                'options'  => $field['options'] ?? [],
-                'default'  => $field['default'] ?? null,
+                'name'      => $name,
+                'label'     => $field['label'] ?? $name,
+                'type'      => $field['type'] ?? 'string',
+                'required'  => ! empty($field['required']),
+                'options'   => $field['options'] ?? [],
+                'default'   => $field['default'] ?? null,
+                'dependsOn' => $field['depends_on'] ?? null,
             ];
         }
 

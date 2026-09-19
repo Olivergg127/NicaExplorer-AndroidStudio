@@ -315,6 +315,79 @@
         }
 
         // ------------------------------------------------------------------
+        // Categorías dependientes (categoría superior -> subcategoría)
+        // ------------------------------------------------------------------
+        const referenceOptionsFor = (name) => (cfg.references && cfg.references[name]) ? cfg.references[name] : [];
+
+        const dependentParentNames = () => Array.from(new Set(
+            cfg.fields
+                .filter((field) => field.type === 'reference' && field.dependsOn)
+                .map((field) => field.dependsOn)
+        ));
+
+        function fillReferenceSelect($select, options, selected) {
+            $select.empty().append('<option value="">— Seleccionar —</option>');
+            options.forEach((option) => {
+                $select.append($('<option>').attr('value', option.value).text(option.label));
+            });
+            if (selected !== undefined && selected !== null) {
+                $select.val(selected);
+            }
+        }
+
+        /** Muestra en las subcategorías solo las hijas de la categoría superior elegida. */
+        function refreshDependentSelects(parentName) {
+            const dependents = cfg.fields.filter(
+                (field) => field.type === 'reference' && field.dependsOn === parentName
+            );
+            if (!dependents.length) {
+                return;
+            }
+
+            const parentValue = ($form.find('[name="' + parentName + '"]').val() || '').toString().trim();
+
+            dependents.forEach((field) => {
+                const $select = $form.find('[name="' + field.name + '"]');
+                if (!$select.length) {
+                    return;
+                }
+
+                const current = ($select.val() || '').toString().trim();
+                const options = referenceOptionsFor(field.name)
+                    .filter((option) => (option.parent || '') === parentValue);
+
+                fillReferenceSelect($select, options, null);
+                if (current && options.some((option) => option.value === current)) {
+                    $select.val(current);
+                }
+            });
+        }
+
+        /** Al editar, si falta la categoría superior pero hay subcategoría, se infiere del catálogo. */
+        function inferParentFromDependent() {
+            cfg.fields
+                .filter((field) => field.type === 'reference' && field.dependsOn)
+                .forEach((field) => {
+                    const $select = $form.find('[name="' + field.name + '"]');
+                    const $parent = $form.find('[name="' + field.dependsOn + '"]');
+                    if (!$select.length || !$parent.length) {
+                        return;
+                    }
+
+                    const current = ($select.val() || '').toString().trim();
+                    const parentValue = ($parent.val() || '').toString().trim();
+                    if (!current || parentValue) {
+                        return;
+                    }
+
+                    const option = referenceOptionsFor(field.name).find((item) => item.value === current);
+                    if (option && option.parent) {
+                        $parent.val(option.parent);
+                    }
+                });
+        }
+
+        // ------------------------------------------------------------------
         // Rellenar / limpiar formulario
         // ------------------------------------------------------------------
         function resetForm() {
@@ -371,6 +444,11 @@
                 if (field.type === 'image') {
                     syncImagePreview($form.find('[name="' + field.name + '"]'));
                 }
+            });
+
+            inferParentFromDependent();
+            dependentParentNames().forEach(function (parentName) {
+                refreshDependentSelects(parentName);
             });
         }
 
@@ -543,6 +621,11 @@
             if (field && field.type === 'image') {
                 syncImagePreview($(this));
             }
+        });
+
+        // Al cambiar una categoría superior, se filtran sus subcategorías.
+        $form.on('change', 'select', function () {
+            refreshDependentSelects($(this).attr('name'));
         });
 
         // Al elegir una ciudad, refleja su nombre en el campo de texto visible.

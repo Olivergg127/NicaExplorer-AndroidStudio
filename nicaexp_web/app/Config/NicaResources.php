@@ -78,7 +78,7 @@ class NicaResources
                 'order_by'     => ['nombre', 'asc'],
                 'fields'       => [
                     'nombre'         => ['label' => 'Nombre', 'type' => 'string', 'required' => true, 'list' => true],
-                    'categoriaPadre' => ['label' => 'Categoría superior', 'type' => 'reference', 'collection' => 'categorias_lugares', 'value_field' => 'nombre', 'label_field' => 'nombre', 'list' => true],
+                    'categoriaPadre' => ['label' => 'Categoría superior', 'type' => 'reference', 'collection' => 'categorias_lugares', 'value_field' => 'nombre', 'label_field' => 'nombre', 'only_root' => true, 'list' => true],
                     'descripcion'    => ['label' => 'Descripción', 'type' => 'text'],
                     'icono'       => ['label' => 'Icono (clase Bootstrap Icons)', 'type' => 'string'],
                     'orden'       => ['label' => 'Orden', 'type' => 'int', 'default' => 0, 'list' => true],
@@ -119,7 +119,8 @@ class NicaResources
                     'nombre'               => ['label' => 'Nombre', 'type' => 'string', 'required' => true, 'list' => true],
                     'ciudad'               => ['label' => 'Ciudad (texto visible)', 'type' => 'string', 'required' => true, 'list' => true],
                     'cityId'               => ['label' => 'Ciudad', 'type' => 'reference', 'collection' => 'ciudades', 'value_field' => 'id', 'label_field' => 'nombre', 'required' => true],
-                    'categoria'            => ['label' => 'Categoría', 'type' => 'reference', 'collection' => 'categorias_lugares', 'value_field' => 'nombre', 'label_field' => 'nombre', 'list' => true],
+                    'categoriaPadre'       => ['label' => 'Categoría superior', 'type' => 'reference', 'collection' => 'categorias_lugares', 'value_field' => 'nombre', 'label_field' => 'nombre', 'only_root' => true],
+                    'categoria'            => ['label' => 'Subcategoría', 'type' => 'reference', 'collection' => 'categorias_lugares', 'value_field' => 'nombre', 'label_field' => 'nombre', 'depends_on' => 'categoriaPadre', 'list' => true],
                     'afluencia'            => ['label' => 'Afluencia', 'type' => 'enum', 'list' => true, 'options' => ['BAJA', 'MODERADA', 'ALTA']],
                     'descripcion'          => ['label' => 'Descripción', 'type' => 'text'],
                     'historia'             => ['label' => 'Historia', 'type' => 'text'],
