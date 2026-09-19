@@ -26,14 +26,15 @@ class Resources extends BaseController
         $options = $this->referenceOptions($definition);
 
         return view('panel/resource', [
-            'title'      => $definition['label'],
-            'active'     => $resource,
-            'resource'   => $resource,
-            'definition' => $definition,
-            'fields'     => $this->formFields($definition),
-            'columns'    => $this->columns($definition),
-            'refs'       => $options['stops'],
-            'references' => $options['references'],
+            'title'       => $definition['label'],
+            'active'      => $resource,
+            'resource'    => $resource,
+            'definition'  => $definition,
+            'fields'      => $this->formFields($definition),
+            'columns'     => $this->columns($definition),
+            'refs'        => $options['stops'],
+            'references'  => $options['references'],
+            'hasLocation' => isset($definition['fields']['latitud'], $definition['fields']['longitud']),
         ]);
     }
 
@@ -292,9 +293,17 @@ class Resources extends BaseController
     private function columns(array $definition): array
     {
         $columns = [];
+        $idField = ($definition['id']['strategy'] ?? 'auto') === 'field'
+            ? ($definition['id']['field'] ?? null)
+            : null;
 
         foreach ($definition['fields'] as $name => $field) {
             if (empty($field['list'])) {
+                continue;
+            }
+
+            // Los identificadores no se muestran en las tablas.
+            if ($idField !== null && $name === $idField) {
                 continue;
             }
 
@@ -319,9 +328,17 @@ class Resources extends BaseController
     private function formFields(array $definition): array
     {
         $fields = [];
+        $idField = ($definition['id']['strategy'] ?? 'auto') === 'field'
+            ? ($definition['id']['field'] ?? null)
+            : null;
 
         foreach ($definition['fields'] as $name => $field) {
             if (! empty($field['server'])) {
+                continue;
+            }
+
+            // Los identificadores (p. ej. uid) no se editan desde el formulario.
+            if ($idField !== null && $name === $idField) {
                 continue;
             }
 

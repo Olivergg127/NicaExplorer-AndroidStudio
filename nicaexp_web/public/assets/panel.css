@@ -1072,12 +1072,84 @@ a.nica-metric:hover {
     margin-left: 2px;
 }
 
+.nica-image-field {
+    position: relative;
+}
+
+.nica-image-preview-wrap {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+}
+
 .nica-image-preview {
     max-height: 150px;
     max-width: 100%;
     object-fit: contain;
     border-radius: var(--nica-radius-sm);
     border: 1px solid var(--nica-border);
+    background: var(--nica-surface-alt);
+}
+
+.nica-image-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--nica-border-strong);
+    border-radius: 999px;
+    background: rgba(11, 15, 14, 0.78);
+    color: var(--nica-danger-text);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.nica-image-remove:hover {
+    background: var(--nica-danger-soft);
+    border-color: var(--nica-danger);
+    color: var(--nica-danger);
+}
+
+/* Selector de ubicación (mapa Leaflet) */
+.nica-location-picker {
+    margin-top: 16px;
+}
+
+.nica-map {
+    height: 280px;
+    margin-top: 12px;
+    border: 1px solid var(--nica-border);
+    border-radius: var(--nica-radius-sm);
+    overflow: hidden;
+    background: var(--nica-surface-alt);
+    z-index: 1;
+}
+
+.nica-map .leaflet-control-attribution {
+    background: rgba(11, 15, 14, 0.72);
+    color: var(--nica-muted);
+    font-size: 0.6875rem;
+}
+
+.nica-map .leaflet-control-attribution a {
+    color: var(--nica-accent);
+}
+
+.nica-map .leaflet-bar a {
+    background: var(--nica-surface-raised);
+    color: var(--nica-text);
+    border-bottom-color: var(--nica-border);
+}
+
+.nica-map .leaflet-bar a:hover {
+    background: var(--nica-hover-strong);
+    color: var(--nica-text);
 }
 
 /* Controles DataTables 2 (integración Bootstrap 5) */

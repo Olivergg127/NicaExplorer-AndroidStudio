@@ -296,14 +296,22 @@
         // ------------------------------------------------------------------
         function syncImagePreview($input) {
             const url = ($input.val() || '').toString().trim();
-            const $preview = $input.closest('.col-md-12, .col-md-6').find('.nica-image-preview').first();
-
-            if (!url) {
-                $preview.addClass('d-none').attr('src', '');
+            const $field = $input.closest('.nica-image-field');
+            if (!$field.length) {
                 return;
             }
 
-            $preview.removeClass('d-none').attr('src', url);
+            const $wrap = $field.find('.nica-image-preview-wrap');
+            const $preview = $field.find('.nica-image-preview');
+
+            if (!url) {
+                $wrap.addClass('d-none');
+                $preview.attr('src', '');
+                return;
+            }
+
+            $preview.attr('src', url);
+            $wrap.removeClass('d-none');
         }
 
         // ------------------------------------------------------------------
@@ -313,7 +321,9 @@
             $form[0].reset();
             $currentId.val('');
             $errors.addClass('d-none').html('');
-            $('.nica-image-preview').addClass('d-none').attr('src', '');
+            $('.nica-image-preview-wrap').addClass('d-none');
+            $('.nica-image-preview').attr('src', '');
+            $('.nica-image-file').val('');
 
             if ($docId.length) {
                 $docId.prop('disabled', false).prop('required', cfg.id && cfg.id.strategy === 'manual');
@@ -396,7 +406,7 @@
             resetForm();
             fillForm(row._raw || {});
             $currentId.val(row.id);
-            $('#nica-modal-title').text('Editar ' + cfg.singular + ' · ' + row.id);
+            $('#nica-modal-title').text('Editar ' + cfg.singular);
 
             if ($docId.length) {
                 $docId.val(row.id).prop('disabled', true);
@@ -518,6 +528,15 @@
                 .fail(showError);
         });
 
+        // Quitar la imagen seleccionada para poder elegir otra.
+        $(document).on('click', '.nica-image-remove', function () {
+            const $field = $(this).closest('.nica-image-field');
+            $field.find('input[type="text"]').val('');
+            $field.find('.nica-image-file').val('');
+            $field.find('.nica-image-preview-wrap').addClass('d-none');
+            $field.find('.nica-image-preview').attr('src', '');
+        });
+
         $(document).on('input change', '#nica-form input[type="text"]', function () {
             const name = $(this).attr('name');
             const field = cfg.fields.find((f) => f.name === name);
@@ -534,6 +553,115 @@
             }
 
             $ciudad.val($(this).find('option:selected').text().trim());
+        });
+
+        // ------------------------------------------------------------------
+        // Selector de ubicación (mapa Leaflet + búsqueda Nominatim)
+        // ------------------------------------------------------------------
+        let nicaMap = null;
+        let nicaMarker = null;
+
+        function writeCoords(lat, lng) {
+            $form.find('[name="latitud"]').val(Number(lat).toFixed(6));
+            $form.find('[name="longitud"]').val(Number(lng).toFixed(6));
+        }
+
+        function placeMarker(lat, lng, focus) {
+            if (!nicaMap) {
+                return;
+            }
+
+            const latlng = [Number(lat), Number(lng)];
+
+            if (nicaMarker) {
+                nicaMarker.setLatLng(latlng);
+            } else {
+                nicaMarker = window.L.marker(latlng, { draggable: true }).addTo(nicaMap);
+                nicaMarker.on('dragend', function () {
+                    const point = nicaMarker.getLatLng();
+                    writeCoords(point.lat, point.lng);
+                });
+            }
+
+            if (focus) {
+                nicaMap.setView(latlng, Math.max(nicaMap.getZoom(), 15));
+            }
+
+            writeCoords(latlng[0], latlng[1]);
+        }
+
+        function initLocationPicker() {
+            if (!cfg.hasLocation) {
+                return;
+            }
+
+            const container = document.getElementById('nica-map');
+            if (!container || !window.L) {
+                return;
+            }
+
+            const lat = parseFloat($form.find('[name="latitud"]').val());
+            const lng = parseFloat($form.find('[name="longitud"]').val());
+            const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
+            const center = hasCoords ? [lat, lng] : [12.1069, -85.3667];
+            const zoom = hasCoords ? 15 : 7;
+
+            if (!nicaMap) {
+                nicaMap = window.L.map(container, { scrollWheelZoom: true }).setView(center, zoom);
+                window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap',
+                }).addTo(nicaMap);
+                nicaMap.on('click', function (event) {
+                    placeMarker(event.latlng.lat, event.latlng.lng, false);
+                });
+            } else {
+                nicaMap.setView(center, zoom);
+                if (nicaMarker) {
+                    nicaMap.removeLayer(nicaMarker);
+                    nicaMarker = null;
+                }
+            }
+
+            if (hasCoords) {
+                placeMarker(lat, lng, false);
+            }
+
+            setTimeout(function () {
+                nicaMap.invalidateSize();
+            }, 160);
+        }
+
+        function searchPlace(query) {
+            const q = String(query || '').trim();
+            if (!q || !nicaMap) {
+                return;
+            }
+
+            const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q);
+            fetch(url, { headers: { Accept: 'application/json' } })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (Array.isArray(data) && data.length) {
+                        placeMarker(parseFloat(data[0].lat), parseFloat(data[0].lon), true);
+                    } else {
+                        Toast.fire({ icon: 'warning', title: 'Sin resultados para esa búsqueda.' });
+                    }
+                })
+                .catch(() => Toast.fire({ icon: 'error', title: 'No se pudo buscar la dirección.' }));
+        }
+
+        document.getElementById('nica-modal').addEventListener('shown.bs.modal', initLocationPicker);
+
+        $(document).on('click', '#nica-map-search-btn', function () {
+            searchPlace($('#nica-map-search').val());
+        });
+
+        $(document).on('keydown', '#nica-map-search', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchPlace($(this).val());
+            }
         });
 
         // Envío del formulario.

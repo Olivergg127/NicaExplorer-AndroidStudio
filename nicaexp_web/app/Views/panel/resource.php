@@ -2,9 +2,8 @@
 
 <?= $this->section('content') ?>
 <?php
-$idStrategy = $definition['id']['strategy'] ?? 'auto';
-$idLabel    = $definition['id']['label'] ?? 'ID';
-$singular   = $definition['singular'] ?? 'registro';
+$singular    = $definition['singular'] ?? 'registro';
+$hasLocation = $hasLocation ?? false;
 
 $ubicacionNames = ['latitud', 'longitud', 'ciudad', 'cityId', 'direccion', 'departamento'];
 $estadoNames    = ['activo', 'orden', 'estado', 'tieneWhatsapp', 'rol', 'destacado', 'publicado'];
@@ -75,28 +74,6 @@ foreach ($fields as $field) {
                 <div class="modal-body">
                     <input type="hidden" name="_current_id" id="nica-current-id" value="">
 
-                    <?php if ($idStrategy === 'manual' || $idStrategy === 'auto'): ?>
-                        <div class="nica-form-block">
-                            <h6 class="nica-form-block-title">Identificador</h6>
-                            <div class="mb-0" id="nica-id-block">
-                                <label class="form-label" for="nica-doc-id">
-                                    <?= esc($idLabel) ?><?= $idStrategy === 'manual' ? ' *' : '' ?>
-                                </label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    name="_id"
-                                    id="nica-doc-id"
-                                    <?= $idStrategy === 'manual' ? 'required' : '' ?>
-                                >
-                                <div class="form-text">
-                                    Clave del documento en Firestore.
-                                    <?= $idStrategy === 'auto' ? 'Si se deja vacío se genera automáticamente.' : '' ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
                     <?php foreach ($blocks as $blockTitle => $blockFields): ?>
                         <?php if ($blockTitle === 'Identificador' || $blockFields === []) { continue; } ?>
                         <div class="nica-form-block">
@@ -151,17 +128,24 @@ foreach ($fields as $field) {
                                             </button>
 
                                         <?php elseif ($type === 'image'): ?>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" name="<?= esc($name) ?>" id="<?= esc($id) ?>"
-                                                       placeholder="https://... o sube un archivo" <?= $req ? 'required' : '' ?>>
-                                                <button type="button" class="btn btn-outline-secondary nica-image-choose"
-                                                        data-target="<?= esc($id) ?>">
-                                                    <i class="bi bi-upload"></i> Subir
-                                                </button>
+                                            <div class="nica-image-field">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" name="<?= esc($name) ?>" id="<?= esc($id) ?>"
+                                                           placeholder="https://... o sube un archivo" <?= $req ? 'required' : '' ?>>
+                                                    <button type="button" class="btn btn-outline-secondary nica-image-choose"
+                                                            data-target="<?= esc($id) ?>">
+                                                        <i class="bi bi-upload"></i> Subir
+                                                    </button>
+                                                </div>
+                                                <input type="file" class="d-none nica-image-file" accept="image/*"
+                                                       data-target="<?= esc($id) ?>">
+                                                <div class="nica-image-preview-wrap mt-2 d-none">
+                                                    <img class="nica-image-preview" alt="Vista previa">
+                                                    <button type="button" class="nica-image-remove">
+                                                        <i class="bi bi-trash3"></i> Quitar imagen
+                                                    </button>
+                                                </div>
                                             </div>
-                                            <input type="file" class="d-none nica-image-file" accept="image/*"
-                                                   data-target="<?= esc($id) ?>">
-                                            <img class="nica-image-preview mt-2 d-none" alt="Vista previa">
 
                                         <?php elseif ($type === 'text'): ?>
                                             <textarea class="form-control" name="<?= esc($name) ?>" id="<?= esc($id) ?>"
@@ -182,6 +166,23 @@ foreach ($fields as $field) {
                                     </div>
                                 <?php endforeach; ?>
                             </div>
+                            <?php if ($blockTitle === 'Ubicación' && $hasLocation): ?>
+                                <div class="nica-location-picker">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                        <input type="text" class="form-control" id="nica-map-search"
+                                               placeholder="Buscar dirección o lugar…">
+                                        <button type="button" class="btn btn-outline-secondary" id="nica-map-search-btn">
+                                            Buscar
+                                        </button>
+                                    </div>
+                                    <div id="nica-map" class="nica-map" role="application"
+                                         aria-label="Mapa para elegir coordenadas"></div>
+                                    <div class="form-text">
+                                        Haz clic en el mapa (o arrastra el marcador) para fijar la latitud y longitud.
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
 
@@ -206,6 +207,7 @@ window.NICA_RESOURCE = <?= json_encode([
     'singular'    => $singular,
     'id'          => $definition['id'] ?? ['strategy' => 'auto'],
     'titleField'  => $definition['title_field'] ?? 'id',
+    'hasLocation' => $hasLocation,
     'columns'     => $columns,
     'fields'      => $fields,
     'refs'        => $refs ?? [],

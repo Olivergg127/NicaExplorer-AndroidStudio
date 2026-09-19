@@ -246,9 +246,59 @@ class FirestoreRepository
             return trim((string) ($input[$field] ?? ''));
         }
 
+        // Estrategia 'auto': id explícito si viene, o slug del campo indicado.
         $provided = trim((string) ($input['_id'] ?? ''));
+        if ($provided !== '') {
+            return $provided;
+        }
 
-        return $provided !== '' ? $provided : null;
+        $slugSource = (string) ($this->resource['id']['slug_source'] ?? '');
+        if ($slugSource !== '') {
+            $base = $this->slugify((string) ($input[$slugSource] ?? ''));
+            if ($base !== '') {
+                return $this->uniqueId($base);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Genera un id legible a partir de un texto ("Toro Chontaleño" -> "toro_chontaleno").
+     */
+    private function slugify(string $value): string
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return '';
+        }
+
+        $ascii = function_exists('iconv')
+            ? iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value)
+            : $value;
+
+        $ascii = $ascii === false ? $value : $ascii;
+        $ascii = strtolower($ascii);
+        $ascii = (string) preg_replace('/[^a-z0-9]+/', '_', $ascii);
+
+        return trim($ascii, '_');
+    }
+
+    /**
+     * Evita colisiones añadiendo un sufijo numérico (_2, _3...).
+     */
+    private function uniqueId(string $base): string
+    {
+        $collection = $this->db->collection($this->resource['collection']);
+        $candidate  = $base;
+        $suffix     = 1;
+
+        while ($collection->document($candidate)->snapshot()->exists()) {
+            $suffix++;
+            $candidate = $base . '_' . $suffix;
+        }
+
+        return $candidate;
     }
 
     /**
