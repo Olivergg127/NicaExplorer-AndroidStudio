@@ -210,6 +210,7 @@ window.NICA_RESOURCE = <?= json_encode([
     'hasLocation' => $hasLocation,
     'columns'     => $columns,
     'fields'      => $fields,
+    'references'  => $references ?? [],
     'refs'        => $refs ?? [],
     'urls'        => [
         'data'   => site_url('panel/' . $resource . '/data'),
