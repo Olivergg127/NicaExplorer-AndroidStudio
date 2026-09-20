@@ -3,6 +3,7 @@ package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lospuntoycoma.nicaexplorer.data.ApiRepository
+import com.lospuntoycoma.nicaexplorer.model.CategoriaComercio
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 data class ComerciosUiState(
     val isLoading: Boolean = true,
     val comercios: List<Comercio> = emptyList(),
+    val categorias: List<CategoriaComercio> = emptyList(),
     val error: String? = null
 )
 
@@ -37,14 +39,19 @@ class ComerciosViewModel : ViewModel() {
         viewModelScope.launch {
             _uiState.value = ComerciosUiState(isLoading = true)
             val result = ApiRepository.getComercios()
+            val categorias = runCatching { ApiRepository.getCategoriasComercios() }
+                .getOrDefault(emptyList())
+
             result.onSuccess { comercios ->
                 _uiState.value = ComerciosUiState(
                     isLoading = false,
-                    comercios = comercios
+                    comercios = comercios,
+                    categorias = categorias
                 )
             }.onFailure { _ ->
                 _uiState.value = ComerciosUiState(
                     isLoading = false,
+                    categorias = categorias,
                     error = "No se pudieron cargar los comercios. Revisa tu conexión e intenta de nuevo."
                 )
             }

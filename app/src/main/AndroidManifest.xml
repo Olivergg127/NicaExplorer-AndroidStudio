@@ -5,15 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
-    <!-- El AAR de MapLibre declara estos permisos de localización, pero en esta
-         fase no se usa GPS. Se eliminan del manifest final para no declarar
-         capacidad de ubicación sin necesidad (se habilitará en la fase GPS). -->
-    <uses-permission
-        android:name="android.permission.ACCESS_FINE_LOCATION"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.ACCESS_COARSE_LOCATION"
-        tools:node="remove" />
+    <!-- Ubicación para detectar la ciudad actual en el mapa principal.
+         Se solicitan en tiempo de ejecución desde MapaPrincipalScreen. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <queries>
         <package android:name="com.whatsapp" />
@@ -31,7 +26,6 @@
         android:label="NicaExplorer"
         android:roundIcon="@drawable/nicaexplorer_isotipo"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.NicaExplorer">
 
         <activity

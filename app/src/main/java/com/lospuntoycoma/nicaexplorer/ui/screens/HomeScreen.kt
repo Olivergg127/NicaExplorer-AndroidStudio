@@ -46,9 +46,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lospuntoycoma.nicaexplorer.R
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lospuntoycoma.nicaexplorer.data.SampleData
+import com.lospuntoycoma.nicaexplorer.data.UbicacionHelper
+import com.lospuntoycoma.nicaexplorer.data.ValoracionesRepository
+import com.lospuntoycoma.nicaexplorer.model.City
+import com.lospuntoycoma.nicaexplorer.model.Comercio
+import com.lospuntoycoma.nicaexplorer.model.Place
+import com.lospuntoycoma.nicaexplorer.model.Valoracion
 import com.lospuntoycoma.nicaexplorer.ui.components.CoverImage
 import com.lospuntoycoma.nicaexplorer.ui.components.PlaceCard
+import com.lospuntoycoma.nicaexplorer.ui.viewmodels.ComerciosViewModel
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaBottomNavBarBrush
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
@@ -67,6 +79,8 @@ fun HomeScreen(
     onMapClick: () -> Unit,
     onAdminPanelClick: () -> Unit,
     onSavedPlacesClick: () -> Unit,
+    onPlaceClick: (cityId: String, placeId: String) -> Unit,
+    onComercioClick: (comercioId: String) -> Unit,
     onLogout: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -77,6 +91,74 @@ fun HomeScreen(
     val userProfile by userViewModel.userProfile.collectAsState()
     val canAccessAdminPanel = userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN ||
         userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.AUDITOR
+
+    // Recomendaciones según la ubicación actual (GPS) y valoraciones.
+    val context = LocalContext.current
+    val comerciosViewModel: ComerciosViewModel = viewModel()
+    val comerciosState by comerciosViewModel.uiState.collectAsState()
+
+    var ciudadActual by remember { mutableStateOf<City?>(null) }
+    var valoraciones by remember { mutableStateOf<List<Valoracion>>(emptyList()) }
+    var permisoUbicacion by remember { mutableStateOf(UbicacionHelper.tienePermiso(context)) }
+
+    val permisoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { resultado ->
+        permisoUbicacion = resultado.values.any { it }
+    }
+
+    LaunchedEffect(Unit) {
+        if (!permisoUbicacion) {
+            permisoLauncher.launch(
+                arrayOf(
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            )
+        }
+    }
+
+    LaunchedEffect(permisoUbicacion, SampleData.cities) {
+        if (!permisoUbicacion) return@LaunchedEffect
+
+        val ubicacion = UbicacionHelper.ultimaUbicacion(context)
+        if (ubicacion != null) {
+            val ciudad = UbicacionHelper.ciudadMasCercana(ubicacion.latitude, ubicacion.longitude, SampleData.cities)
+            if (ciudad != null) {
+                ciudadActual = ciudad
+                valoraciones = ValoracionesRepository.deCiudad(ciudad.id)
+            }
+        }
+    }
+
+    val promedios = remember(valoraciones) {
+        valoraciones.groupBy { "${it.tipo}|${it.refId}" }
+            .mapValues { (_, lista) -> lista.map { it.estrellas }.average() }
+    }
+    val promedioDe: (String, String) -> Double = { tipo, refId -> promedios["$tipo|$refId"] ?: 0.0 }
+
+    val lugaresRecomendados = remember(ciudadActual, valoraciones) {
+        val ciudad = ciudadActual
+        val lugares = if (ciudad != null) {
+            SampleData.placesByCity[ciudad.id].orEmpty()
+        } else {
+            SampleData.recommendedPlaces
+        }
+        lugares
+            .sortedWith(compareByDescending<Place> { promedioDe("lugar", it.id) }.thenBy { it.name })
+            .take(6)
+    }
+
+    val comerciosRecomendados = remember(ciudadActual, comerciosState.comercios, valoraciones) {
+        val ciudad = ciudadActual ?: return@remember emptyList()
+        comerciosState.comercios
+            .filter {
+                it.ciudad.trim().equals(ciudad.id, ignoreCase = true) ||
+                    it.ciudad.trim().equals(ciudad.name, ignoreCase = true)
+            }
+            .sortedWith(compareByDescending<Comercio> { promedioDe("comercio", it.id) }.thenBy { it.nombre })
+            .take(6)
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -492,8 +574,10 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
+                val sufijoCiudad = ciudadActual?.let { " en ${it.name}" } ?: ""
+
                 Text(
-                    text = "Lugares recomendados",
+                    text = "Lugares recomendados$sufijoCiudad",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -505,11 +589,36 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp)
                 ) {
-                    items(SampleData.recommendedPlaces) { place ->
+                    items(lugaresRecomendados) { place ->
                         PlaceCard(
                             place = place,
-                            onClick = { }
+                            onClick = { onPlaceClick(place.cityId, place.id) }
                         )
+                    }
+                }
+
+                if (comerciosRecomendados.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(28.dp))
+
+                    Text(
+                        text = "Comercios recomendados$sufijoCiudad",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp)
+                    ) {
+                        items(comerciosRecomendados, key = { it.id }) { comercio ->
+                            ComercioMiniCard(
+                                comercio = comercio,
+                                onClick = { onComercioClick(comercio.id) }
+                            )
+                        }
                     }
                 }
 

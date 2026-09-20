@@ -22,7 +22,7 @@ android {
             file.inputStream().use { load(it) }
         }
     }
-    val nicaApiBaseUrl = localProperties.getProperty("nica.apiBaseUrl") ?: "http://192.168.123.39:8080"
+    val nicaApiBaseUrl = localProperties.getProperty("nica.apiBaseUrl") ?: "https://nicaexplorer-backend.onrender.com"
     val nicaApiKey = localProperties.getProperty("nica.apiKey") ?: ""
 
     namespace = "com.lospuntoycoma.nicaexplorer"

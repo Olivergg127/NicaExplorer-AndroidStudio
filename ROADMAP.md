@@ -45,8 +45,10 @@
   `php spark nica:seed-categorias-comercios` crea el catálogo desde los comercios
   existentes.
 - **Comercios recomendados en el detalle de ciudad:** al final de la vista de la ciudad,
-  una **nube de categorías** (tags) y un **carrusel** que muestra los comercios de la
-  categoría elegida ("Restaurante" por defecto).
+  una **nube de categorías superiores** y los comercios en **minicards** (imagen, título y
+  subcategoría), **limitados a 6**. "Ver todos" abre las **subcategorías** (cards) y, al
+  elegir una, todos los comercios de esa subcategoría
+  (`ComerciosSubcategoriasScreen` / `ComerciosSubcategoriaScreen`).
 
 ### Rutas turísticas (P1)
 - Rutas cargadas desde el backend por ciudad (`rutas.paradas`); la cantidad de paradas es

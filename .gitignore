@@ -28,6 +28,9 @@ keystore.properties
 .DS_Store
 Thumbs.db
 
+# Artefactos temporales de depuración
+.artifacts/
+
 # Dependencias locales del seed Firestore
 tools/node_modules/
 

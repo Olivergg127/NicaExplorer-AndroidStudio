@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -40,6 +42,7 @@ import androidx.compose.material.icons.outlined.Eco
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -79,14 +82,16 @@ import com.lospuntoycoma.nicaexplorer.model.Afluencia
 import com.lospuntoycoma.nicaexplorer.model.City
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.model.Place
+import com.lospuntoycoma.nicaexplorer.model.TipoValoracion
 import com.lospuntoycoma.nicaexplorer.ui.components.CoverImage
+import com.lospuntoycoma.nicaexplorer.ui.components.ValoracionRow
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.ComerciosViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun CatalogScreen(
     cityId: String,
@@ -94,7 +99,7 @@ fun CatalogScreen(
     onVerEn3dClick: (String) -> Unit,
     onAssistantClick: (String) -> Unit,
     onComercioClick: (String) -> Unit,
-    onVerTodosComercios: () -> Unit,
+    onVerSubcategoriasComercio: (String) -> Unit,
     onRutasInteligentesClick: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -117,6 +122,32 @@ fun CatalogScreen(
     val comerciosCiudad = comerciosState.comercios.filter {
         it.ciudad.trim().equals(cityId.trim(), ignoreCase = true) ||
             it.ciudad.trim().equals(cityName.trim(), ignoreCase = true)
+    }
+
+    // Categorías superiores presentes en los comercios de la ciudad, ordenadas por el catálogo.
+    val categoriasPadreCiudad = remember(comerciosCiudad, comerciosState.categorias) {
+        val presentes = comerciosCiudad
+            .map { it.categoriaPadre.trim() }
+            .filter { it.isNotBlank() }
+            .distinct()
+        val ordenRaiz = comerciosState.categorias
+            .filter { it.categoriaPadre.isBlank() }
+            .associate { it.nombre.trim() to it.orden }
+        presentes.sortedWith(compareBy({ ordenRaiz[it] ?: Int.MAX_VALUE }, { it }))
+    }
+
+    // Por defecto "Restaurantes y comida" si existe; si no, la primera categoría superior.
+    var padreSeleccionado by remember(categoriasPadreCiudad) {
+        mutableStateOf(
+            categoriasPadreCiudad.firstOrNull { it.equals("Restaurantes y comida", ignoreCase = true) }
+                ?: categoriasPadreCiudad.firstOrNull()
+        )
+    }
+
+    val comerciosPadre = remember(comerciosCiudad, padreSeleccionado) {
+        padreSeleccionado?.let { padre ->
+            comerciosCiudad.filter { it.categoriaPadre.trim().equals(padre, ignoreCase = true) }
+        } ?: emptyList()
     }
 
     if (places.isEmpty()) {
@@ -218,6 +249,22 @@ fun CatalogScreen(
             if (city != null) {
                 CiudadHero(city = city)
                 CiudadInfoCard(city = city)
+
+                Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "Valora esta ciudad",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    ValoracionRow(
+                        tipo = TipoValoracion.CIUDAD,
+                        refId = city.id,
+                        cityId = city.id
+                    )
+                }
             }
 
             Box(
@@ -324,6 +371,14 @@ fun CatalogScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+                ValoracionRow(
+                    tipo = TipoValoracion.LUGAR,
+                    refId = place.id,
+                    cityId = place.cityId
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
@@ -375,19 +430,21 @@ fun CatalogScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                NicaButton(
-                    text = "Ver en 3D",
-                    onClick = { onVerEn3dClick(place.id) },
-                    enabled = place.modeloUnity.isNotBlank(),
-                    gradient = Brush.horizontalGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.secondary,
-                            MaterialTheme.colorScheme.tertiary
+                // El botón 3D solo aparece si el lugar tiene modelo asignado.
+                if (place.modeloUnity.isNotBlank()) {
+                    NicaButton(
+                        text = "Ver en 3D",
+                        onClick = { onVerEn3dClick(place.id) },
+                        gradient = Brush.horizontalGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.secondary,
+                                MaterialTheme.colorScheme.tertiary
+                            )
                         )
                     )
-                )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
 
                 NicaButton(
                     text = "Hablar con el asistente IA",
@@ -530,26 +587,52 @@ fun CatalogScreen(
                 )
 
                 Text(
-                    text = "Descubre negocios locales",
+                    text = "Comercios recomendados",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                if (comerciosCiudad.isNotEmpty()) {
+                if (categoriasPadreCiudad.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    // Nube de categorías superiores.
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(
-                            items = comerciosCiudad.take(3),
-                            key = { it.id }
-                        ) { comercio ->
-                            ComercioMiniCard(
-                                comercio = comercio,
-                                onClick = { onComercioClick(comercio.id) }
+                        categoriasPadreCiudad.forEach { padre ->
+                            FilterChip(
+                                selected = padre == padreSeleccionado,
+                                onClick = { padreSeleccionado = padre },
+                                label = { Text(padre) }
                             )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    val comerciosVisibles = remember(comerciosPadre) { comerciosPadre.take(6) }
+
+                    if (comerciosVisibles.isEmpty()) {
+                        Text(
+                            text = "No hay comercios de esta categoría en la ciudad.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
+                        )
+                    } else {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(
+                                items = comerciosVisibles,
+                                key = { it.id }
+                            ) { comercio ->
+                                ComercioMiniCard(
+                                    comercio = comercio,
+                                    onClick = { onComercioClick(comercio.id) }
+                                )
+                            }
                         }
                     }
                 }
@@ -558,7 +641,10 @@ fun CatalogScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    TextButton(onClick = onVerTodosComercios) {
+                    TextButton(
+                        onClick = { padreSeleccionado?.let(onVerSubcategoriasComercio) },
+                        enabled = padreSeleccionado != null
+                    ) {
                         Text(text = "Ver todos")
                         Icon(
                             imageVector = Icons.Filled.ChevronRight,
@@ -778,7 +864,7 @@ private fun RutasInteligentesAccessCard(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (ruta != null) "Rutas inteligentes" else "Rutas próximamente",
+                    text = if (ruta != null) "Rutas Creativas" else "Rutas próximamente",
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -797,7 +883,7 @@ private fun RutasInteligentesAccessCard(
             if (ruta != null) {
                 Icon(
                     imageVector = Icons.Filled.ChevronRight,
-                    contentDescription = "Abrir rutas inteligentes",
+                    contentDescription = "Abrir rutas creativas",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )
@@ -976,7 +1062,7 @@ private fun InfoRow(
  * Muestra solo imagen, nombre y categoría. Al tocarla abre el detalle.
  */
 @Composable
-private fun ComercioMiniCard(
+fun ComercioMiniCard(
     comercio: Comercio,
     onClick: () -> Unit
 ) {

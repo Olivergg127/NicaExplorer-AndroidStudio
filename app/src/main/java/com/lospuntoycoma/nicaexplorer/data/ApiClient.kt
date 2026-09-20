@@ -16,8 +16,9 @@ import java.net.URL
  */
 object ApiClient {
 
-    private const val CONNECT_TIMEOUT_MS = 15_000
-    private const val READ_TIMEOUT_MS = 20_000
+    private const val CONNECT_TIMEOUT_MS = 20_000
+    // El plan free de Render duerme el servicio; el primer request puede tardar en despertar.
+    private const val READ_TIMEOUT_MS = 60_000
 
     suspend fun getObject(path: String): JSONObject = withContext(Dispatchers.IO) {
         JSONObject(getText(path))

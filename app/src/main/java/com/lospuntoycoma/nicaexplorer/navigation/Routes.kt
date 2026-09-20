@@ -24,6 +24,8 @@ object Routes {
     const val ACERCA_DE = "acerca_de"
     const val COMERCIOS = "comercios"
     const val COMERCIOS_CON_FILTRO = "comercios?cityId={cityId}"
+    const val COMERCIOS_SUBCATEGORIAS = "comercios_subcategorias/{cityId}/{padre}"
+    const val COMERCIOS_SUBCATEGORIA = "comercios_subcategoria/{cityId}/{subcategoria}"
     const val COMERCIO_DETALLE = "comercio_detalle/{comercioId}"
     const val SOLICITUD_COMERCIO = "solicitud_comercio/{cityId}"
     const val RUTAS_INTELIGENTES = "rutas_inteligentes/{cityId}"
@@ -33,6 +35,10 @@ object Routes {
     fun assistant(placeId: String) = "$ASSISTANT?placeId=${Uri.encode(placeId)}"
     fun arPlaceholder(cityId: String, placeId: String) = "ar_placeholder/$cityId/$placeId"
     fun comercioDetalle(comercioId: String) = "comercio_detalle/$comercioId"
+    fun comerciosSubcategorias(cityId: String, padre: String) =
+        "comercios_subcategorias/${Uri.encode(cityId)}/${Uri.encode(padre)}"
+    fun comerciosSubcategoria(cityId: String, subcategoria: String) =
+        "comercios_subcategoria/${Uri.encode(cityId)}/${Uri.encode(subcategoria)}"
     fun comercios(cityId: String) = "comercios?cityId=$cityId"
     fun solicitudComercio(cityId: String) = "solicitud_comercio/${Uri.encode(cityId)}"
     fun rutasInteligentes(cityId: String) = "rutas_inteligentes/${Uri.encode(cityId)}"

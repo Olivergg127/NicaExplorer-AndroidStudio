@@ -302,6 +302,24 @@
 - Verificado: `categorias_lugares` = 1 raíz + 8 subcategorías; los 10 lugares quedaron con
   categoría válida (sin huérfanos).
 
+### Agent / task — "Comercios recomendados": categorías padre, minicards y subcategorías
+- Vista de ciudad: "Comercios recomendados" ahora muestra una **nube de categorías
+  superiores** (presentes en los comercios de la ciudad) y los comercios en **minicards**
+  (imagen, título y **subcategoría**), **limitados a 6**; botón "Ver todos".
+- Nuevas vistas:
+  - `ComerciosSubcategoriasScreen`: cards de subcategorías (con conteo) de la categoría
+    superior elegida.
+  - `ComerciosSubcategoriaScreen`: todos los comercios de una subcategoría.
+- Datos: se agregó `categoriaPadre` a `Comercio` y `CategoriaComercio` (modelos +
+  `ApiRepository` + `FirebaseRepository`).
+- Navegación: rutas `comercios_subcategorias` y `comercios_subcategoria`;
+  `onVerTodosComercios` de `CatalogScreen` se reemplazó por
+  `onVerSubcategoriasComercio(parent)`.
+- Verificado en el dispositivo: nube "Restaurantes y comida" → 3 minicards (Comida rápida,
+  Cafeterías, Restaurantes); "Ver todos" → cards de subcategorías; tocar "Restaurantes" →
+  "Restaurante Mi Choza".
+- Pendiente: subir los cambios de la app Android a `main`.
+
 ## 2026-09-17
 
 ### Agent / task

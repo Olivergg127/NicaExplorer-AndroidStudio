@@ -28,5 +28,7 @@ data class Place(
     val imageRes: Int? = null,
     val imageKey: String? = null,
     val imagenUrl: String? = null,
+    val latitud: Double? = null,
+    val longitud: Double? = null,
     val consejosResponsables: List<String> = emptyList()
 )

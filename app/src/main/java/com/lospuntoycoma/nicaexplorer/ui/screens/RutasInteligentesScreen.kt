@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,15 +60,22 @@ import com.lospuntoycoma.nicaexplorer.model.ReferenciaParadaRuta
 import com.lospuntoycoma.nicaexplorer.model.RutaTuristica
 import com.lospuntoycoma.nicaexplorer.ui.components.CoverImage
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
+import com.lospuntoycoma.nicaexplorer.ui.components.ParadaMapa
+import com.lospuntoycoma.nicaexplorer.ui.components.RutaMapa
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.ComerciosUiState
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.ComerciosViewModel
+import kotlinx.coroutines.launch
+
+// El mapa es el primer ítem de la lista, seguido de encabezado, inteligencia y título.
+private const val ITEMS_ANTES_DE_PARADAS = 4
 
 /**
- * Presenta la ruta predefinida de una ciudad sin GPS, mapa ni navegación.
- * Las referencias de cada parada se resuelven desde las fuentes existentes.
+ * Presenta la ruta predefinida de una ciudad con un mapa de paradas numeradas
+ * (sin GPS ni navegación en tiempo real). Las referencias de cada parada se
+ * resuelven desde las fuentes existentes.
  */
 @Composable
 fun RutasInteligentesScreen(
@@ -80,7 +89,7 @@ fun RutasInteligentesScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Rutas inteligentes",
+                title = "Rutas Creativas",
                 onBack = onBack
             )
         }
@@ -146,7 +155,7 @@ private fun RutaDisponible(
     // Se crea solo para ciudades con una ruta publicada; León y Managua no consultan Firestore.
     val comerciosViewModel: ComerciosViewModel = viewModel()
     val comerciosState by comerciosViewModel.uiState.collectAsState()
-    val lugarsPorId = remember {
+    val lugaresPorId = remember {
         SampleData.allPlaces.associateBy { lugar -> lugar.id }
     }
     val nombreCiudad = remember(ruta.cityId) {
@@ -156,11 +165,68 @@ private fun RutaDisponible(
             .orEmpty()
     }
 
+    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+
+    // Paradas con coordenadas, en el orden de la ruta, con el índice de su tarjeta
+    // en el LazyColumn para poder desplazar la lista al pulsar un pin.
+    val paradasMapa = remember(ruta, lugaresPorId, comerciosState.comercios) {
+        ruta.paradas.mapIndexedNotNull { index, referencia ->
+            val itemIndex = ITEMS_ANTES_DE_PARADAS + index
+
+            when (referencia) {
+                is ReferenciaParadaRuta.Lugar -> {
+                    val lugar = lugaresPorId[referencia.placeId]
+                        ?.takeIf { candidate ->
+                            candidate.cityId.equals(ruta.cityId, ignoreCase = true)
+                        }
+                    val latitud = lugar?.latitud
+                    val longitud = lugar?.longitud
+
+                    if (lugar != null && latitud != null && longitud != null) {
+                        ParadaMapa(index + 1, latitud, longitud, lugar.name, itemIndex)
+                    } else {
+                        null
+                    }
+                }
+
+                is ReferenciaParadaRuta.ComercioLocal -> {
+                    val comercio = comerciosState.comercios.firstOrNull { candidate ->
+                        candidate.id == referencia.comercioId &&
+                            candidate.activo &&
+                            candidate.perteneceA(cityId = ruta.cityId, nombreCiudad = nombreCiudad)
+                    }
+
+                    if (comercio != null && (comercio.latitud != 0.0 || comercio.longitud != 0.0)) {
+                        ParadaMapa(index + 1, comercio.latitud, comercio.longitud, comercio.nombre, itemIndex)
+                    } else {
+                        null
+                    }
+                }
+            }
+        }
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        item(key = "mapa_ruta") {
+            RutaMapa(
+                paradas = paradasMapa,
+                onParadaClick = { parada ->
+                    scope.launch {
+                        listState.animateScrollToItem(parada.itemIndex)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(360.dp)
+            )
+        }
+
         item {
             EncabezadoRuta(ruta = ruta)
         }
@@ -186,7 +252,7 @@ private fun RutaDisponible(
 
             when (referencia) {
                 is ReferenciaParadaRuta.Lugar -> {
-                    val lugar = lugarsPorId[referencia.placeId]
+                    val lugar = lugaresPorId[referencia.placeId]
                         ?.takeIf { candidate ->
                             candidate.cityId.equals(ruta.cityId, ignoreCase = true)
                         }
@@ -342,7 +408,7 @@ private fun InteligenciaRuta(objetivos: List<String>) {
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Cómo funciona esta ruta inteligente",
+                    text = "Cómo funciona esta ruta",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -755,3 +821,4 @@ private fun AfluenciaEstimada(afluencia: Afluencia) {
         )
     }
 }
+

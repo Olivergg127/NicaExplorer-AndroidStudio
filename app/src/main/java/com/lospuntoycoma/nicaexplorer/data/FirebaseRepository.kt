@@ -86,8 +86,10 @@ object FirebaseRepository {
                         id = doc.id,
                         nombre = doc.getString("nombre") ?: "",
                         categoria = doc.getString("categoria") ?: "",
+                        categoriaPadre = doc.getString("categoriaPadre") ?: "",
                         descripcion = doc.getString("descripcion") ?: "",
                         ciudad = doc.getString("ciudad") ?: "",
+                        cityId = doc.getString("cityId") ?: "",
                         direccion = doc.getString("direccion") ?: "",
                         horario = doc.getString("horario") ?: "",
                         imagenUrl = doc.getString("imagenUrl")
@@ -124,8 +126,10 @@ object FirebaseRepository {
                     id = doc.id,
                     nombre = doc.getString("nombre") ?: "",
                     categoria = doc.getString("categoria") ?: "",
+                    categoriaPadre = doc.getString("categoriaPadre") ?: "",
                     descripcion = doc.getString("descripcion") ?: "",
                     ciudad = doc.getString("ciudad") ?: "",
+                    cityId = doc.getString("cityId") ?: "",
                     direccion = doc.getString("direccion") ?: "",
                     horario = doc.getString("horario") ?: "",
                     imagenUrl = doc.getString("imagenUrl")

@@ -32,8 +32,9 @@ import com.lospuntoycoma.nicaexplorer.ui.screens.HistorialExploracionScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.HomeScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.LoginScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.LugaresGuardadosScreen
-import com.lospuntoycoma.nicaexplorer.ui.screens.MapaScreen
-import com.lospuntoycoma.nicaexplorer.ui.screens.MapaActivity
+import com.lospuntoycoma.nicaexplorer.ui.screens.ComerciosSubcategoriaScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.ComerciosSubcategoriasScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.MapaPrincipalScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ProfileScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RecoveryPasswordScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RegisterScreen
@@ -149,6 +150,12 @@ fun AppNavigation(navController: NavHostController) {
                 onSavedPlacesClick = {
                     navController.navigate(Routes.LUGARES_GUARDADOS)
                 },
+                onPlaceClick = { placeCityId, placeId ->
+                    navController.navigate(Routes.catalogWithPlace(placeCityId, placeId))
+                },
+                onComercioClick = { comercioId ->
+                    navController.navigate(Routes.comercioDetalle(comercioId))
+                },
                 onLogout = {
                     FirebaseRepository.signOut()
                     navController.navigate(Routes.LOGIN) {
@@ -159,11 +166,15 @@ fun AppNavigation(navController: NavHostController) {
         }
 
         composable(Routes.MAPA) {
-            val context = LocalContext.current
-            LaunchedEffect(Unit) {
-                context.startActivity(Intent(context, MapaActivity::class.java))
-                navController.popBackStack()
-            }
+            MapaPrincipalScreen(
+                onBack = { navController.popBackStack() },
+                onVerLugar = { cityId, placeId ->
+                    navController.navigate(Routes.catalogWithPlace(cityId, placeId))
+                },
+                onVerComercio = { comercioId ->
+                    navController.navigate(Routes.comercioDetalle(comercioId))
+                }
+            )
         }
 
         composable(Routes.ADMIN_PANEL) {
@@ -230,8 +241,8 @@ fun AppNavigation(navController: NavHostController) {
                 onComercioClick = { comercioId ->
                     navController.navigate(Routes.comercioDetalle(comercioId))
                 },
-                onVerTodosComercios = {
-                    navController.navigate(Routes.comercios(cityId))
+                onVerSubcategoriasComercio = { padre ->
+                    navController.navigate(Routes.comerciosSubcategorias(cityId, padre))
                 },
                 onRutasInteligentesClick = {
                     navController.navigate(Routes.rutasInteligentes(cityId))
@@ -262,6 +273,44 @@ fun AppNavigation(navController: NavHostController) {
                 onBack = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(
+            route = Routes.COMERCIOS_SUBCATEGORIAS,
+            arguments = listOf(
+                navArgument("cityId") { type = NavType.StringType },
+                navArgument("padre") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val subCityId = backStackEntry.arguments?.getString("cityId") ?: ""
+            val padre = backStackEntry.arguments?.getString("padre") ?: ""
+            ComerciosSubcategoriasScreen(
+                cityId = subCityId,
+                padre = padre,
+                onSubcategoriaClick = { subcategoria ->
+                    navController.navigate(Routes.comerciosSubcategoria(subCityId, subcategoria))
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Routes.COMERCIOS_SUBCATEGORIA,
+            arguments = listOf(
+                navArgument("cityId") { type = NavType.StringType },
+                navArgument("subcategoria") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val subCityId = backStackEntry.arguments?.getString("cityId") ?: ""
+            val subcategoria = backStackEntry.arguments?.getString("subcategoria") ?: ""
+            ComerciosSubcategoriaScreen(
+                cityId = subCityId,
+                subcategoria = subcategoria,
+                onComercioClick = { comercioId ->
+                    navController.navigate(Routes.comercioDetalle(comercioId))
+                },
+                onBack = { navController.popBackStack() }
             )
         }
 

@@ -55,7 +55,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.lospuntoycoma.nicaexplorer.model.Comercio
+import com.lospuntoycoma.nicaexplorer.model.TipoValoracion
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
+import com.lospuntoycoma.nicaexplorer.ui.components.ValoracionRow
 import com.lospuntoycoma.nicaexplorer.ui.components.EmptyState
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -194,6 +196,14 @@ fun ComercioDetalleScreen(
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                                 )
                             }
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            ValoracionRow(
+                                tipo = TipoValoracion.COMERCIO,
+                                refId = comercio.id,
+                                cityId = comercio.cityId
+                            )
 
                             if (comercio.tieneWhatsapp) {
                                 Spacer(modifier = Modifier.height(12.dp))

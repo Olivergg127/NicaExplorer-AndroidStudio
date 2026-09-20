@@ -1,6 +1,7 @@
 package com.lospuntoycoma.nicaexplorer.data
 
 import com.lospuntoycoma.nicaexplorer.model.Afluencia
+import com.lospuntoycoma.nicaexplorer.model.CategoriaComercio
 import com.lospuntoycoma.nicaexplorer.model.City
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.model.Place
@@ -49,6 +50,10 @@ object ApiRepository {
         toComercio(item.optString("id", id), document) ?: error("Comercio no encontrado")
     }
 
+    suspend fun getCategoriasComercios(): List<CategoriaComercio> =
+        ApiClient.getItems("/api/v1/categorias_comercios")
+            .mapNotNull { (id, document) -> toCategoriaComercio(id, document) }
+
     // ---- Mapeo JSON -> modelos ----
 
     private fun toCity(id: String, d: JSONObject): City? {
@@ -94,6 +99,8 @@ object ApiRepository {
             gradientStart = d.optLong("gradientStart", DEFAULT_GRADIENT_START),
             gradientEnd = d.optLong("gradientEnd", DEFAULT_GRADIENT_END),
             imagenUrl = d.optString("imagenUrl").takeIf { it.isNotBlank() },
+            latitud = d.optNullableDouble("latitud"),
+            longitud = d.optNullableDouble("longitud"),
             consejosResponsables = d.optJSONArray("consejosResponsables").toStringList()
         )
     }
@@ -121,8 +128,10 @@ object ApiRepository {
         id = id,
         nombre = d.optString("nombre", ""),
         categoria = d.optString("categoria", ""),
+        categoriaPadre = d.optString("categoriaPadre", ""),
         descripcion = d.optString("descripcion", ""),
         ciudad = d.optString("ciudad", ""),
+        cityId = d.optString("cityId", ""),
         direccion = d.optString("direccion", ""),
         horario = d.optString("horario", ""),
         imagenUrl = d.optString("imagenUrl").ifBlank { d.optString("imagenurl") },
@@ -133,6 +142,20 @@ object ApiRepository {
         tieneWhatsapp = d.optBoolean("tieneWhatsapp", false),
         activo = d.optBoolean("activo", false)
     )
+
+    private fun toCategoriaComercio(id: String, d: JSONObject): CategoriaComercio? {
+        if (!d.optBoolean("activo", true)) return null
+        val nombre = d.optString("nombre", "").trim()
+        if (nombre.isBlank()) return null
+
+        return CategoriaComercio(
+            id = id,
+            nombre = nombre,
+            categoriaPadre = d.optString("categoriaPadre", "").trim(),
+            orden = d.optInt("orden", 0),
+            activo = true
+        )
+    }
 
     private fun parseReferenciaParada(value: String): ReferenciaParadaRuta? {
         val trimmed = value.trim()
