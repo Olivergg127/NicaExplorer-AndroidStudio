@@ -4,6 +4,40 @@
 > cambios importantes. No sustituye al historial de Git; lo complementa con contexto.
 > Formato: fecha, objetivo, archivos, cambios, build, resultado, riesgos y pendientes.
 
+## 2026-09-20
+
+### Roles y permisos — Nuevo rol Editor + autorización por rol en el panel web
+- Objetivo: implementar 4 roles (ADMIN, EDITOR, AUDITOR, USUARIO) con matriz de permisos
+  por módulo (C/L/M/E), aplicada en backend/UI sin reemplazar la autenticación existente.
+  El rol USUARIO no accede al panel.
+- Archivos nuevos:
+  - `nicaexp_web/app/Libraries/PanelPermissions.php` — matriz rol/módulo/operación.
+  - `nicaexp_web/app/Filters/PanelPermissionFilter.php` — autoriza cada acción del panel.
+- Archivos actualizados (backend):
+  - `Panel/Auth.php` (login con cuentas Firebase vía Identity Toolkit + rol desde Firestore;
+    admin de `.env` como respaldo), `Panel/Dashboard.php` (resumen filtrado),
+    `Panel/Resources.php` (bloquea borrar el propio usuario o al último ADMIN),
+    `Config/Nica.php` (`webApiKey`), `Config/Filters.php`, `Config/Routes.php`,
+    `Config/NicaResources.php` (EDITOR en el enum de roles), `Views/layout/panel.php`,
+    `Views/panel/{resource,dashboard,login}.php`, `public/assets/panel.js`,
+    `docker/write-env.php` (`nica.webApiKey`).
+- Archivos actualizados (app): `model/UserRole.kt` (EDITOR), `ui/screens/AdminPanelScreen.kt`,
+  `ui/screens/ProfileScreen.kt`, `ui/viewmodels/UserViewModel.kt`.
+- Otros: `firestore.rules` (EDITOR como rol asignable).
+- Hallazgos:
+  - CI4 no acepta filtros separados por coma en una ruta; debe usarse un array
+    (`['filter' => ['panelauth', 'panelcan']]`) o lanza `FilterException`.
+  - Firestore rechaza ids de documento que empiezan por `__` (reservados).
+- Build/pruebas:
+  - `php -l` en todos los PHP y `node --check panel.js` — OK.
+  - Matriz de permisos verificada con script (24 aserciones, todas OK).
+  - En Render (deploy `aa027d5`): 20/20 pruebas con un usuario Firebase temporal
+    (EDITOR/AUDITOR/USUARIO) y con el admin de `.env`; usuario temporal eliminado al final.
+  - `.\gradlew.bat :app:assembleDebug` — BUILD SUCCESSFUL.
+- Riesgos/pendientes:
+  - No existe bitácora de auditoría (el Auditor no tiene registros que revisar).
+  - `solicitudes_comercios` se asocia a los permisos del módulo `comercios` (decisión).
+
 ## 2026-09-19
 
 ### Agent / task — Preparar el backend para desplegar en Render + Firebase Storage

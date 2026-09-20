@@ -60,11 +60,15 @@
   `latitud`/`longitud`.
 
 ### Administración y roles (P2)
-- Roles `USUARIO`, `ADMIN`, `AUDITOR` (`UserRole`).
+- Roles `USUARIO`, `EDITOR`, `ADMIN`, `AUDITOR` (`UserRole`).
 - Panel con contadores, búsqueda, filtros y cambio de rol confirmado por ADMIN
   (`AdminPanelScreen`, `getAllUsers`, `updateUserRole`).
-- Guardas de acceso en `AppNavigation` (rojo si no es ADMIN/AUDITOR) y reglas en
-  `firestore.rules`.
+- Guardas de acceso en `AppNavigation` (solo ADMIN/AUDITOR; el Editor no administra
+  usuarios) y reglas en `firestore.rules`.
+- **Panel web con permisos por rol (2026-09-20):** login con cuentas Firebase (rol leído
+  de Firestore) además del admin de respaldo en `.env`; matriz `PanelPermissions`
+  (C/L/M/E por módulo) aplicada con `PanelPermissionFilter` en todas las rutas del panel;
+  UI (navegación y botones) filtrada por permisos. El rol `USUARIO` no accede al panel.
 
 ### Mapa (P1)
 - **Mapa principal** (`MapaPrincipalScreen`, Compose + MapLibre `textureMode` con teselas
