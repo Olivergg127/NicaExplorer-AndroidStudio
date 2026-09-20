@@ -6,6 +6,17 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->get('/', static fn () => redirect()->to(site_url('panel')));
 
+// TEMPORAL (diagnóstico): comprobar carga de clases de permisos.
+$routes->get('diag', static function () {
+    return service('response')->setJSON([
+        'filter' => class_exists(\App\Filters\PanelPermissionFilter::class),
+        'perm'   => \App\Libraries\PanelPermissions::can('EDITOR', 'lugares', 'L'),
+        'panel'  => \App\Libraries\PanelPermissions::canAccessPanel('EDITOR'),
+        'php'    => PHP_VERSION,
+        'logs'   => array_map('basename', array_slice(glob(WRITEPATH . 'logs/log-*.php') ?: [], -2)),
+    ]);
+});
+
 // ---------------------------------------------------------------------
 // API REST v1 (protegida con API key: header X-API-KEY)
 // ---------------------------------------------------------------------

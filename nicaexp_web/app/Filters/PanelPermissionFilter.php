@@ -30,6 +30,19 @@ class PanelPermissionFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
+        try {
+            return $this->authorize($request);
+        } catch (\Throwable $e) {
+            return service('response')->setStatusCode(500)->setJSON([
+                'diag_error' => $e->getMessage(),
+                'diag_at'    => $e->getFile() . ':' . $e->getLine(),
+                'diag_trace' => array_slice(explode("\n", $e->getTraceAsString()), 0, 6),
+            ]);
+        }
+    }
+
+    private function authorize(RequestInterface $request)
+    {
         if (session()->get('nica_admin') !== true) {
             // PanelAuthFilter ya se encarga; aquí solo se evita el acceso anónimo.
             return $this->deny($request, 401, 'Sesión expirada. Vuelve a iniciar sesión.');
