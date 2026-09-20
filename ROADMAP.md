@@ -74,6 +74,13 @@
 - **Mapa principal** (`MapaPrincipalScreen`, Compose + MapLibre `textureMode` con teselas
   OSM): pines de **lugares** y **comercios**, **selector de ciudad**, filtro por tipo
   (Todos/Lugares/Comercios) y botón "Inicio".
+- **Rediseño "Descubre a tu alrededor" (2026-09-20):** encabezado con ciudad + campana,
+  buscador con filtro (Todo/Lugares/Comercios), rejilla de **categorías** (tomadas de
+  `categoriaPadre` de los comercios, con ícono/color por tipo), mapa con esquinas
+  redondeadas y botones flotantes (navegación, capas, mi ubicación). Los pines de
+  comercios se **colorean según su categoría**; se agregó el punto azul de ubicación
+  (`MapaMarkerFactory.ubicacionIcon`). Probado en dispositivo (diseño); el color por
+  categoría quedó compilando a la espera de verificación visual.
 - **Detección de ciudad con GPS** (`LocationManager`, sin dependencia nueva): el chip
   "Mi ubicación" ubica la ciudad conocida más cercana (≤ 25 km) y centra el mapa.
 - Coordenadas de ciudades: `php spark nica:seed-coordenadas-ciudades` (Juigalpa, León,

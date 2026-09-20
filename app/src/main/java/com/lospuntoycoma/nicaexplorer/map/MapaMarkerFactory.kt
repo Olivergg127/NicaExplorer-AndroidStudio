@@ -39,6 +39,40 @@ object MapaMarkerFactory {
     fun puntoIcon(context: Context, color: Int): Icon =
         IconFactory.getInstance(context).fromBitmap(puntoBitmap(context, color))
 
+    /**
+     * Punto azul con halo translúcido para la ubicación actual del usuario.
+     */
+    fun ubicacionIcon(context: Context): Icon =
+        IconFactory.getInstance(context).fromBitmap(ubicacionBitmap(context))
+
+    private fun ubicacionBitmap(context: Context): Bitmap {
+        val size = (38 * context.resources.displayMetrics.density).toInt().coerceAtLeast(38)
+        val centra = size / 2f
+
+        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+
+        val halo = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = 0x332196F3
+            style = Paint.Style.FILL
+        }
+        val borde = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+            style = Paint.Style.STROKE
+            strokeWidth = size * 0.055f
+        }
+        val relleno = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = 0xFF2196F3.toInt()
+            style = Paint.Style.FILL
+        }
+
+        canvas.drawCircle(centra, centra, centra * 0.96f, halo)
+        canvas.drawCircle(centra, centra, centra * 0.40f, relleno)
+        canvas.drawCircle(centra, centra, centra * 0.40f, borde)
+
+        return bitmap
+    }
+
     private fun puntoBitmap(context: Context, color: Int): Bitmap {
         val size = (34 * context.resources.displayMetrics.density).toInt().coerceAtLeast(34)
         val centra = size / 2f

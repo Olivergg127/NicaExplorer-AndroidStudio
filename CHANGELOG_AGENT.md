@@ -6,6 +6,23 @@
 
 ## 2026-09-20
 
+### App — Rediseño de la vista de mapa ("EjemploVista")
+- Objetivo: rehacer la vista del mapa basándose en la imagen `EjemploVista.jpeg`
+  (estructura y estilo).
+- Archivos:
+  - `app/.../ui/screens/MapaPrincipalScreen.kt` — reescrita: encabezado (ciudad + campana),
+    título/subtítulo, buscador con menú de filtros (Todo/Lugares/Comercios), rejilla de
+    categorías (desde `categoriaPadre` de los comercios, con ícono/color por tipo), mapa
+    con esquinas redondeadas y botones flotantes (navegación, capas, mi ubicación).
+  - `app/.../map/MapaMarkerFactory.kt` — nuevo `ubicacionIcon` (punto azul con halo).
+  - Pines de comercios **coloreados por categoría** (`MapaPin.color`).
+- Build/pruebas:
+  - `.\gradlew.bat :app:assembleDebug` — BUILD SUCCESSFUL.
+  - Verificado en dispositivo el diseño, el selector de ciudad, el menú de filtros y el
+    filtrado por categoría (Restaurantes). El color por categoría quedó compilando; no se
+    pudo verificar visualmente porque el dispositivo se desconectó.
+- Pendiente: clustering; lugares sin coordenadas no aparecen.
+
 ### Roles y permisos — Nuevo rol Editor + autorización por rol en el panel web
 - Objetivo: implementar 4 roles (ADMIN, EDITOR, AUDITOR, USUARIO) con matriz de permisos
   por módulo (C/L/M/E), aplicada en backend/UI sin reemplazar la autenticación existente.
