@@ -219,7 +219,17 @@
         }
 
         function stopOptions(tipo) {
-            return (cfg.refs && cfg.refs[tipo]) ? cfg.refs[tipo] : [];
+            const options = (cfg.refs && cfg.refs[tipo]) ? cfg.refs[tipo] : [];
+            const cityId = ($form.find('[name="cityId"]').val() || '').toString().trim();
+
+            // Las paradas solo ofrecen lugares/comercios de la ciudad de la ruta.
+            if (!cityId) {
+                return options;
+            }
+
+            return options.filter(function (item) {
+                return !item.cityId || item.cityId === cityId;
+            });
         }
 
         function refreshStopRefs($row) {
@@ -631,14 +641,16 @@
             refreshDependentSelects($(this).attr('name'));
         });
 
-        // Al elegir una ciudad, refleja su nombre en el campo de texto visible.
+        // Al elegir una ciudad, refleja su nombre y filtra las paradas de la ruta.
         $form.on('change', 'select[name="cityId"]', function () {
             const $ciudad = $form.find('[name="ciudad"]');
-            if (!$ciudad.length || !$(this).val()) {
-                return;
+            if ($ciudad.length && $(this).val()) {
+                $ciudad.val($(this).find('option:selected').text().trim());
             }
 
-            $ciudad.val($(this).find('option:selected').text().trim());
+            $form.find('.nica-stop-tipo').each(function () {
+                refreshStopRefs($(this).closest('.nica-item'));
+            });
         });
 
         // ------------------------------------------------------------------

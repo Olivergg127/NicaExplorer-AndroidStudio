@@ -230,12 +230,14 @@ class Resources extends BaseController
                     $result['stops']['lugar'][] = [
                         'id'     => (string) $row['id'],
                         'nombre' => trim((string) ($row['nombre'] ?? $row['id'])),
+                        'cityId' => trim((string) ($row['cityId'] ?? '')),
                     ];
                 }
                 foreach (ResourceManager::repository('comercios')->tableRows('', 1000) as $row) {
                     $result['stops']['comercio'][] = [
                         'id'     => (string) $row['id'],
                         'nombre' => trim((string) ($row['nombre'] ?? $row['id'])),
+                        'cityId' => trim((string) ($row['cityId'] ?? '')),
                     ];
                 }
             } catch (Throwable) {
