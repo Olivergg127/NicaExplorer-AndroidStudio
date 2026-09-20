@@ -78,6 +78,7 @@ fun AdminPanelScreen(userViewModel: UserViewModel, onBack: () -> Unit) {
                     ) {
                         RoleCount("Todos", users.size, filter == null) { filter = null }
                         RoleCount("Usuario", users.count { it.rol == UserRole.USUARIO }, filter == UserRole.USUARIO) { filter = UserRole.USUARIO }
+                        RoleCount("Editor", users.count { it.rol == UserRole.EDITOR }, filter == UserRole.EDITOR) { filter = UserRole.EDITOR }
                         RoleCount("Admin", users.count { it.rol == UserRole.ADMIN }, filter == UserRole.ADMIN) { filter = UserRole.ADMIN }
                         RoleCount("Auditor", users.count { it.rol == UserRole.AUDITOR }, filter == UserRole.AUDITOR) { filter = UserRole.AUDITOR }
                     }
@@ -166,6 +167,7 @@ private fun UserItem(user: UserProfile, canEditRoles: Boolean, onRoleChange: () 
 
 private fun UserRole.displayName() = when (this) {
     UserRole.USUARIO -> "Usuario"
+    UserRole.EDITOR -> "Editor"
     UserRole.ADMIN -> "Administrador"
     UserRole.AUDITOR -> "Auditor"
 }

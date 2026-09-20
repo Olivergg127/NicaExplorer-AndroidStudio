@@ -3,6 +3,7 @@
 namespace App\Controllers\Panel;
 
 use App\Controllers\BaseController;
+use App\Libraries\PanelPermissions;
 use App\Libraries\ResourceManager;
 use Throwable;
 
@@ -14,8 +15,14 @@ class Dashboard extends BaseController
     public function index()
     {
         $summary = [];
+        $rol     = (string) (session()->get('nica_admin_role') ?? PanelPermissions::ROLE_ADMIN);
 
         foreach (ResourceManager::all() as $key => $definition) {
+            // Solo se resumen los módulos que el rol puede consultar.
+            if (! PanelPermissions::can($rol, $key, 'L')) {
+                continue;
+            }
+
             $count = null;
 
             try {

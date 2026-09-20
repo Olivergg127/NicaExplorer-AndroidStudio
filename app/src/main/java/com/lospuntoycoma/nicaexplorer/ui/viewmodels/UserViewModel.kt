@@ -40,5 +40,6 @@ class UserViewModel : ViewModel() {
     }
 
     fun isAdmin(): Boolean = _userProfile.value?.rol == UserRole.ADMIN
+    fun isEditor(): Boolean = _userProfile.value?.rol == UserRole.EDITOR
     fun isAuditor(): Boolean = _userProfile.value?.rol == UserRole.AUDITOR
 }

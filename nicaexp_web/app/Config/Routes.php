@@ -28,7 +28,7 @@ $routes->get('panel/login', 'Panel\Auth::loginForm');
 $routes->post('panel/login', 'Panel\Auth::attempt', ['filter' => 'csrf']);
 $routes->get('panel/logout', 'Panel\Auth::logout');
 
-$routes->group('panel', ['filter' => 'panelauth'], static function (RouteCollection $routes): void {
+$routes->group('panel', ['filter' => 'panelauth,panelcan'], static function (RouteCollection $routes): void {
     $routes->get('', 'Panel\Dashboard::index');
 
     $routes->post('upload', 'Panel\Resources::upload', ['filter' => 'csrf']);

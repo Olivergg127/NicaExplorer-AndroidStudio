@@ -67,6 +67,7 @@ $config = [
     'nica.githubPath'               => nica_env('nica_githubPath', 'uploads'),
     'nica.publicBaseUrl'            => nica_env('nica_publicBaseUrl', $baseUrl),
     'nica.apiKey'                   => nica_env('nica_apiKey'),
+    'nica.webApiKey'                => nica_env('nica_webApiKey'),
     'nica.adminUser'                => nica_env('nica_adminUser', 'admin'),
     'nica.adminPassword'            => nica_env('nica_adminPassword'),
 ];

@@ -94,7 +94,7 @@ service cloud.firestore {
       allow update: if isAdmin()
         && request.auth.uid != uid
         && request.resource.data.uid == resource.data.uid
-        && request.resource.data.rol in ['ADMIN', 'USUARIO', 'AUDITOR']
+        && request.resource.data.rol in ['ADMIN', 'USUARIO', 'EDITOR', 'AUDITOR']
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rol']);
 
       allow update: if signedIn()

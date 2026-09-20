@@ -53,9 +53,9 @@
             <?= csrf_field() ?>
 
             <div class="mb-3">
-                <label class="form-label" for="nica-username">Usuario</label>
+                <label class="form-label" for="nica-username">Usuario o correo</label>
                 <input type="text" name="username" id="nica-username" class="form-control"
-                       placeholder="admin" required autofocus>
+                       placeholder="admin o tu correo" required autofocus>
             </div>
 
             <div class="mb-4">

@@ -129,6 +129,7 @@ fun ProfileScreen(
                                 .background(
                                     color = when (rol) {
                                         com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN -> Color(0xFFFFD700)
+                                        com.lospuntoycoma.nicaexplorer.model.UserRole.EDITOR -> Color(0xFF2EC4B6)
                                         com.lospuntoycoma.nicaexplorer.model.UserRole.AUDITOR -> Color(0xFFADD8E6)
                                         else -> Color.White.copy(alpha = 0.3f)
                                     },

@@ -36,6 +36,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'apikey'        => \App\Filters\ApiKeyFilter::class,
         'panelauth'     => \App\Filters\PanelAuthFilter::class,
+        'panelcan'      => \App\Filters\PanelPermissionFilter::class,
     ];
 
     /**

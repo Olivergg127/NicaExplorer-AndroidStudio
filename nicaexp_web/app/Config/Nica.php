@@ -57,7 +57,13 @@ class Nica extends BaseConfig
     /** API key exigida por los endpoints /api/v1/* (header X-API-KEY). */
     public string $apiKey = '';
 
-    /** Credenciales del panel web. */
+    /**
+     * Web API key de Firebase (Identity Toolkit). Permite validar cuentas de
+     * la app en el login del panel y leer su rol desde Firestore.
+     */
+    public string $webApiKey = '';
+
+    /** Credenciales del panel web (administrador de respaldo). */
     public string $adminUser = 'admin';
 
     public string $adminPassword = '';

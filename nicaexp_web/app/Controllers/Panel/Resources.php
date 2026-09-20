@@ -102,6 +102,11 @@ class Resources extends BaseController
         $repository = $this->repository($resource);
         $id         = trim((string) $this->request->getPost('id'));
 
+        $blocked = $this->userDeletionBlockReason($resource, $id);
+        if ($blocked !== null) {
+            return $this->response->setStatusCode(409)->setJSON(['error' => $blocked]);
+        }
+
         if ($id === '' || ! $repository->delete($id)) {
             return $this->response->setStatusCode(404)->setJSON(['error' => 'No existe el registro.']);
         }
@@ -180,6 +185,43 @@ class Resources extends BaseController
         }
 
         return $base . '/uploads/' . $name;
+    }
+
+    /**
+     * Evita que el panel elimine al usuario en sesión o al último administrador.
+     */
+    private function userDeletionBlockReason(string $resource, string $id): ?string
+    {
+        if ($resource !== 'usuarios' || $id === '') {
+            return null;
+        }
+
+        $sessionUid = trim((string) (session()->get('nica_admin_uid') ?? ''));
+        if ($sessionUid !== '' && $sessionUid === $id) {
+            return 'No puedes eliminar tu propia cuenta.';
+        }
+
+        try {
+            $repository = $this->repository('usuarios');
+            $target     = $repository->find($id);
+
+            if ($target !== null && trim((string) ($target['data']['rol'] ?? '')) === 'ADMIN') {
+                $admins = 0;
+                foreach ($repository->all('', 1000) as $row) {
+                    if (trim((string) ($row['data']['rol'] ?? '')) === 'ADMIN') {
+                        $admins++;
+                    }
+                }
+
+                if ($admins <= 1) {
+                    return 'No puedes eliminar al último administrador del sistema.';
+                }
+            }
+        } catch (Throwable) {
+            return null;
+        }
+
+        return null;
     }
 
     private function repository(string $resource): FirestoreRepository

@@ -33,6 +33,9 @@
 <body class="layout-fixed sidebar-expand-lg">
 <?php
 $adminUser   = (string) (session()->get('nica_admin_user') ?? 'admin');
+$adminName   = (string) (session()->get('nica_admin_name') ?? $adminUser);
+$adminRole   = (string) (session()->get('nica_admin_role') ?? \App\Libraries\PanelPermissions::ROLE_ADMIN);
+$roleLabel   = \App\Libraries\PanelPermissions::roleLabel($adminRole);
 $current     = $active ?? '';
 $apiHealth   = site_url('api/v1/health?api_key=' . rawurlencode((string) config('Nica')->apiKey));
 $navGroups   = [
@@ -41,10 +44,15 @@ $navGroups   = [
     'Ecosistema local' => ['comercios', 'categorias_comercios', 'solicitudes_comercios'],
     'Administración'   => ['usuarios'],
 ];
-$navItems = [
-    'dashboard' => ['label' => 'Dashboard', 'icon' => 'bi-grid-1x2', 'url' => site_url('panel')],
-];
+$navItems = [];
+if (\App\Libraries\PanelPermissions::can($adminRole, 'dashboard', 'L')) {
+    $navItems['dashboard'] = ['label' => 'Dashboard', 'icon' => 'bi-grid-1x2', 'url' => site_url('panel')];
+}
 foreach (\App\Libraries\ResourceManager::all() as $navKey => $navResource) {
+    // Solo se muestran los módulos que el rol puede consultar.
+    if (! \App\Libraries\PanelPermissions::can($adminRole, $navKey, 'L')) {
+        continue;
+    }
     $navItems[$navKey] = [
         'label' => $navResource['label'],
         'icon'  => $navResource['icon'] ?? 'bi-collection',
@@ -92,11 +100,16 @@ if ($navItems !== []) {
                 </a>
                 <div class="dropdown">
                     <button class="nica-user" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="nica-user-avatar"><?= esc(mb_substr($adminUser, 0, 1)) ?></span>
-                        <span class="nica-user-name"><?= esc($adminUser) ?></span>
+                        <span class="nica-user-avatar"><?= esc(mb_substr($adminName, 0, 1)) ?></span>
+                        <span class="nica-user-name"><?= esc($adminName) ?></span>
                         <i class="bi bi-chevron-down small nica-text-faint"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="px-3 py-2">
+                            <div class="small fw-semibold"><?= esc($adminName) ?></div>
+                            <div class="small nica-text-faint"><?= esc($roleLabel) ?></div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item" href="<?= site_url('panel/logout') ?>">
                                 <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
@@ -142,8 +155,8 @@ if ($navItems !== []) {
 
             <div class="nica-sidebar-footer">
                 <div class="nica-user">
-                    <span class="nica-user-avatar"><?= esc(mb_substr($adminUser, 0, 1)) ?></span>
-                    <span class="nica-user-name"><?= esc($adminUser) ?></span>
+                    <span class="nica-user-avatar"><?= esc(mb_substr($adminName, 0, 1)) ?></span>
+                    <span class="nica-user-name" title="<?= esc($roleLabel) ?>"><?= esc($adminName) ?></span>
                     <a class="nica-icon-btn" href="<?= site_url('panel/logout') ?>" title="Cerrar sesión" aria-label="Cerrar sesión">
                         <i class="bi bi-box-arrow-right"></i>
                     </a>
@@ -190,6 +203,14 @@ if ($navItems !== []) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="<?= base_url('assets/theme.js') ?>"></script>
+    <script>
+        window.NICA_USER = <?= json_encode([
+            'role'        => $adminRole,
+            'roleLabel'   => $roleLabel,
+            'permissions' => \App\Libraries\PanelPermissions::forFrontend($adminRole),
+            'canUpload'   => \App\Libraries\PanelPermissions::canUpload($adminRole),
+        ], JSON_UNESCAPED_UNICODE) ?>;
+    </script>
     <script src="<?= base_url('assets/panel.js') ?>"></script>
 <?= $this->renderSection('scripts') ?>
 </body>

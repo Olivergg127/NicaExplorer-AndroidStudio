@@ -8,6 +8,13 @@ $hasLocation = $hasLocation ?? false;
 $ubicacionNames = ['latitud', 'longitud', 'ciudad', 'cityId', 'direccion', 'departamento'];
 $estadoNames    = ['activo', 'orden', 'estado', 'tieneWhatsapp', 'rol', 'destacado', 'publicado'];
 
+$rol            = (string) (session()->get('nica_admin_role') ?? \App\Libraries\PanelPermissions::ROLE_ADMIN);
+$ops            = \App\Libraries\PanelPermissions::ops($rol, (string) $resource);
+$canCreate      = in_array('C', $ops, true);
+$canEdit        = in_array('M', $ops, true);
+$canDelete      = in_array('E', $ops, true);
+$canUpload      = \App\Libraries\PanelPermissions::canUpload($rol);
+
 $blocks = [
     'Identificador'        => [],
     'Información básica'   => [],
@@ -49,9 +56,11 @@ foreach ($fields as $field) {
         <?php endif; ?>
     </div>
     <div class="nica-page-actions">
-        <button type="button" class="btn btn-primary" id="nica-btn-new">
-            <i class="bi bi-plus-lg"></i> Nuevo <?= esc($singular) ?>
-        </button>
+        <?php if ($canCreate): ?>
+            <button type="button" class="btn btn-primary" id="nica-btn-new">
+                <i class="bi bi-plus-lg"></i> Nuevo <?= esc($singular) ?>
+            </button>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -131,11 +140,13 @@ foreach ($fields as $field) {
                                             <div class="nica-image-field">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control" name="<?= esc($name) ?>" id="<?= esc($id) ?>"
-                                                           placeholder="https://... o sube un archivo" <?= $req ? 'required' : '' ?>>
-                                                    <button type="button" class="btn btn-outline-secondary nica-image-choose"
-                                                            data-target="<?= esc($id) ?>">
-                                                        <i class="bi bi-upload"></i> Subir
-                                                    </button>
+                                                           placeholder="<?= $canUpload ? 'https://... o sube un archivo' : 'https://...' ?>" <?= $req ? 'required' : '' ?>>
+                                                    <?php if ($canUpload): ?>
+                                                        <button type="button" class="btn btn-outline-secondary nica-image-choose"
+                                                                data-target="<?= esc($id) ?>">
+                                                            <i class="bi bi-upload"></i> Subir
+                                                        </button>
+                                                    <?php endif; ?>
                                                 </div>
                                                 <input type="file" class="d-none nica-image-file" accept="image/*"
                                                        data-target="<?= esc($id) ?>">
@@ -212,6 +223,12 @@ window.NICA_RESOURCE = <?= json_encode([
     'fields'      => $fields,
     'references'  => $references ?? [],
     'refs'        => $refs ?? [],
+    'permissions' => [
+        'create' => $canCreate,
+        'edit'   => $canEdit,
+        'delete' => $canDelete,
+        'upload' => $canUpload,
+    ],
     'urls'        => [
         'data'   => site_url('panel/' . $resource . '/data'),
         'save'   => site_url('panel/' . $resource . '/save'),

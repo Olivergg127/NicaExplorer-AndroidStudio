@@ -238,7 +238,7 @@ class NicaResources
                     'uid'           => ['label' => 'uid', 'type' => 'string', 'required' => true, 'list' => true],
                     'nombre'        => ['label' => 'Nombre', 'type' => 'string', 'required' => true, 'list' => true],
                     'correo'        => ['label' => 'Correo', 'type' => 'email', 'list' => true],
-                    'rol'           => ['label' => 'Rol', 'type' => 'enum', 'list' => true, 'options' => ['USUARIO', 'ADMIN', 'AUDITOR'], 'default' => 'USUARIO'],
+                    'rol'           => ['label' => 'Rol', 'type' => 'enum', 'list' => true, 'options' => ['USUARIO', 'ADMIN', 'EDITOR', 'AUDITOR'], 'default' => 'USUARIO'],
                     'fechaRegistro' => ['label' => 'Fecha de registro', 'type' => 'timestamp', 'list' => true, 'server' => true],
                 ],
             ],

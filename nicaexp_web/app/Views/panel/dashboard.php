@@ -48,8 +48,9 @@ $apiHealth   = site_url('api/v1/health?api_key=' . rawurlencode((string) config(
 </div>
 
 <div class="row g-4 nica-section">
+    <?php $solicitudes = $byKey['solicitudes_comercios'] ?? null; ?>
+    <?php if ($solicitudes !== null): ?>
     <div class="col-lg-7">
-        <?php $solicitudes = $byKey['solicitudes_comercios'] ?? null; ?>
         <div class="nica-panel h-100 d-flex flex-column">
             <div class="nica-panel-head">
                 <div class="d-flex align-items-center gap-3">
@@ -83,6 +84,7 @@ $apiHealth   = site_url('api/v1/health?api_key=' . rawurlencode((string) config(
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <div class="col-lg-5">
         <div class="nica-panel h-100 d-flex flex-column">

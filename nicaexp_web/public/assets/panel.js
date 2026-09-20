@@ -4,6 +4,8 @@
 
     $(function () {
         const cfg = window.NICA_RESOURCE;
+const canEdit = !!(cfg && cfg.permissions && cfg.permissions.edit);
+const canDelete = !!(cfg && cfg.permissions && cfg.permissions.delete);
         if (!cfg || !document.getElementById('nica-table')) {
             return;
         }
@@ -96,9 +98,17 @@
                     orderable: false,
                     searchable: false,
                     className: 'text-end text-nowrap',
-                    render: (id) => ''
-                        + '<button type="button" class="nica-icon-btn nica-edit" data-id="' + escapeHtml(id) + '" title="Editar" aria-label="Editar"><i class="bi bi-pencil"></i></button>'
-                        + '<button type="button" class="nica-icon-btn nica-delete" data-id="' + escapeHtml(id) + '" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>',
+                    visible: canEdit || canDelete,
+                    render: (id) => {
+                        let html = '';
+                        if (canEdit) {
+                            html += '<button type="button" class="nica-icon-btn nica-edit" data-id="' + escapeHtml(id) + '" title="Editar" aria-label="Editar"><i class="bi bi-pencil"></i></button>';
+                        }
+                        if (canDelete) {
+                            html += '<button type="button" class="nica-icon-btn nica-delete" data-id="' + escapeHtml(id) + '" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>';
+                        }
+                        return html;
+                    },
                 },
             ],
             order: [[0, 'asc']],
