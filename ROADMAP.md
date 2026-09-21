@@ -28,6 +28,9 @@
 - `UnityArActivity` + contrato de Intent (`cityId`, `monumentId`, `escena=visor3d`).
 - Mapeo `monumentId` → prefab vía Unity (`Visor3DController`).
 - Salida con `moveTaskToBack` sin destruir el motor; reinicio por `onNewIntent`.
+- **"Los Motivos del Lobo (Escultura)" (León)** integrado: `los_motivos_del_lobo_escultura`
+  → prefab `PazHermanoLobo`, y `modeloUnity = PazHermanoLobo` registrado en Firestore.
+  Pendiente: probar el botón "Ver en 3D" en un dispositivo real.
 
 ### Asistente Itzae (P1)
 - Chat con Firebase AI Logic (`gemini-3.5-flash-lite`), `GeminiRepository`.

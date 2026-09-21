@@ -43,6 +43,10 @@ Las únicas ciudades vigentes son Juigalpa, León y Managua. El catálogo contie
 | Managua | Estatua de Rubén Darío | ruben_dario |
 | Managua | Campana de la Paz | campana_de_la_paz |
 
+> Nota: "Los Motivos del Lobo (Escultura)" (León, `los_motivos_del_lobo_escultura`) ya está
+> registrado en Firestore con `modeloUnity = PazHermanoLobo` y el modelo integrado en el
+> visor 3D.
+
 ## Tecnologías
 
 - Android Studio, Kotlin, Jetpack Compose y Material 3.
@@ -113,6 +117,7 @@ Visor3DController relee el Intent en cada entrada, destruye la instancia anterio
 | arbol_vida | ArbolDeLaVida |
 | ruben_dario | EstatuaRubenDario |
 | campana_de_la_paz | CampanaDeLaPaz |
+| los_motivos_del_lobo_escultura | PazHermanoLobo |
 
 La Estatua de Rubén Darío usa Assets/Models/Managua/ruben_dario.fbx y Assets/Prefabs/EstatuaRubenDario.prefab. La primera apertura de Unity puede tardar algunos segundos por la inicialización del motor; las posteriores suelen ser más rápidas.
 

@@ -50,6 +50,7 @@ import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.map.MapaConfig
 import com.lospuntoycoma.nicaexplorer.map.MapaMarkerFactory
 import com.lospuntoycoma.nicaexplorer.model.Comercio
+import com.lospuntoycoma.nicaexplorer.ui.components.TextoExpandible
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.MapaViewModel
 import org.maplibre.android.annotations.MarkerOptions
@@ -182,11 +183,11 @@ fun MapaScreen(
                 )
                 comercio.descripcion.takeIf { it.isNotBlank() }?.let { descripcion ->
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(
+                    TextoExpandible(
                         text = descripcion,
-                        style = MaterialTheme.typography.bodyMedium,
                         maxLines = 4,
-                        overflow = TextOverflow.Ellipsis
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
                 Spacer(modifier = Modifier.height(18.dp))

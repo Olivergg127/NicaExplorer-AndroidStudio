@@ -88,6 +88,7 @@ import com.lospuntoycoma.nicaexplorer.ui.components.ValoracionRow
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
+import com.lospuntoycoma.nicaexplorer.ui.components.TextoExpandible
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.ComerciosViewModel
 import kotlinx.coroutines.launch
 
@@ -409,8 +410,9 @@ fun CatalogScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
+                TextoExpandible(
                     text = place.description,
+                    maxLines = 4,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                 )
@@ -488,7 +490,8 @@ fun CatalogScreen(
                         InfoRow(
                             icon = Icons.Filled.Info,
                             label = "Historia",
-                            value = place.history
+                            value = place.history,
+                            expandible = true
                         )
                     }
                 }
@@ -799,33 +802,22 @@ private fun CiudadInfoCard(city: City) {
 
         if (city.description.isNotBlank()) {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
+            TextoExpandible(
                 text = city.description,
+                maxLines = 4,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f)
             )
         }
 
         if (city.historia.isNotBlank()) {
-            var expanded by remember(city.id) { mutableStateOf(false) }
-            val preview = if (expanded || city.historia.length <= 180) {
-                city.historia
-            } else {
-                city.historia.take(180) + "…"
-            }
-
             Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = preview,
+            TextoExpandible(
+                text = city.historia,
+                maxLines = 4,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
             )
-
-            if (city.historia.length > 180) {
-                TextButton(onClick = { expanded = !expanded }) {
-                    Text(if (expanded) "Ver menos" else "Ver más")
-                }
-            }
         }
     }
 }
@@ -1029,7 +1021,8 @@ private fun AfluenciaCard(
 private fun InfoRow(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     label: String,
-    value: String
+    value: String,
+    expandible: Boolean = false
 ) {
     Row(
         verticalAlignment = Alignment.Top
@@ -1041,18 +1034,27 @@ private fun InfoRow(
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(12.dp))
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
             )
             Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground
-            )
+            if (expandible) {
+                TextoExpandible(
+                    text = value,
+                    maxLines = 4,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            } else {
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
     }
 }

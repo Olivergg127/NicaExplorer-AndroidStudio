@@ -49,6 +49,10 @@ culturales, todo con una identidad visual nicaragüense.
   | Managua | Estatua de Rubén Darío | `ruben_dario` |
   | Managua | Campana de la Paz | `campana_de_la_paz` |
 
+  > En el visor 3D ya está integrada "Los Motivos del Lobo (Escultura)" (León,
+  > `los_motivos_del_lobo_escultura` → `PazHermanoLobo`), con el lugar registrado en
+  > Firestore (`modeloUnity = PazHermanoLobo`).
+
 - **Categorías de monumento (ejemplos reales):** Monumento cultural, Tradición ganadera,
   Patrimonio arqueológico, Monumento urbano, Monumento conmemorativo, Monumento histórico,
   Patrimonio religioso.

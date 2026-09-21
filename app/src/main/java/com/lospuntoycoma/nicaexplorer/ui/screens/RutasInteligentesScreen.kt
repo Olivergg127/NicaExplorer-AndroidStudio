@@ -64,6 +64,7 @@ import com.lospuntoycoma.nicaexplorer.ui.components.ParadaMapa
 import com.lospuntoycoma.nicaexplorer.ui.components.RutaMapa
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
+import com.lospuntoycoma.nicaexplorer.ui.components.TextoExpandible
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.ComerciosUiState
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.ComerciosViewModel
@@ -298,8 +299,9 @@ private fun EncabezadoRuta(ruta: RutaTuristica) {
             color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Text(
+        TextoExpandible(
             text = ruta.descripcion,
+            maxLines = 4,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.76f)
         )
@@ -408,7 +410,7 @@ private fun InteligenciaRuta(objetivos: List<String>) {
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Cómo funciona esta ruta",
+                    text = "Objetivos de esta ruta",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface

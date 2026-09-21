@@ -61,6 +61,7 @@ import com.lospuntoycoma.nicaexplorer.ui.components.ValoracionRow
 import com.lospuntoycoma.nicaexplorer.ui.components.EmptyState
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
+import com.lospuntoycoma.nicaexplorer.ui.components.TextoExpandible
 import com.lospuntoycoma.nicaexplorer.ui.theme.GreenPrimary
 import com.lospuntoycoma.nicaexplorer.ui.theme.GreenSurface
 import com.lospuntoycoma.nicaexplorer.ui.theme.SuccessGreen
@@ -254,8 +255,9 @@ fun ComercioDetalleScreen(
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(
+                                TextoExpandible(
                                     text = comercio.descripcion,
+                                    maxLines = 4,
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
                                 )

@@ -4,6 +4,50 @@
 > cambios importantes. No sustituye al historial de Git; lo complementa con contexto.
 > Formato: fecha, objetivo, archivos, cambios, build, resultado, riesgos y pendientes.
 
+## 2026-09-21
+
+### App — Texto expandible ("Ver más") y renombre en rutas creativas
+- Objetivo: evitar bloques largos de texto mostrando "Ver más/Ver menos" solo cuando el
+  texto se desborda, y renombrar "Cómo funciona esta ruta" → "Objetivos de esta ruta".
+- Archivos:
+  - `app/.../ui/components/TextoExpandible.kt` — nuevo componente reutilizable; recorta a
+    `maxLines` y muestra el botón solo si hay desborde real (`onTextLayout.hasVisualOverflow`).
+  - `app/.../ui/screens/CatalogScreen.kt` — descripción del lugar, "Historia" de
+    *Información adicional* (nuevo `InfoRow(expandible = true)`) y descripción/historia de
+    la ciudad usan `TextoExpandible`.
+  - `app/.../ui/screens/ComercioDetalleScreen.kt` — descripción del comercio.
+  - `app/.../ui/screens/MapaScreen.kt` — descripción del comercio en el bottom sheet.
+  - `app/.../ui/screens/RutasInteligentesScreen.kt` — descripción de la ruta y renombre del
+    encabezado a "Objetivos de esta ruta".
+- Build: `.\gradlew.bat :app:assembleDebug` — BUILD SUCCESSFUL.
+- Pendiente: no se aplicó a las tarjetas de lista (`PlaceCard` ya recorta a 2 líneas;
+  `CityCard` tiene `onClick` y el botón chocaría con el tap).
+
+### Unity — Integración del modelo "Paz Hermano Lobo" (León) y reexport de `unityLibrary`
+- Objetivo: agregar la escultura "Paz Hermano Lobo" al visor 3D.
+- Proyecto Unity fuente (fuera del repo, `C:/UnityProjects/NicaExplorer`):
+  - `Assets/Models/Leon/estatuapazhermanolobo.fbx` (copiado desde Descargas).
+  - `Assets/Editor/PrepararPrefabPazHermanoLobo.cs` — nuevo; importa el FBX, crea el prefab
+    `PazHermanoLobo` (raíz identidad, hijo con rotación `(-90,180,0)`, altura normalizada) y
+    registra `los_motivos_del_lobo_escultura` en el catálogo de `Visor3DController`.
+  - `Assets/Prefabs/PazHermanoLobo.prefab` y `Assets/Scenes/Visor3D.unity` (catálogo).
+  - Verificación: previews renderizadas en batchmode confirmaron el modelo de pie y **de
+    frente a la cámara** (la cámara del visor está en `-Z` mirando a `+Z`).
+- Repo Android (`unityLibrary`):
+  - Se reexportó la librería desde Unity y se actualizó únicamente
+    `src/main/assets/bin/Data/` (`data.unity3d`, `boot.config`, `unity_app_guid`).
+  - `global-metadata.dat`, `libunity.so`, `lib_burst_generated.so`, `libs/` y el
+    `build.gradle` con el parche de símbolos se conservaron (idénticos) para reutilizar el
+    IL2CPP precompilado. `:unityLibrary:buildIl2Cpp` quedó `UP-TO-DATE`.
+- Build: `.\gradlew.bat :app:assembleDebug` — BUILD SUCCESSFUL (APK incluye el nuevo
+  `data.unity3d` de ~100 MB).
+- Docs: `ARCHITECTURE.md`, `README.md`, `PROJECT_CONTEXT.md` y `ROADMAP.md` actualizados con
+  el mapeo `los_motivos_del_lobo_escultura` → `PazHermanoLobo`.
+- Verificación en el panel/API: el lugar ya existía en Firestore como
+  **"Los Motivos del Lobo (Escultura)"** (`id = los_motivos_del_lobo_escultura`, León) con
+  `modeloUnity` vacío; se actualizó a `PazHermanoLobo` por la API (`PATCH /api/v1/lugares/...`).
+- Pendiente: probar el botón "Ver en 3D" en un dispositivo real.
+
 ## 2026-09-20
 
 ### App — Rediseño de la vista de mapa ("EjemploVista")

@@ -162,7 +162,8 @@ Detalles verificados:
   `homenaje_madre_juigalpina`→`HomenajeMadreJuigalpina`, `toro_chontaleno`→`ToroChontaleno`,
   `estatua_museo_juigalpa`→`EstatuaMuseoJuigalpa`, `tumba_ruben_dario`→`TumbaRubenDario`,
   `estatua_san_benito`→`SanBenito`, `arbol_vida`→`ArbolDeLaVida`,
-  `ruben_dario`→`EstatuaRubenDario`, `campana_de_la_paz`→`CampanaDeLaPaz`.
+  `ruben_dario`→`EstatuaRubenDario`, `campana_de_la_paz`→`CampanaDeLaPaz`,
+  `los_motivos_del_lobo_escultura`→`PazHermanoLobo` (León).
 
 ## MapLibre
 
