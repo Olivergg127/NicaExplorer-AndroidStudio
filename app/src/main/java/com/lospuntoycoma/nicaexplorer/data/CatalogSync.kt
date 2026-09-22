@@ -15,10 +15,20 @@ object CatalogSync {
 
     private var lastVersion: String? = null
 
+    private var ciclo = 0
+
     /** Se ejecuta mientras la pantalla esté activa (LaunchedEffect). */
     suspend fun watch(intervalMs: Long = DEFAULT_INTERVAL_MS) {
         while (true) {
             checkForChanges()
+
+            // Las valoraciones no cambian la versión del catálogo; se refrescan
+            // periódicamente (~60 s) para que los "top" se actualicen solos.
+            if (ciclo % 4 == 0) {
+                ValoracionesRepository.refreshPublicas()
+            }
+            ciclo++
+
             delay(intervalMs)
         }
     }
