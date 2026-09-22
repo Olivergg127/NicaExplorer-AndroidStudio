@@ -27,6 +27,10 @@
   adicional, portada, logo y galería.
 - **Subida de imágenes desde la app:** endpoint `POST /api/v1/upload` (token de Firebase +
   API key) que usa el almacén del backend (GitHub > Firebase Storage > local).
+- **Redes sociales y correo (2026-09-22):** el comercio elige varias redes
+  (Facebook, X/Twitter, TikTok, YouTube, Instagram) y guarda enlace/usuario por red; en su
+  perfil público se muestran los **iconos clicables** (abren la red) y su **correo de
+  contacto** con botón "Enviar correo".
 - **Aprobación:** los comercios nuevos nacen `aprobado=false, activo=false`; un
   administrador los aprueba desde el panel (`comercios.aprobado`) y el dueño los activa.
   Solo `activo && aprobado` es visible públicamente y en el mapa.
@@ -35,6 +39,11 @@
 - El flujo anterior de "Solicitud de comercio" queda reemplazado por el registro directo.
 
 ### Catálogo y exploración (P1)
+- **Recomendados por valoración (2026-09-22):** la vista de cada ciudad muestra
+  **"Lugares recomendados" (top 5)** y **"Comercios recomendados" (top 10)** ordenados por
+  el promedio de estrellas; se recalculan solos al recibir reseñas
+  (`GET /api/v1/valoraciones` + caché en `ValoracionesRepository`). El Home usa top 5 y
+  top 10 respectivamente. La nube de categorías de comercios agrega el chip "Todos".
 - 3 ciudades y 8 monumentos, con carga desde Firestore y **fallback local** (`SampleData`).
 - Selección de ciudad con búsqueda (`CitySelectionScreen`).
 - Detalle de monumento (`CatalogScreen`): descripción, historia, año, categoría,

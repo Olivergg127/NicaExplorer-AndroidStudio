@@ -6,6 +6,39 @@
 
 ## 2026-09-21
 
+### App/Backend — Redes sociales, correo de contacto y tops por valoración (2026-09-22)
+- Objetivo: que un comercio elija redes sociales (múltiples) y muestre sus iconos
+  clicables + correo de contacto; y que las vistas de ciudad muestren un top de
+  mejores puntuados que se actualice solo con las reseñas.
+- Backend (`nicaexp_web`):
+  - `Config/NicaResources.php` (`comercios`): `redesSociales` pasa a `stringlist`
+    (formato `red|url`) y se agrega `correo` (tipo email).
+  - Nuevo `app/Controllers/Api/Valoraciones.php` + ruta `GET /api/v1/valoraciones`:
+    devuelve las valoraciones públicas (sin `uid`) para el ranking.
+- App Android:
+  - `model/RedesSociales.kt`: catálogo (Facebook, X/Twitter, TikTok, YouTube, Instagram)
+    con icono y utilidades `red|valor` / URL final.
+  - `model/Comercio.kt`: nuevos `correo` y `redesSociales: List<String>`.
+  - `ComercioFormScreen`: chips multi-selección de redes + campo de enlace/usuario por
+    red + campo "Correo de contacto".
+  - `ComercioDetalleScreen`: iconos de redes **clicables** (abren la app/sitio de la red),
+    fila de correo y botón "Enviar correo".
+  - Iconos vectoriales provisionales `ic_social_{facebook,x,tiktok,youtube,instagram}`.
+  - `ValoracionesRepository`: caché pública (`StateFlow`) desde la API, `refreshPublicas()`
+    tras valorar; `ValoracionRow` muestra el promedio público (sirve a visitantes).
+  - `HomeScreen`: "Lugares recomendados" top 5 y "Comercios recomendados" top 10 por
+    valoración (por ciudad detectada).
+  - `CatalogScreen`: nueva sección **"Lugares recomendados" (top 5)** y
+    **"Comercios recomendados" (top 10)** por valoración de la ciudad; la nube de
+    categorías agrega el chip **"Todos"** (por defecto).
+- Verificado en dispositivo (Infinix X6886): selector de redes y correo en el formulario;
+  en el detalle se ven los 3 iconos y el correo; tocar Facebook abre la app de Facebook;
+  la vista de Juigalpa ordena Casa Josefa (4★) primero en lugares y muestra el top 10 de
+  comercios.
+- Build: `.\gradlew.bat :app:assembleDebug` — **BUILD SUCCESSFUL**.
+- Nota: los iconos de marca son provisionales (Material Icons solo trae Facebook/WhatsApp);
+  se pueden reemplazar por PNG oficiales en `res/drawable-nodpi/`.
+
 ### App/Backend — Exploración pública, cuentas COMERCIO y comercios administrables
 - Objetivo: permitir entrar sin registrarse, diferenciar usuario normal y usuario comercio, y
   que cada cuenta COMERCIO administre sus propios comercios con aprobación del admin.
