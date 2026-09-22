@@ -48,10 +48,27 @@
     el dueño puede editar pero **no** cambiar `propietarioUid` ni `aprobado`; borrado solo
     del dueño o admin.
 - Build: `.\gradlew.bat :app:assembleDebug` — **BUILD SUCCESSFUL**.
-- Pendiente: desplegar el backend (endpoint de subida) en Render; probar en dispositivo
-  el ciclo completo (registro comercio → aprobación en panel → activar → mapa).
 - Nota: el comercio creado desde la app usa ID aleatorio de Firestore (no slug) para que
   no sea adivinable mientras está pendiente.
+
+### Despliegue y verificación (2026-09-22)
+- Commit `b605122` en `main`; Render auto-desplegó `nicaexplorer-backend` (deploy `live`).
+- Reglas de Firestore publicadas en `projects/nica-explore/releases/cloud.firestore`
+  (con header `x-goog-user-project` para el quota project).
+- Verificado end-to-end en producción con usuarios temporales:
+  - `/api/v1/upload`: 401 sin token; con ID token de cuenta COMERCIO subió una imagen a
+    GitHub y la URL respondió `200 image/png`.
+  - Reglas `comercios`: el dueño crea/lee/edita lo suyo; **no** se autoaprueba; otra
+    cuenta COMERCIO no puede editar/borrar; un USUARIO no puede crear; el anónimo no lee
+    pendientes; el ADMIN aprueba y el comercio pasa a la API pública.
+  - Panel web: login OK y módulo de comercios con `Aprobado` y `Logo`.
+- Verificado en dispositivo (Infinix X6886): modo visitante ("Hola, explorador" + perfil de
+  invitado), registro como "Usuario comercio", "Mis comercios", creación (Pendiente/
+  Inactivo), edición, aprobación del admin + activación desde la app y **pin visible en el
+  mapa** filtrando por nombre.
+- Limpieza: usuarios/comercio QA e imágenes de prueba eliminados (Firebase y repo de assets).
+- Pendiente: nada bloqueante. Opcional: revisar `tieneCoordenadasValidas` (permite un solo
+  cero) para descartar puntos con una coordenada en 0.
 
 ### App — Texto expandible ("Ver más") y renombre en rutas creativas
 - Objetivo: evitar bloques largos de texto mostrando "Ver más/Ver menos" solo cuando el
