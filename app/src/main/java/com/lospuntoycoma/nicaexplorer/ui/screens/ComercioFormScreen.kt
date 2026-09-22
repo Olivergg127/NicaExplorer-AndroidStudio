@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +32,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,6 +64,7 @@ import coil.compose.AsyncImage
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.ImageUploader
 import com.lospuntoycoma.nicaexplorer.model.Comercio
+import com.lospuntoycoma.nicaexplorer.model.RedesSociales
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
@@ -71,7 +75,7 @@ import kotlinx.coroutines.launch
  * Alta y edición de un comercio propio. Al crear, el comercio queda pendiente
  * de aprobación; el propietario no puede marcarlo como aprobado.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ComercioFormScreen(
     comercioId: String?,
@@ -102,7 +106,8 @@ fun ComercioFormScreen(
     var tieneWhatsapp by remember { mutableStateOf(false) }
     var horario by remember { mutableStateOf("") }
     var diasAtencion by remember { mutableStateOf("") }
-    var redesSociales by remember { mutableStateOf("") }
+    var correo by remember { mutableStateOf("") }
+    var redes by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
     var servicios by remember { mutableStateOf("") }
     var productos by remember { mutableStateOf("") }
     var infoAdicional by remember { mutableStateOf("") }
@@ -130,7 +135,10 @@ fun ComercioFormScreen(
             tieneWhatsapp = c.tieneWhatsapp
             horario = c.horario
             diasAtencion = c.diasAtencion
-            redesSociales = c.redesSociales
+            correo = c.correo
+            redes = c.redesSociales
+                .mapNotNull { RedesSociales.parsear(it) }
+                .associate { it.first.clave to it.second }
             servicios = c.servicios.joinToString("\n")
             productos = c.productos.joinToString("\n")
             infoAdicional = c.infoAdicional
@@ -281,7 +289,53 @@ fun ComercioFormScreen(
 
             FormTextField(horario, { horario = it }, "Horario (ej. 8:00 a.m. - 6:00 p.m.)")
             FormTextField(diasAtencion, { diasAtencion = it }, "Días de atención")
-            FormTextField(redesSociales, { redesSociales = it }, "Redes sociales")
+            FormTextField(
+                value = correo,
+                onValueChange = { correo = it },
+                label = "Correo de contacto",
+                keyboardType = KeyboardType.Email
+            )
+
+            SeccionTitulo("Redes sociales")
+            Text(
+                text = "Elige una o varias redes y escribe el enlace o tu usuario.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                RedesSociales.disponibles.forEach { red ->
+                    val seleccionada = redes.containsKey(red.clave)
+                    FilterChip(
+                        selected = seleccionada,
+                        onClick = {
+                            redes = if (seleccionada) {
+                                redes - red.clave
+                            } else {
+                                redes + (red.clave to "")
+                            }
+                        },
+                        label = { Text(red.nombre) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            RedesSociales.disponibles
+                .filter { redes.containsKey(it.clave) }
+                .forEach { red ->
+                    FormTextField(
+                        value = redes[red.clave].orEmpty(),
+                        onValueChange = { valor -> redes = redes + (red.clave to valor) },
+                        label = "Enlace o usuario de ${red.nombre}"
+                    )
+                }
+
             FormTextField(servicios, { servicios = it }, "Servicios (uno por línea)", minLines = 3)
             FormTextField(productos, { productos = it }, "Productos (uno por línea)", minLines = 3)
             FormTextField(infoAdicional, { infoAdicional = it }, "Información adicional", minLines = 2)
@@ -399,7 +453,10 @@ fun ComercioFormScreen(
                             telefono = telefono.trim(),
                             whatsapp = whatsapp.trim(),
                             tieneWhatsapp = tieneWhatsapp,
-                            redesSociales = redesSociales.trim(),
+                            correo = correo.trim(),
+                            redesSociales = redes.mapNotNull { (clave, valor) ->
+                                RedesSociales.entrada(clave, valor)
+                            },
                             servicios = servicios.split("\n").map { it.trim() }.filter { it.isNotBlank() },
                             productos = productos.split("\n").map { it.trim() }.filter { it.isNotBlank() },
                             infoAdicional = infoAdicional.trim(),

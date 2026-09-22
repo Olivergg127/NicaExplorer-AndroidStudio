@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,9 @@ import kotlin.math.roundToInt
 /**
  * Fila de valoración con 5 estrellas: muestra el promedio y permite al usuario
  * calificar (1..5). El objetivo se identifica por [tipo] y [refId].
+ *
+ * El promedio se toma de la caché pública (sirve también para visitantes); las
+ * estrellas se actualizan solas cuando alguien valora.
  */
 @Composable
 fun ValoracionRow(
@@ -42,15 +46,17 @@ fun ValoracionRow(
     val uid = remember { FirebaseRepository.getCurrentUser()?.uid.orEmpty() }
     val scope = rememberCoroutineScope()
 
-    var promedio by remember(refId) { mutableStateOf(0.0) }
-    var total by remember(refId) { mutableStateOf(0) }
+    val publicas by ValoracionesRepository.publicas.collectAsState()
+    val promedioTotal = remember(publicas, tipo, refId) {
+        ValoracionesRepository.resumenPublico(tipo, refId)
+    }
+    val promedio = promedioTotal.first
+    val total = promedioTotal.second
+
     var miValoracion by remember(refId) { mutableStateOf<Int?>(null) }
 
     LaunchedEffect(tipo, refId, uid) {
         if (uid.isBlank() || refId.isBlank()) return@LaunchedEffect
-        val resumen = ValoracionesRepository.resumen(tipo, refId)
-        promedio = resumen.first
-        total = resumen.second
         miValoracion = ValoracionesRepository.miValoracion(tipo, refId, uid)
     }
 
@@ -67,9 +73,6 @@ fun ValoracionRow(
                         scope.launch {
                             if (ValoracionesRepository.guardar(tipo, refId, cityId, uid, indice)) {
                                 miValoracion = indice
-                                val resumen = ValoracionesRepository.resumen(tipo, refId)
-                                promedio = resumen.first
-                                total = resumen.second
                             }
                         }
                     }

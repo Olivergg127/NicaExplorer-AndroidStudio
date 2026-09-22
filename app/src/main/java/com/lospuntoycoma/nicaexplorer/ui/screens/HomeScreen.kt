@@ -104,8 +104,14 @@ fun HomeScreen(
     val comerciosState by comerciosViewModel.uiState.collectAsState()
 
     var ciudadActual by remember { mutableStateOf<City?>(null) }
-    var valoraciones by remember { mutableStateOf<List<Valoracion>>(emptyList()) }
+    val valoraciones by ValoracionesRepository.publicas.collectAsState()
     var permisoUbicacion by remember { mutableStateOf(UbicacionHelper.tienePermiso(context)) }
+
+    LaunchedEffect(Unit) {
+        if (ValoracionesRepository.publicas.value.isEmpty()) {
+            ValoracionesRepository.refreshPublicas()
+        }
+    }
 
     val permisoLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -132,7 +138,6 @@ fun HomeScreen(
             val ciudad = UbicacionHelper.ciudadMasCercana(ubicacion.latitude, ubicacion.longitude, SampleData.cities)
             if (ciudad != null) {
                 ciudadActual = ciudad
-                valoraciones = ValoracionesRepository.deCiudad(ciudad.id)
             }
         }
     }
@@ -152,7 +157,7 @@ fun HomeScreen(
         }
         lugares
             .sortedWith(compareByDescending<Place> { promedioDe("lugar", it.id) }.thenBy { it.name })
-            .take(6)
+            .take(5)
     }
 
     val comerciosRecomendados = remember(ciudadActual, comerciosState.comercios, valoraciones) {
@@ -163,7 +168,7 @@ fun HomeScreen(
                     it.ciudad.trim().equals(ciudad.name, ignoreCase = true)
             }
             .sortedWith(compareByDescending<Comercio> { promedioDe("comercio", it.id) }.thenBy { it.nombre })
-            .take(6)
+            .take(10)
     }
 
     ModalNavigationDrawer(

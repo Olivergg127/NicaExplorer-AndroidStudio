@@ -78,12 +78,14 @@ import coil.compose.AsyncImage
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
+import com.lospuntoycoma.nicaexplorer.data.ValoracionesRepository
 import com.lospuntoycoma.nicaexplorer.model.Afluencia
 import com.lospuntoycoma.nicaexplorer.model.City
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.model.Place
 import com.lospuntoycoma.nicaexplorer.model.TipoValoracion
 import com.lospuntoycoma.nicaexplorer.ui.components.CoverImage
+import com.lospuntoycoma.nicaexplorer.ui.components.PlaceCard
 import com.lospuntoycoma.nicaexplorer.ui.components.ValoracionRow
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
@@ -137,18 +139,38 @@ fun CatalogScreen(
         presentes.sortedWith(compareBy({ ordenRaiz[it] ?: Int.MAX_VALUE }, { it }))
     }
 
-    // Por defecto "Restaurantes y comida" si existe; si no, la primera categoría superior.
-    var padreSeleccionado by remember(categoriasPadreCiudad) {
-        mutableStateOf(
-            categoriasPadreCiudad.firstOrNull { it.equals("Restaurantes y comida", ignoreCase = true) }
-                ?: categoriasPadreCiudad.firstOrNull()
-        )
+    // "Todos" por defecto para mostrar el top de mejores puntuados de la ciudad.
+    var padreSeleccionado by remember { mutableStateOf<String?>(null) }
+
+    // Valoraciones públicas para el ranking de recomendados (se actualiza solo).
+    val valoraciones by ValoracionesRepository.publicas.collectAsState()
+    val promedios = remember(valoraciones) {
+        valoraciones.groupBy { "${it.tipo}|${it.refId}" }
+            .mapValues { (_, lista) -> lista.map { it.estrellas }.average() }
+    }
+    val promedioDe: (String, String) -> Double = { tipo, refId -> promedios["$tipo|$refId"] ?: 0.0 }
+
+    LaunchedEffect(Unit) {
+        if (ValoracionesRepository.publicas.value.isEmpty()) {
+            ValoracionesRepository.refreshPublicas()
+        }
     }
 
-    val comerciosPadre = remember(comerciosCiudad, padreSeleccionado) {
-        padreSeleccionado?.let { padre ->
+    // Top 5 de lugares mejores puntuados de la ciudad.
+    val lugaresTop = remember(places, valoraciones) {
+        places
+            .sortedWith(compareByDescending<Place> { promedioDe("lugar", it.id) }.thenBy { it.name })
+            .take(5)
+    }
+
+    // Top 10 de comercios mejores puntuados de la ciudad (o de la categoría elegida).
+    val comerciosTop = remember(comerciosCiudad, padreSeleccionado, valoraciones) {
+        val base = padreSeleccionado?.let { padre ->
             comerciosCiudad.filter { it.categoriaPadre.trim().equals(padre, ignoreCase = true) }
-        } ?: emptyList()
+        } ?: comerciosCiudad
+        base
+            .sortedWith(compareByDescending<Comercio> { promedioDe("comercio", it.id) }.thenBy { it.nombre })
+            .take(10)
     }
 
     if (places.isEmpty()) {
@@ -590,52 +612,81 @@ fun CatalogScreen(
                 )
 
                 Text(
+                    text = "Lugares recomendados",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    items(items = lugaresTop, key = { it.id }) { lugar ->
+                        PlaceCard(
+                            place = lugar,
+                            onClick = {
+                                val idx = places.indexOfFirst { it.id == lugar.id }
+                                if (idx >= 0) currentIndex = idx
+                            }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Divider(
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                Text(
                     text = "Comercios recomendados",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
 
-                if (categoriasPadreCiudad.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                    // Nube de categorías superiores.
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        categoriasPadreCiudad.forEach { padre ->
-                            FilterChip(
-                                selected = padre == padreSeleccionado,
-                                onClick = { padreSeleccionado = padre },
-                                label = { Text(padre) }
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    val comerciosVisibles = remember(comerciosPadre) { comerciosPadre.take(6) }
-
-                    if (comerciosVisibles.isEmpty()) {
-                        Text(
-                            text = "No hay comercios de esta categoría en la ciudad.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
+                // Nube de categorías superiores (con "Todos").
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChip(
+                        selected = padreSeleccionado == null,
+                        onClick = { padreSeleccionado = null },
+                        label = { Text("Todos") }
+                    )
+                    categoriasPadreCiudad.forEach { padre ->
+                        FilterChip(
+                            selected = padre == padreSeleccionado,
+                            onClick = { padreSeleccionado = padre },
+                            label = { Text(padre) }
                         )
-                    } else {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(
-                                items = comerciosVisibles,
-                                key = { it.id }
-                            ) { comercio ->
-                                ComercioMiniCard(
-                                    comercio = comercio,
-                                    onClick = { onComercioClick(comercio.id) }
-                                )
-                            }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (comerciosTop.isEmpty()) {
+                    Text(
+                        text = "Aún no hay comercios para mostrar.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
+                    )
+                } else {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = comerciosTop,
+                            key = { it.id }
+                        ) { comercio ->
+                            ComercioMiniCard(
+                                comercio = comercio,
+                                onClick = { onComercioClick(comercio.id) }
+                            )
                         }
                     }
                 }

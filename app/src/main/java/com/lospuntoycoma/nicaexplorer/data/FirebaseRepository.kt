@@ -215,7 +215,12 @@ object FirebaseRepository {
         telefono = doc.getString("telefono") ?: "",
         whatsapp = doc.getString("whatsapp") ?: "",
         tieneWhatsapp = doc.getBoolean("tieneWhatsapp") ?: false,
-        redesSociales = doc.getString("redesSociales") ?: "",
+        correo = doc.getString("correo") ?: "",
+        redesSociales = when (val redes = doc.get("redesSociales")) {
+            is List<*> -> redes.mapNotNull { it as? String }
+            is String -> redes.takeIf { it.isNotBlank() }?.let { listOf(it) } ?: emptyList()
+            else -> emptyList()
+        },
         servicios = (doc.get("servicios") as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
         productos = (doc.get("productos") as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
         infoAdicional = doc.getString("infoAdicional") ?: "",
@@ -242,6 +247,7 @@ object FirebaseRepository {
         "telefono" to comercio.telefono,
         "whatsapp" to comercio.whatsapp,
         "tieneWhatsapp" to comercio.tieneWhatsapp,
+        "correo" to comercio.correo,
         "redesSociales" to comercio.redesSociales,
         "servicios" to comercio.servicios,
         "productos" to comercio.productos,

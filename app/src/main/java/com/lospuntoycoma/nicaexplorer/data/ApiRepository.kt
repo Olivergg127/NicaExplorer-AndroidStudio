@@ -7,6 +7,7 @@ import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.model.Place
 import com.lospuntoycoma.nicaexplorer.model.ReferenciaParadaRuta
 import com.lospuntoycoma.nicaexplorer.model.RutaTuristica
+import com.lospuntoycoma.nicaexplorer.model.Valoracion
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -53,6 +54,25 @@ object ApiRepository {
     suspend fun getCategoriasComercios(): List<CategoriaComercio> =
         ApiClient.getItems("/api/v1/categorias_comercios")
             .mapNotNull { (id, document) -> toCategoriaComercio(id, document) }
+
+    /** Valoraciones públicas (sin uid) para el ranking de recomendados. */
+    suspend fun getValoraciones(): List<Valoracion> =
+        ApiClient.getItems("/api/v1/valoraciones")
+            .mapNotNull { (_, document) ->
+                val tipo = document.optString("tipo", "").trim()
+                val refId = document.optString("refId", "").trim()
+                if (tipo.isBlank() || refId.isBlank()) {
+                    null
+                } else {
+                    Valoracion(
+                        tipo = tipo,
+                        refId = refId,
+                        cityId = document.optString("cityId", "").trim(),
+                        uid = "",
+                        estrellas = document.optInt("estrellas", 0)
+                    )
+                }
+            }
 
     // ---- Mapeo JSON -> modelos ----
 
@@ -143,7 +163,8 @@ object ApiRepository {
         telefono = d.optString("telefono", ""),
         whatsapp = d.optString("whatsapp", ""),
         tieneWhatsapp = d.optBoolean("tieneWhatsapp", false),
-        redesSociales = d.optString("redesSociales", ""),
+        correo = d.optString("correo", ""),
+        redesSociales = d.toStringListFlexible("redesSociales"),
         servicios = d.optJSONArray("servicios").toStringList(),
         productos = d.optJSONArray("productos").toStringList(),
         infoAdicional = d.optString("infoAdicional", ""),
@@ -182,6 +203,16 @@ object ApiRepository {
     private fun JSONArray?.toStringList(): List<String> {
         if (this == null) return emptyList()
         return (0 until length()).mapNotNull { index -> optString(index).takeIf { it.isNotBlank() } }
+    }
+
+    /**
+     * Acepta tanto una lista como un string (documentos legados que guardaban
+     * `redesSociales` como texto libre).
+     */
+    private fun JSONObject.toStringListFlexible(key: String): List<String> {
+        optJSONArray(key)?.let { return it.toStringList() }
+        val texto = optString(key, "").trim()
+        return if (texto.isBlank()) emptyList() else listOf(texto)
     }
 
     private fun JSONObject.optNullableDouble(key: String): Double? =

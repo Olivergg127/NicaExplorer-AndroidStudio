@@ -16,6 +16,7 @@ import org.maplibre.android.MapLibre
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.CatalogSync
+import com.lospuntoycoma.nicaexplorer.data.ValoracionesRepository
 import com.lospuntoycoma.nicaexplorer.navigation.AppNavigation
 import com.lospuntoycoma.nicaexplorer.ui.theme.NicaExplorerTheme
 
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 SampleData.loadCatalog()
                 CatalogSync.watch()
+                ValoracionesRepository.refreshPublicas()
             }
             val darkThemePref by UserPreferences.darkThemeFlow().collectAsState(initial = null)
             NicaExplorerTheme(darkTheme = darkThemePref ?: isSystemInDarkTheme()) {

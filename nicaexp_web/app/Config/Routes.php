@@ -13,6 +13,9 @@ $routes->group('api/v1', ['filter' => 'apikey'], static function (RouteCollectio
     $routes->get('health', 'Api\Health::index');
     $routes->get('version', 'Api\Catalog::version');
 
+    // Ranking de recomendados: valoraciones públicas (sin uid).
+    $routes->get('valoraciones', 'Api\Valoraciones::index');
+
     // Subida de imágenes para cuentas COMERCIO/EDITOR/ADMIN (token de Firebase).
     $routes->post('upload', 'Api\Upload::image');
 

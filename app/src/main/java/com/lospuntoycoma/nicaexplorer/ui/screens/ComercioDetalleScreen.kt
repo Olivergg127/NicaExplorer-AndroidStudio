@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,12 +21,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Refresh
@@ -54,12 +58,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.lospuntoycoma.nicaexplorer.model.Comercio
+import com.lospuntoycoma.nicaexplorer.model.RedesSociales
 import com.lospuntoycoma.nicaexplorer.model.TipoValoracion
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
 import com.lospuntoycoma.nicaexplorer.ui.components.ValoracionRow
@@ -303,12 +309,48 @@ fun ComercioDetalleScreen(
                             ListaTexto("Servicios", comercio.servicios)
                             ListaTexto("Productos", comercio.productos)
 
-                            if (comercio.redesSociales.isNotBlank()) {
+                            val redesValidas = comercio.redesSociales
+                                .mapNotNull { RedesSociales.parsear(it) }
+                            if (redesValidas.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Redes sociales",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                                    redesValidas.forEach { (red, valor) ->
+                                        Image(
+                                            painter = painterResource(id = red.icono),
+                                            contentDescription = red.nombre,
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .clip(CircleShape)
+                                                .clickable {
+                                                    openSocial(
+                                                        context,
+                                                        RedesSociales.urlDe("${red.clave}|$valor")
+                                                    ) {
+                                                        scope.launch {
+                                                            snackbarHostState.showSnackbar(
+                                                                "No se pudo abrir ${red.nombre}."
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (comercio.correo.isNotBlank()) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 ComercioInfoRow(
-                                    icon = Icons.Filled.Storefront,
-                                    label = "Redes sociales",
-                                    value = comercio.redesSociales
+                                    icon = Icons.Filled.Email,
+                                    label = "Correo de contacto",
+                                    value = comercio.correo
                                 )
                             }
 
@@ -378,6 +420,22 @@ fun ComercioDetalleScreen(
                                     gradient = Brush.horizontalGradient(
                                         colors = listOf(GreenPrimary, SuccessGreen)
                                     )
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+
+                            if (comercio.correo.isNotBlank()) {
+                                NicaButton(
+                                    text = "Enviar correo",
+                                    onClick = {
+                                        openCorreo(context, comercio.nombre, comercio.correo) {
+                                            scope.launch {
+                                                snackbarHostState.showSnackbar(
+                                                    "No hay una aplicación de correo disponible."
+                                                )
+                                            }
+                                        }
+                                    }
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
                             }
@@ -536,6 +594,31 @@ private fun openGoogleMaps(context: Context, comercio: Comercio, onError: () -> 
             )
             context.startActivity(chooser)
         }
+    } catch (e: Exception) {
+        onError()
+    }
+}
+
+private fun openSocial(context: Context, url: String, onError: () -> Unit) {
+    if (url.isBlank()) {
+        onError()
+        return
+    }
+    try {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        onError()
+    }
+}
+
+private fun openCorreo(context: Context, comercio: String, correo: String, onError: () -> Unit) {
+    try {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:$correo")
+            putExtra(Intent.EXTRA_SUBJECT, "Consulta sobre $comercio")
+        }
+        context.startActivity(intent)
     } catch (e: Exception) {
         onError()
     }

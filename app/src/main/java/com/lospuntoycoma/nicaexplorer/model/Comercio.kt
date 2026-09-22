@@ -28,7 +28,9 @@ data class Comercio(
     val telefono: String = "",
     val whatsapp: String = "",
     val tieneWhatsapp: Boolean = false,
-    val redesSociales: String = "",
+    val correo: String = "",
+    /** Entradas en formato "red|valor"; ver [RedesSociales]. */
+    val redesSociales: List<String> = emptyList(),
     val servicios: List<String> = emptyList(),
     val productos: List<String> = emptyList(),
     val infoAdicional: String = "",
