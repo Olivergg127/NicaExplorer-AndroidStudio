@@ -36,8 +36,10 @@
   la vista de Juigalpa ordena Casa Josefa (4★) primero en lugares y muestra el top 10 de
   comercios.
 - Build: `.\gradlew.bat :app:assembleDebug` — **BUILD SUCCESSFUL**.
-- Nota: los iconos de marca son provisionales (Material Icons solo trae Facebook/WhatsApp);
-  se pueden reemplazar por PNG oficiales en `res/drawable-nodpi/`.
+- Iconos: Facebook y TikTok son vectoriales propios; Instagram, X (Twitter) y YouTube usan
+  los PNG aportados por el usuario (`ic_social_instagram.png`, `ic_social_x.png`,
+  `ic_social_youtube.png`). Verificado en dispositivo: los 5 iconos se ven y el enlace abre
+  la red correspondiente.
 
 ### App/Backend — Exploración pública, cuentas COMERCIO y comercios administrables
 - Objetivo: permitir entrar sin registrarse, diferenciar usuario normal y usuario comercio, y
