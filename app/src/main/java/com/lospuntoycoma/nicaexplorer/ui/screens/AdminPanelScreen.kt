@@ -167,6 +167,7 @@ private fun UserItem(user: UserProfile, canEditRoles: Boolean, onRoleChange: () 
 
 private fun UserRole.displayName() = when (this) {
     UserRole.USUARIO -> "Usuario"
+    UserRole.COMERCIO -> "Comercio"
     UserRole.EDITOR -> "Editor"
     UserRole.ADMIN -> "Administrador"
     UserRole.AUDITOR -> "Auditor"

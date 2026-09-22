@@ -6,6 +6,7 @@ package com.lospuntoycoma.nicaexplorer.model
 enum class UserRole {
     ADMIN,    // Control total y gestión de contenido y usuarios
     EDITOR,   // Gestiona contenido operativo (lugares, comercios, rutas)
-    USUARIO,  // Turista estándar
+    USUARIO,  // Turista estándar / visitante registrado
+    COMERCIO, // Cuenta de negocio: administra sus propios comercios
     AUDITOR   // Visualización de reportes y logs
 }

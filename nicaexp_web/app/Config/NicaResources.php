@@ -190,8 +190,18 @@ class NicaResources
                     'telefono'      => ['label' => 'Teléfono', 'type' => 'string'],
                     'whatsapp'      => ['label' => 'WhatsApp', 'type' => 'string'],
                     'tieneWhatsapp' => ['label' => 'Tiene WhatsApp', 'type' => 'bool', 'list' => true, 'default' => false],
+                    'logoUrl'       => ['label' => 'Logo', 'type' => 'image'],
+                    'diasAtencion'  => ['label' => 'Días de atención', 'type' => 'string'],
+                    'redesSociales' => ['label' => 'Redes sociales', 'type' => 'string'],
+                    'servicios'     => ['label' => 'Servicios', 'type' => 'stringlist'],
+                    'productos'     => ['label' => 'Productos', 'type' => 'stringlist'],
+                    'infoAdicional' => ['label' => 'Información adicional', 'type' => 'text'],
                     'orden'         => ['label' => 'Orden', 'type' => 'int', 'default' => 0],
+                    // Requiere aprobación del administrador para publicarse.
+                    'aprobado'      => ['label' => 'Aprobado', 'type' => 'bool', 'list' => true, 'default' => true],
                     'activo'        => ['label' => 'Activo', 'type' => 'bool', 'list' => true, 'default' => true],
+                    // Cuenta propietaria (se asigna desde la app, no se edita en el panel).
+                    'propietarioUid' => ['label' => 'Propietario (uid)', 'type' => 'string', 'internal' => true],
                 ],
             ],
 

@@ -6,6 +6,53 @@
 
 ## 2026-09-21
 
+### App/Backend — Exploración pública, cuentas COMERCIO y comercios administrables
+- Objetivo: permitir entrar sin registrarse, diferenciar usuario normal y usuario comercio, y
+  que cada cuenta COMERCIO administre sus propios comercios con aprobación del admin.
+- Decisión del usuario: subida real de imágenes (reutilizando el almacén del backend:
+  GitHub > Firebase Storage > local) y comercios nuevos **pendientes de aprobación**.
+  El flujo de "Solicitud de comercio" se reemplaza por el registro directo.
+- Backend (`nicaexp_web`):
+  - Nuevo `app/Controllers/Api/Upload.php` + ruta `POST /api/v1/upload`: sube imágenes
+    verificando el ID token de Firebase (header `Authorization: Bearer`) y el rol
+    `COMERCIO/EDITOR/ADMIN`; usa `ImageStorage` (prioridad GitHub).
+  - `Config/NicaResources.php` (`comercios`): nuevos campos `logoUrl`, `diasAtencion`,
+    `redesSociales`, `servicios` (stringlist), `productos` (stringlist), `infoAdicional`,
+    `aprobado` (bool, default true) y `propietarioUid` (internal). El admin aprueba desde
+    el panel.
+- App Android:
+  - `UserRole`: nuevo rol `COMERCIO` (no accede al panel web).
+  - `Comercio`: campos nuevos (`logoUrl`, `galeria`, `diasAtencion`, `redesSociales`,
+    `servicios`, `productos`, `infoAdicional`, `aprobado`, `propietarioUid`) y
+    `visiblePublicamente = activo && aprobado`.
+  - `RegisterScreen`: selector "Usuario normal" / "Usuario comercio"; el registro
+    (`FirebaseRepository.registerUser`) guarda el rol elegido.
+  - **Modo visitante:** `SplashScreen` entra siempre a `Home`; `LoginScreen` añade
+    "Continuar sin registrarme"; `HomeScreen`/`ProfileScreen`/`ConfiguracionScreen`
+    distinguen invitado (sin sesión) de usuario.
+  - Nuevas pantallas `MisComerciosScreen` (lista, estados, eliminar) y
+    `ComercioFormScreen` (crear/editar con subida de portada, logo y galería).
+    ViewModels `MisComerciosViewModel` y `ComercioFormViewModel`.
+  - `ImageUploader`: subida multipart a `/api/v1/upload` con token de Firebase.
+  - `ComercioDetalleScreen`: muestra logo/galería/días/servicios/productos/info adicional
+    y avisa si el comercio está pendiente o inactivo; `ComercioDetalleViewModel` cae a
+    Firestore como respaldo.
+  - Navegación: rutas `mis_comercios` y `comercio_form`; guarda por rol para `MIS_COMERCIOS`.
+    El botón de comercios ahora lleva a generar cuenta/administrar ("Registra tu comercio").
+  - `ApiRepository`: mapea los campos nuevos y filtra el catálogo público por
+    `activo && aprobado`.
+- Seguridad (`firestore.rules`):
+  - `usuarios` permite auto-registro con rol `USUARIO` o `COMERCIO`.
+  - `comercios`: lectura pública si `aprobado && activo` (o dueño/admin); creación solo
+    por `COMERCIO/EDITOR/ADMIN` a su propio uid y siempre `aprobado=false, activo=false`;
+    el dueño puede editar pero **no** cambiar `propietarioUid` ni `aprobado`; borrado solo
+    del dueño o admin.
+- Build: `.\gradlew.bat :app:assembleDebug` — **BUILD SUCCESSFUL**.
+- Pendiente: desplegar el backend (endpoint de subida) en Render; probar en dispositivo
+  el ciclo completo (registro comercio → aprobación en panel → activar → mapa).
+- Nota: el comercio creado desde la app usa ID aleatorio de Firestore (no slug) para que
+  no sea adivinable mientras está pendiente.
+
 ### App — Texto expandible ("Ver más") y renombre en rutas creativas
 - Objetivo: evitar bloques largos de texto mostrando "Ver más/Ver menos" solo cuando el
   texto se desborda, y renombrar "Cómo funciona esta ruta" → "Objetivos de esta ruta".

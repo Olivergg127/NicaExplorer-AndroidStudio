@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.lospuntoycoma.nicaexplorer.model.Comercio
@@ -40,7 +41,12 @@ object FirebaseRepository {
         }
     }
 
-    suspend fun registerUser(email: String, password: String, fullName: String): Result<FirebaseUser> {
+    suspend fun registerUser(
+        email: String,
+        password: String,
+        fullName: String,
+        role: UserRole = UserRole.USUARIO
+    ): Result<FirebaseUser> {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user ?: throw Exception("No se pudo crear el usuario")
@@ -50,16 +56,18 @@ object FirebaseRepository {
                 .build()
             user.updateProfile(profileUpdates).await()
 
-            // Toda cuenta creada desde la aplicación comienza como USUARIO.
-            // El administrador histórico se reconoce en Firestore Rules por correo
-            // o por su documento existente, nunca desde este flujo de registro.
-            val role = UserRole.USUARIO
+            // Solo se permiten auto-registros USUARIO o COMERCIO. Los roles
+            // administrativos (ADMIN/EDITOR/AUDITOR) los asigna un ADMIN.
+            val roleToSave = when (role) {
+                UserRole.COMERCIO -> UserRole.COMERCIO
+                else -> UserRole.USUARIO
+            }
 
             val userMap = hashMapOf(
                 "uid" to user.uid,
                 "nombre" to fullName,
                 "correo" to email,
-                "rol" to role.name,
+                "rol" to roleToSave.name,
                 "fechaRegistro" to Date()
             )
             db.collection("usuarios").document(user.uid).set(userMap).await()
@@ -82,26 +90,7 @@ object FirebaseRepository {
                 .await()
             val comercios = snapshot.documents.mapNotNull { doc ->
                 try {
-                    Comercio(
-                        id = doc.id,
-                        nombre = doc.getString("nombre") ?: "",
-                        categoria = doc.getString("categoria") ?: "",
-                        categoriaPadre = doc.getString("categoriaPadre") ?: "",
-                        descripcion = doc.getString("descripcion") ?: "",
-                        ciudad = doc.getString("ciudad") ?: "",
-                        cityId = doc.getString("cityId") ?: "",
-                        direccion = doc.getString("direccion") ?: "",
-                        horario = doc.getString("horario") ?: "",
-                        imagenUrl = doc.getString("imagenUrl")
-                            ?.takeIf { it.isNotBlank() }
-                            ?: doc.getString("imagenurl").orEmpty(),
-                        latitud = doc.getDouble("latitud") ?: 0.0,
-                        longitud = doc.getDouble("longitud") ?: 0.0,
-                        telefono = doc.getString("telefono") ?: "",
-                        whatsapp = doc.getString("whatsapp") ?: "",
-                        tieneWhatsapp = doc.getBoolean("tieneWhatsapp") ?: false,
-                        activo = doc.getBoolean("activo") ?: false
-                    )
+                    docToComercio(doc)
                 } catch (e: Exception) {
                     Log.w(TAG, "getComerciosActivos: documento omitido (${doc.id})", e)
                     null
@@ -122,27 +111,7 @@ object FirebaseRepository {
         return try {
             val doc = db.collection("comercios").document(id).get().await()
             if (doc.exists()) {
-                val comercio = Comercio(
-                    id = doc.id,
-                    nombre = doc.getString("nombre") ?: "",
-                    categoria = doc.getString("categoria") ?: "",
-                    categoriaPadre = doc.getString("categoriaPadre") ?: "",
-                    descripcion = doc.getString("descripcion") ?: "",
-                    ciudad = doc.getString("ciudad") ?: "",
-                    cityId = doc.getString("cityId") ?: "",
-                    direccion = doc.getString("direccion") ?: "",
-                    horario = doc.getString("horario") ?: "",
-                    imagenUrl = doc.getString("imagenUrl")
-                        ?.takeIf { it.isNotBlank() }
-                        ?: doc.getString("imagenurl").orEmpty(),
-                    latitud = doc.getDouble("latitud") ?: 0.0,
-                    longitud = doc.getDouble("longitud") ?: 0.0,
-                    telefono = doc.getString("telefono") ?: "",
-                    whatsapp = doc.getString("whatsapp") ?: "",
-                    tieneWhatsapp = doc.getBoolean("tieneWhatsapp") ?: false,
-                    activo = doc.getBoolean("activo") ?: false
-                )
-                Result.success(comercio)
+                Result.success(docToComercio(doc))
             } else {
                 Result.failure(Exception("Comercio no encontrado"))
             }
@@ -151,6 +120,134 @@ object FirebaseRepository {
             Result.failure(e)
         }
     }
+
+    /**
+     * Comercios cuyo propietario es el usuario indicado (incluye no aprobados
+     * e inactivos). Se usa en la administración de "Mis comercios".
+     */
+    suspend fun getComerciosDeUsuario(uid: String): Result<List<Comercio>> {
+        return try {
+            val snapshot = db.collection("comercios")
+                .whereEqualTo("propietarioUid", uid)
+                .get()
+                .await()
+            Result.success(snapshot.documents.mapNotNull { doc ->
+                try {
+                    docToComercio(doc)
+                } catch (e: Exception) {
+                    Log.w(TAG, "getComerciosDeUsuario: documento omitido (${doc.id})", e)
+                    null
+                }
+            })
+        } catch (e: Exception) {
+            Log.e(TAG, "getComerciosDeUsuario: error al leer Firestore", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Crea un comercio del usuario autenticado. Nace sin aprobar y sin activar:
+     * la aprobación la realiza un administrador y la activación el propietario.
+     */
+    suspend fun crearComercio(comercio: Comercio): Result<String> {
+        return try {
+            val uid = auth.currentUser?.uid
+                ?: throw Exception("Debes iniciar sesión para crear un comercio")
+
+            val payload = comercioPayload(comercio).toMutableMap()
+            payload["propietarioUid"] = uid
+            payload["aprobado"] = false
+            payload["activo"] = false
+
+            val ref = db.collection("comercios").add(payload).await()
+            Result.success(ref.id)
+        } catch (e: Exception) {
+            Log.e(TAG, "crearComercio: error al escribir en Firestore", e)
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Actualiza un comercio existente. No toca `propietarioUid` ni `aprobado`;
+     * las reglas de Firestore garantizan que solo el dueño (o un admin) edite.
+     */
+    suspend fun actualizarComercio(comercio: Comercio): Result<Unit> {
+        return try {
+            db.collection("comercios").document(comercio.id)
+                .set(comercioPayload(comercio), SetOptions.merge())
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "actualizarComercio: error al escribir Firestore (${comercio.id})", e)
+            Result.failure(e)
+        }
+    }
+
+    /** Elimina un comercio propio. Las reglas exigen ser el propietario o ADMIN. */
+    suspend fun eliminarComercio(id: String): Result<Unit> {
+        return try {
+            db.collection("comercios").document(id).delete().await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "eliminarComercio: error al borrar Firestore ($id)", e)
+            Result.failure(e)
+        }
+    }
+
+    private fun docToComercio(doc: DocumentSnapshot): Comercio = Comercio(
+        id = doc.id,
+        nombre = doc.getString("nombre") ?: "",
+        categoria = doc.getString("categoria") ?: "",
+        categoriaPadre = doc.getString("categoriaPadre") ?: "",
+        descripcion = doc.getString("descripcion") ?: "",
+        ciudad = doc.getString("ciudad") ?: "",
+        cityId = doc.getString("cityId") ?: "",
+        direccion = doc.getString("direccion") ?: "",
+        horario = doc.getString("horario") ?: "",
+        diasAtencion = doc.getString("diasAtencion") ?: "",
+        imagenUrl = doc.getString("imagenUrl")
+            ?.takeIf { it.isNotBlank() }
+            ?: doc.getString("imagenurl").orEmpty(),
+        logoUrl = doc.getString("logoUrl") ?: "",
+        galeria = (doc.get("galeria") as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
+        latitud = doc.getDouble("latitud") ?: 0.0,
+        longitud = doc.getDouble("longitud") ?: 0.0,
+        telefono = doc.getString("telefono") ?: "",
+        whatsapp = doc.getString("whatsapp") ?: "",
+        tieneWhatsapp = doc.getBoolean("tieneWhatsapp") ?: false,
+        redesSociales = doc.getString("redesSociales") ?: "",
+        servicios = (doc.get("servicios") as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
+        productos = (doc.get("productos") as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
+        infoAdicional = doc.getString("infoAdicional") ?: "",
+        activo = doc.getBoolean("activo") ?: false,
+        aprobado = doc.getBoolean("aprobado") ?: true,
+        propietarioUid = doc.getString("propietarioUid") ?: ""
+    )
+
+    private fun comercioPayload(comercio: Comercio): Map<String, Any?> = hashMapOf(
+        "nombre" to comercio.nombre,
+        "categoria" to comercio.categoria,
+        "categoriaPadre" to comercio.categoriaPadre,
+        "descripcion" to comercio.descripcion,
+        "ciudad" to comercio.ciudad,
+        "cityId" to comercio.cityId,
+        "direccion" to comercio.direccion,
+        "horario" to comercio.horario,
+        "diasAtencion" to comercio.diasAtencion,
+        "imagenUrl" to comercio.imagenUrl,
+        "logoUrl" to comercio.logoUrl,
+        "galeria" to comercio.galeria,
+        "latitud" to comercio.latitud,
+        "longitud" to comercio.longitud,
+        "telefono" to comercio.telefono,
+        "whatsapp" to comercio.whatsapp,
+        "tieneWhatsapp" to comercio.tieneWhatsapp,
+        "redesSociales" to comercio.redesSociales,
+        "servicios" to comercio.servicios,
+        "productos" to comercio.productos,
+        "infoAdicional" to comercio.infoAdicional,
+        "activo" to comercio.activo
+    )
 
     /**
      * Obtiene la lista de todos los usuarios registrados (Solo para Admins).

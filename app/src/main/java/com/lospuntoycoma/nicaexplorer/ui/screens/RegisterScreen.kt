@@ -26,6 +26,8 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,6 +55,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
+import com.lospuntoycoma.nicaexplorer.model.UserRole
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import kotlinx.coroutines.launch
 
@@ -66,6 +69,7 @@ fun RegisterScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var accountType by remember { mutableStateOf(UserRole.USUARIO) }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmVisible by remember { mutableStateOf(false) }
     var acceptTerms by remember { mutableStateOf(false) }
@@ -136,6 +140,50 @@ fun RegisterScreen(
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center
             )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Tipo de cuenta",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                FilterChip(
+                    selected = accountType == UserRole.USUARIO,
+                    onClick = { accountType = UserRole.USUARIO },
+                    label = { Text("Usuario normal") },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                )
+                FilterChip(
+                    selected = accountType == UserRole.COMERCIO,
+                    onClick = { accountType = UserRole.COMERCIO },
+                    label = { Text("Usuario comercio") },
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                )
+            }
+
+            if (accountType == UserRole.COMERCIO) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = "Podrás registrar y administrar tus propios comercios.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -327,7 +375,8 @@ fun RegisterScreen(
                             val result = FirebaseRepository.registerUser(
                                 email.trim(),
                                 password,
-                                fullName.trim()
+                                fullName.trim(),
+                                accountType
                             )
                             isLoading = false
                             result.fold(

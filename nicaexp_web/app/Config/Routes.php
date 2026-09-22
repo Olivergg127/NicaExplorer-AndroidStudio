@@ -13,6 +13,9 @@ $routes->group('api/v1', ['filter' => 'apikey'], static function (RouteCollectio
     $routes->get('health', 'Api\Health::index');
     $routes->get('version', 'Api\Catalog::version');
 
+    // Subida de imágenes para cuentas COMERCIO/EDITOR/ADMIN (token de Firebase).
+    $routes->post('upload', 'Api\Upload::image');
+
     $routes->get('(:segment)', 'Api\Resources::index/$1');
     $routes->post('(:segment)', 'Api\Resources::create/$1');
     $routes->get('(:segment)/(:segment)', 'Api\Resources::show/$1/$2');

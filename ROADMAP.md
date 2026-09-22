@@ -9,10 +9,30 @@
 ### Autenticación y cuenta (P1)
 - Registro, inicio de sesión y recuperación de contraseña con Firebase Auth
   (`FirebaseRepository`, `LoginScreen`, `RegisterScreen`, `RecoveryPasswordScreen`).
-- Decisión de sesión en `SplashScreen` según `FirebaseAuth.currentUser`.
+- **Exploración pública (2026-09-21):** no es obligatorio registrarse. `SplashScreen`
+  entra siempre a `Home`; `LoginScreen` permite "Continuar sin registrarme". `HomeScreen`,
+  `ProfileScreen` y `ConfiguracionScreen` distinguen visitante de usuario.
+- **Tipos de cuenta (2026-09-21):** registro como *Usuario normal* (`USUARIO`) o
+  *Usuario comercio* (`COMERCIO`); `SplashScreen` ya no decide Login/Home.
 - Perfil con nombre, correo y rol; edición de nombre (`EditarPerfilScreen` +
   `updateUserName`).
 - Cierre de sesión (`signOut`) desde Home, Perfil y Configuración.
+
+### Cuentas y comercios propios (P1, 2026-09-21)
+- Un usuario `COMERCIO` puede tener varios comercios.
+- `MisComerciosScreen` lista sus comercios (pendientes/aprobados, activos/inactivos) y
+  permite eliminarlos; acceso desde Home (drawer) y Perfil.
+- `ComercioFormScreen` crea/edita nombre, categorías, descripción, dirección, ciudad,
+  coordenadas, teléfono, WhatsApp, redes, horarios, días, servicios, productos, info
+  adicional, portada, logo y galería.
+- **Subida de imágenes desde la app:** endpoint `POST /api/v1/upload` (token de Firebase +
+  API key) que usa el almacén del backend (GitHub > Firebase Storage > local).
+- **Aprobación:** los comercios nuevos nacen `aprobado=false, activo=false`; un
+  administrador los aprueba desde el panel (`comercios.aprobado`) y el dueño los activa.
+  Solo `activo && aprobado` es visible públicamente y en el mapa.
+- Seguridad: `firestore.rules` impide editar comercios de otra cuenta o autoadministrarse
+  el rol y la aprobación.
+- El flujo anterior de "Solicitud de comercio" queda reemplazado por el registro directo.
 
 ### Catálogo y exploración (P1)
 - 3 ciudades y 8 monumentos, con carga desde Firestore y **fallback local** (`SampleData`).

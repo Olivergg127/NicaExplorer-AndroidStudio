@@ -70,7 +70,8 @@ Pantallas registradas en el `NavHost`:
 | `city_selection` | `CitySelectionScreen` | busca en `SampleData.cities` |
 | `catalog/{cityId}?monumentId=` | `CatalogScreen` | detalle de monumento + comercios + rutas |
 | `assistant?monumentId=` | `AssistantScreen` | Itzae (Gemini) |
-| `comercios?cityId=` / `comercio_detalle/{id}` / `solicitud_comercio/{cityId}` | `ComerciosScreen`, `ComercioDetalleScreen`, `SolicitudComercioScreen` | Firestore |
+| `comercios?cityId=` / `comercio_detalle/{id}` | `ComerciosScreen`, `ComercioDetalleScreen` | catálogo vía API; detalle con respaldo Firestore |
+| `mis_comercios` / `comercio_form?comercioId=` | `MisComerciosScreen`, `ComercioFormScreen` | solo rol COMERCIO/ADMIN; Firestore + subida de imágenes |
 | `rutas_inteligentes/{cityId}` | `RutasInteligentesScreen` | solo Juigalpa |
 | `profile` / `editar_perfil` | `ProfileScreen`, `EditarPerfilScreen` | perfil + rol |
 | `lugares_guardados` / `historial` | `LugaresGuardadosScreen`, `HistorialExploracionScreen` | DataStore local |
@@ -87,10 +88,14 @@ Ubicado en `model/`:
 - `Monument(id, name, city, cityId, category, afluencia, description, history, yearBuilt,
   modeloUnity, gradientStart, gradientEnd, icon, imageRes, imageKey, consejosResponsables)`
 - `Afluencia` (enum: `BAJA`, `MODERADA`, `ALTA`, con `displayName` y `quietnessPriority`)
-- `Comercio(id, nombre, categoria, descripcion, ciudad, direccion, horario, imagenUrl,
-  latitud, longitud, telefono, whatsapp, tieneWhatsapp, activo)`
-- `RutaTuristica(...)` + `ReferenciaParadaRuta` (sealed: `Monumento`, `ComercioLocal`)
-- `SolicitudComercio(...)` y `UserProfile(uid, nombre, correo, rol)`, `UserRole` (ADMIN/USUARIO/AUDITOR)
+- `Comercio(id, nombre, categoria, categoriaPadre, descripcion, ciudad, cityId, direccion,
+  horario, diasAtencion, imagenUrl, logoUrl, galeria, latitud, longitud, telefono, whatsapp,
+  tieneWhatsapp, redesSociales, servicios, productos, infoAdicional, activo, aprobado,
+  propietarioUid)`. `visiblePublicamente = activo && aprobado`.
+- `CategoriaComercio(id, nombre, categoriaPadre, orden, activo)`
+- `RutaTuristica(...)` + `ReferenciaParadaRuta` (sealed: `Lugar`, `ComercioLocal`)
+- `SolicitudComercio(...)` (legado, ya no se usa desde la app) y
+  `UserProfile(uid, nombre, correo, rol)`, `UserRole` (ADMIN/EDITOR/USUARIO/COMERCIO/AUDITOR)
 
 ## Fuentes de datos
 
@@ -238,8 +243,12 @@ App Android
 - La app **consume la API REST** (`/api/v1/*`) del backend para todo el contenido
   (ciudades, lugares, rutas y comercios) y descarga las imágenes desde `/uploads/`.
   La API key y la URL base se inyectan en tiempo de compilación desde `local.properties`
-  (`nica.apiBaseUrl`, `nica.apiKey`) -> `BuildConfig`. Firebase se usa solo para
-  autenticación y datos del usuario (perfil, rol, solicitudes).
+  (`nica.apiBaseUrl`, `nica.apiKey`) -> `BuildConfig`. Firebase se usa para
+  autenticación, datos del usuario y **comercios propios** (escritura directa a Firestore
+  con reglas por propietario).
+- **Subida de imágenes de la app:** `POST /api/v1/upload` (`Api\Upload`) valida el ID token
+  de Firebase y el rol `COMERCIO/EDITOR/ADMIN`, sube con `ImageStorage` y devuelve la URL.
+  La app la consume desde `data/ImageUploader.kt`.
 - `SampleData.loadCatalog()` -> `ApiRepository` -> `ApiClient` (HttpURLConnection + org.json).
   No hay catálogo hardcodeado: si la API no responde, las listas quedan vacías.
 - Con `adb reverse tcp:8080 tcp:8080`, la app usa `http://localhost:8080` y llega al backend

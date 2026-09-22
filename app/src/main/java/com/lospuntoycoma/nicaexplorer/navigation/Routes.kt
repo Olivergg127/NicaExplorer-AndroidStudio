@@ -22,6 +22,8 @@ object Routes {
     const val HISTORIAL = "historial"
     const val CONFIGURACION = "configuracion"
     const val ACERCA_DE = "acerca_de"
+    const val MIS_COMERCIOS = "mis_comercios"
+    const val COMERCIO_FORM = "comercio_form?comercioId={comercioId}"
     const val COMERCIOS = "comercios"
     const val COMERCIOS_CON_FILTRO = "comercios?cityId={cityId}"
     const val COMERCIOS_SUBCATEGORIAS = "comercios_subcategorias/{cityId}/{padre}"
@@ -35,6 +37,8 @@ object Routes {
     fun assistant(placeId: String) = "$ASSISTANT?placeId=${Uri.encode(placeId)}"
     fun arPlaceholder(cityId: String, placeId: String) = "ar_placeholder/$cityId/$placeId"
     fun comercioDetalle(comercioId: String) = "comercio_detalle/$comercioId"
+    fun comercioForm(comercioId: String? = null) =
+        if (comercioId.isNullOrBlank()) "comercio_form" else "comercio_form?comercioId=${Uri.encode(comercioId)}"
     fun comerciosSubcategorias(cityId: String, padre: String) =
         "comercios_subcategorias/${Uri.encode(cityId)}/${Uri.encode(padre)}"
     fun comerciosSubcategoria(cityId: String, subcategoria: String) =

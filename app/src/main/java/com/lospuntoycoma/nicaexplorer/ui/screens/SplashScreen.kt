@@ -23,12 +23,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.firebase.auth.FirebaseAuth
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
 
 @Composable
-fun SplashScreen(onNavigateToHome: () -> Unit, onNavigateToLogin: () -> Unit) {
+fun SplashScreen(onNavigateToHome: () -> Unit) {
     var startAnimation by remember { mutableStateOf(false) }
     val alphaAnim by animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
@@ -38,12 +37,9 @@ fun SplashScreen(onNavigateToHome: () -> Unit, onNavigateToLogin: () -> Unit) {
 
     LaunchedEffect(Unit) {
         startAnimation = true
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            onNavigateToHome()
-        } else {
-            onNavigateToLogin()
-        }
+        // La exploración es pública: siempre se entra a la app, con o sin sesión.
+        // El visitante podrá iniciar sesión cuando lo necesite.
+        onNavigateToHome()
     }
 
     Box(

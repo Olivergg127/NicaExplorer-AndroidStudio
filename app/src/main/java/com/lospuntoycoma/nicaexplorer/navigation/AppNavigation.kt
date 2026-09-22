@@ -25,6 +25,7 @@ import com.lospuntoycoma.nicaexplorer.ui.screens.AssistantScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.CatalogScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.CitySelectionScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ComercioDetalleScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.ComercioFormScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ComerciosScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ConfiguracionScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.EditarPerfilScreen
@@ -32,6 +33,7 @@ import com.lospuntoycoma.nicaexplorer.ui.screens.HistorialExploracionScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.HomeScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.LoginScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.LugaresGuardadosScreen
+import com.lospuntoycoma.nicaexplorer.ui.screens.MisComerciosScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ComerciosSubcategoriaScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.ComerciosSubcategoriasScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.MapaPrincipalScreen
@@ -40,7 +42,6 @@ import com.lospuntoycoma.nicaexplorer.ui.screens.RecoveryPasswordScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RegisterScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.RutasInteligentesScreen
 import com.lospuntoycoma.nicaexplorer.ui.screens.SplashScreen
-import com.lospuntoycoma.nicaexplorer.ui.screens.SolicitudComercioScreen
 import com.lospuntoycoma.nicaexplorer.ui.viewmodels.UserViewModel
 
 @Composable
@@ -78,12 +79,8 @@ fun AppNavigation(navController: NavHostController) {
         composable(Routes.SPLASH) {
             SplashScreen(
                 onNavigateToHome = {
+                    userViewModel.loadUserProfile()
                     navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.SPLASH) { inclusive = true }
-                    }
-                },
-                onNavigateToLogin = {
-                    navController.navigate(Routes.LOGIN) {
                         popUpTo(Routes.SPLASH) { inclusive = true }
                     }
                 }
@@ -103,6 +100,11 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onNavigateToRecovery = {
                     navController.navigate(Routes.RECUPERAR_CONTRASENA)
+                },
+                onContinueAsGuest = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
                 }
             )
         }
@@ -118,17 +120,25 @@ fun AppNavigation(navController: NavHostController) {
         composable(Routes.REGISTER) {
             RegisterScreen(
                 onRegisterSuccess = {
-                    navController.popBackStack()
+                    userViewModel.loadUserProfile()
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 },
                 onNavigateToLogin = {
-                    navController.popBackStack()
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.REGISTER) { inclusive = true }
+                    }
                 }
             )
         }
 
         composable(Routes.HOME) {
+            val profile by userViewModel.userProfile.collectAsState()
+            val isLoggedIn = FirebaseRepository.getCurrentUser() != null
             HomeScreen(
                 userViewModel = userViewModel,
+                isLoggedIn = isLoggedIn,
                 onCityClick = {
                     navController.navigate(Routes.CITY_SELECTION)
                 },
@@ -148,7 +158,17 @@ fun AppNavigation(navController: NavHostController) {
                     navController.navigate(Routes.ADMIN_PANEL)
                 },
                 onSavedPlacesClick = {
-                    navController.navigate(Routes.LUGARES_GUARDADOS)
+                    if (isLoggedIn) {
+                        navController.navigate(Routes.LUGARES_GUARDADOS)
+                    } else {
+                        navController.navigate(Routes.LOGIN)
+                    }
+                },
+                onMisComerciosClick = {
+                    navController.navigate(Routes.MIS_COMERCIOS)
+                },
+                onLoginClick = {
+                    navController.navigate(Routes.LOGIN)
                 },
                 onPlaceClick = { placeCityId, placeId ->
                     navController.navigate(Routes.catalogWithPlace(placeCityId, placeId))
@@ -158,7 +178,8 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onLogout = {
                     FirebaseRepository.signOut()
-                    navController.navigate(Routes.LOGIN) {
+                    userViewModel.loadUserProfile()
+                    navController.navigate(Routes.HOME) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
@@ -333,7 +354,8 @@ fun AppNavigation(navController: NavHostController) {
                 userViewModel = userViewModel,
                 onLogout = {
                     FirebaseRepository.signOut()
-                    navController.navigate(Routes.LOGIN) {
+                    userViewModel.loadUserProfile()
+                    navController.navigate(Routes.HOME) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
@@ -354,6 +376,63 @@ fun AppNavigation(navController: NavHostController) {
                 },
                 onAbout = {
                     navController.navigate(Routes.ACERCA_DE)
+                },
+                onLogin = {
+                    navController.navigate(Routes.LOGIN)
+                },
+                onRegister = {
+                    navController.navigate(Routes.REGISTER)
+                },
+                onMisComercios = {
+                    navController.navigate(Routes.MIS_COMERCIOS)
+                }
+            )
+        }
+
+        composable(Routes.MIS_COMERCIOS) {
+            val profile by userViewModel.userProfile.collectAsState()
+            val loading by userViewModel.isLoading.collectAsState()
+            val isComercio = profile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.COMERCIO ||
+                profile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN
+
+            LaunchedEffect(profile, loading) {
+                if (!loading && !isComercio) {
+                    navController.popBackStack()
+                }
+            }
+
+            if (isComercio) {
+                MisComerciosScreen(
+                    onBack = { navController.popBackStack() },
+                    onCrear = { navController.navigate(Routes.comercioForm()) },
+                    onEditar = { comercioId ->
+                        navController.navigate(Routes.comercioForm(comercioId))
+                    },
+                    onVerPublico = { comercioId ->
+                        navController.navigate(Routes.comercioDetalle(comercioId))
+                    }
+                )
+            }
+        }
+
+        composable(
+            route = Routes.COMERCIO_FORM,
+            arguments = listOf(
+                navArgument("comercioId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) { backStackEntry ->
+            val formComercioId = backStackEntry.arguments?.getString("comercioId")
+                ?.takeIf { it.isNotBlank() }
+            ComercioFormScreen(
+                comercioId = formComercioId,
+                onBack = { navController.popBackStack() },
+                onSaved = {
+                    navController.navigate(Routes.MIS_COMERCIOS) {
+                        popUpTo(Routes.MIS_COMERCIOS) { inclusive = true }
+                    }
                 }
             )
         }
@@ -370,27 +449,13 @@ fun AppNavigation(navController: NavHostController) {
                 onComercioClick = { comercioId ->
                     navController.navigate(Routes.comercioDetalle(comercioId))
                 },
-                onSolicitarAparicion = { cityId ->
-                    navController.navigate(Routes.solicitudComercio(cityId))
+                onSolicitarAparicion = { _ ->
+                    if (FirebaseRepository.getCurrentUser() != null) {
+                        navController.navigate(Routes.MIS_COMERCIOS)
+                    } else {
+                        navController.navigate(Routes.REGISTER)
+                    }
                 },
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        composable(
-            route = Routes.SOLICITUD_COMERCIO,
-            arguments = listOf(
-                navArgument("cityId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val requestedCityId = backStackEntry.arguments?.getString("cityId") ?: ""
-            val city = SampleData.cities.firstOrNull { it.id == requestedCityId }
-
-            SolicitudComercioScreen(
-                cityId = city?.id.orEmpty(),
-                ciudad = city?.name.orEmpty(),
                 onBack = {
                     navController.popBackStack()
                 }

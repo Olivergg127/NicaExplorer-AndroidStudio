@@ -3,6 +3,7 @@ package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lospuntoycoma.nicaexplorer.data.ApiRepository
+import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,10 +46,20 @@ class ComercioDetalleViewModel(
                     comercio = comercio
                 )
             }.onFailure { _ ->
-                _uiState.value = ComercioDetalleUiState(
-                    isLoading = false,
-                    error = "No se pudo cargar el comercio. Revisa tu conexión e intenta de nuevo."
-                )
+                // Respaldo: el propietario puede abrir su comercio aunque aún
+                // no esté publicado o la API no responda.
+                val fallback = FirebaseRepository.getComercioById(comercioId)
+                fallback.onSuccess { comercio ->
+                    _uiState.value = ComercioDetalleUiState(
+                        isLoading = false,
+                        comercio = comercio
+                    )
+                }.onFailure {
+                    _uiState.value = ComercioDetalleUiState(
+                        isLoading = false,
+                        error = "No se pudo cargar el comercio. Revisa tu conexión e intenta de nuevo."
+                    )
+                }
             }
         }
     }

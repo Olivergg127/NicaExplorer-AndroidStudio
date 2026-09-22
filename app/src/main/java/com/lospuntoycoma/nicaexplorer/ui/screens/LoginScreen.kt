@@ -58,7 +58,8 @@ import kotlinx.coroutines.launch
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
-    onNavigateToRecovery: () -> Unit
+    onNavigateToRecovery: () -> Unit,
+    onContinueAsGuest: () -> Unit = {}
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -103,7 +104,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Inicia sesión para comenzar tu experiencia",
+            text = "Inicia sesión o explora NicaExplorer sin registrarte",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             textAlign = TextAlign.Center
@@ -285,6 +286,18 @@ fun LoginScreen(
                 modifier = Modifier.clickable { onNavigateToRegister() }
             )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Continuar sin registrarme",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            modifier = Modifier
+                .clickable { onContinueAsGuest() }
+                .padding(8.dp)
+        )
 
         Spacer(modifier = Modifier.height(32.dp))
     }

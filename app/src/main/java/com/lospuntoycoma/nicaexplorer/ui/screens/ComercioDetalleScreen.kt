@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -48,12 +51,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.model.TipoValoracion
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
@@ -263,6 +268,86 @@ fun ComercioDetalleScreen(
                                 )
                             }
 
+                            if (comercio.galeria.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(20.dp))
+                                Text(
+                                    text = "Fotos",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    items(comercio.galeria) { url ->
+                                        AsyncImage(
+                                            model = url,
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(140.dp)
+                                                .clip(RoundedCornerShape(14.dp))
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (comercio.diasAtencion.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                ComercioInfoRow(
+                                    icon = Icons.Filled.AccessTime,
+                                    label = "Días de atención",
+                                    value = comercio.diasAtencion
+                                )
+                            }
+
+                            ListaTexto("Servicios", comercio.servicios)
+                            ListaTexto("Productos", comercio.productos)
+
+                            if (comercio.redesSociales.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                ComercioInfoRow(
+                                    icon = Icons.Filled.Storefront,
+                                    label = "Redes sociales",
+                                    value = comercio.redesSociales
+                                )
+                            }
+
+                            if (comercio.infoAdicional.isNotBlank()) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Información adicional",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                TextoExpandible(
+                                    text = comercio.infoAdicional,
+                                    maxLines = 4,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+                                )
+                            }
+
+                            if (!comercio.visiblePublicamente) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = MaterialTheme.colorScheme.surfaceVariant
+                                ) {
+                                    Text(
+                                        text = if (!comercio.aprobado) {
+                                            "Este comercio está pendiente de aprobación y aún no es visible públicamente."
+                                        } else {
+                                            "Este comercio está inactivo y no aparece en el mapa."
+                                        },
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.padding(12.dp)
+                                    )
+                                }
+                            }
+
                             Spacer(modifier = Modifier.height(24.dp))
 
                             if (comercio.telefono.isNotBlank()) {
@@ -342,6 +427,28 @@ fun ComercioDetalleScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ListaTexto(titulo: String, items: List<String>) {
+    if (items.isEmpty()) return
+
+    Spacer(modifier = Modifier.height(16.dp))
+    Text(
+        text = titulo,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onBackground
+    )
+    Spacer(modifier = Modifier.height(6.dp))
+    items.forEach { item ->
+        Text(
+            text = "• $item",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            modifier = Modifier.padding(vertical = 2.dp)
+        )
     }
 }
 

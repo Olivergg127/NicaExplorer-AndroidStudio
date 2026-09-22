@@ -40,7 +40,7 @@ object ApiRepository {
     suspend fun getComercios(): Result<List<Comercio>> = runCatching {
         ApiClient.getItems("/api/v1/comercios")
             .mapNotNull { (id, document) -> toComercio(id, document) }
-            .filter { it.activo }
+            .filter { it.visiblePublicamente }
     }
 
     suspend fun getComercio(id: String): Result<Comercio> = runCatching {
@@ -134,13 +134,23 @@ object ApiRepository {
         cityId = d.optString("cityId", ""),
         direccion = d.optString("direccion", ""),
         horario = d.optString("horario", ""),
+        diasAtencion = d.optString("diasAtencion", ""),
         imagenUrl = d.optString("imagenUrl").ifBlank { d.optString("imagenurl") },
+        logoUrl = d.optString("logoUrl", ""),
+        galeria = d.optJSONArray("galeria").toStringList(),
         latitud = d.optDouble("latitud", 0.0),
         longitud = d.optDouble("longitud", 0.0),
         telefono = d.optString("telefono", ""),
         whatsapp = d.optString("whatsapp", ""),
         tieneWhatsapp = d.optBoolean("tieneWhatsapp", false),
-        activo = d.optBoolean("activo", false)
+        redesSociales = d.optString("redesSociales", ""),
+        servicios = d.optJSONArray("servicios").toStringList(),
+        productos = d.optJSONArray("productos").toStringList(),
+        infoAdicional = d.optString("infoAdicional", ""),
+        activo = d.optBoolean("activo", false),
+        // Los documentos antiguos no tienen "aprobado": se consideran aprobados.
+        aprobado = if (d.has("aprobado")) d.optBoolean("aprobado", true) else true,
+        propietarioUid = d.optString("propietarioUid", "")
     )
 
     private fun toCategoriaComercio(id: String, d: JSONObject): CategoriaComercio? {

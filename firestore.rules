@@ -17,6 +17,20 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'AUDITOR';
     }
 
+    function role() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol;
+    }
+
+    // Cuenta con permiso para administrar sus propios comercios.
+    function canManageOwnComercios() {
+      return signedIn() && role() in ['COMERCIO', 'EDITOR', 'ADMIN'];
+    }
+
+    function isComercioOwner() {
+      return signedIn()
+        && resource.data.propietarioUid == request.auth.uid;
+    }
+
     match /solicitudes_comercios/{solicitudId} {
       function requiredText(value, maxSize) {
         return value is string
@@ -86,12 +100,12 @@ service cloud.firestore {
       allow create: if signedIn()
         && request.auth.uid == uid
         && request.resource.data.uid == uid
-        && request.resource.data.rol == 'USUARIO';
+        && request.resource.data.rol in ['USUARIO', 'COMERCIO'];
 
       allow update: if isAdmin()
         && request.auth.uid != uid
         && request.resource.data.uid == resource.data.uid
-        && request.resource.data.rol in ['ADMIN', 'USUARIO', 'EDITOR', 'AUDITOR']
+        && request.resource.data.rol in ['ADMIN', 'USUARIO', 'EDITOR', 'COMERCIO', 'AUDITOR']
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rol']);
 
       allow update: if signedIn()
@@ -133,8 +147,39 @@ service cloud.firestore {
     }
 
     match /comercios/{id} {
-      allow read: if signedIn() && resource.data.activo == true;
-      allow create, update, delete: if false;
+      // Público: aprobado y activo. El dueño ve los suyos aunque no lo estén.
+      function isPublic() {
+        return resource.data.get('aprobado', true) == true
+          && resource.data.activo == true;
+      }
+
+      function ownsComercioDoc(data) {
+        return data.propietarioUid == request.auth.uid;
+      }
+
+      allow read: if (signedIn() && isPublic())
+        || (signedIn() && isComercioOwner())
+        || isAdmin() || isAuditor();
+
+      // Solo cuentas COMERCIO/EDITOR/ADMIN pueden crear comercios a su nombre.
+      // Nacen sin aprobar y sin activar (pendientes de revisión).
+      allow create: if canManageOwnComercios()
+        && ownsComercioDoc(request.resource.data)
+        && request.resource.data.aprobado == false
+        && request.resource.data.activo == false;
+
+      // El dueño edita su comercio pero no puede cambiar propietario ni aprobación.
+      allow update: if isComercioOwner()
+        && ownsComercioDoc(request.resource.data)
+        && request.resource.data.aprobado == resource.data.aprobado;
+
+      // Un ADMIN/EDITOR puede aprobar, activar o editar cualquier comercio.
+      allow update: if isAdmin()
+        || (signedIn()
+            && role() == 'EDITOR'
+            && request.resource.data.propietarioUid == resource.data.propietarioUid);
+
+      allow delete: if isComercioOwner() || isAdmin();
     }
   }
 }

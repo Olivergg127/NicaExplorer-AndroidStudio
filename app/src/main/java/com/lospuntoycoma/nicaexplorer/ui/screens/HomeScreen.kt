@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material3.*
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaRefreshBox
@@ -72,6 +73,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     userViewModel: UserViewModel,
+    isLoggedIn: Boolean,
     onCityClick: () -> Unit,
     onCityCardClick: (String) -> Unit,
     onProfileClick: () -> Unit,
@@ -79,6 +81,8 @@ fun HomeScreen(
     onMapClick: () -> Unit,
     onAdminPanelClick: () -> Unit,
     onSavedPlacesClick: () -> Unit,
+    onMisComerciosClick: () -> Unit,
+    onLoginClick: () -> Unit,
     onPlaceClick: (cityId: String, placeId: String) -> Unit,
     onComercioClick: (comercioId: String) -> Unit,
     onLogout: () -> Unit
@@ -91,6 +95,8 @@ fun HomeScreen(
     val userProfile by userViewModel.userProfile.collectAsState()
     val canAccessAdminPanel = userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN ||
         userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.AUDITOR
+    val canManageComercios = userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.COMERCIO ||
+        userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN
 
     // Recomendaciones según la ubicación actual (GPS) y valoraciones.
     val context = LocalContext.current
@@ -227,6 +233,20 @@ fun HomeScreen(
                         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
                     )
                 )
+                if (canManageComercios) {
+                    NavigationDrawerItem(
+                        icon = { Icon(Icons.Filled.Storefront, contentDescription = null) },
+                        label = { Text("Mis comercios") },
+                        selected = false,
+                        onClick = {
+                            scope.launch { drawerState.close() }
+                            onMisComerciosClick()
+                        },
+                        colors = NavigationDrawerItemDefaults.colors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    )
+                }
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Assistant, contentDescription = null) },
                     label = { Text("Asistente IA") },
@@ -271,11 +291,11 @@ fun HomeScreen(
 
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Person, contentDescription = null) },
-                    label = { Text("Cerrar sesión") },
+                    label = { Text(if (isLoggedIn) "Cerrar sesión" else "Iniciar sesión") },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
-                        onLogout()
+                        if (isLoggedIn) onLogout() else onLoginClick()
                     },
                     colors = NavigationDrawerItemDefaults.colors(
                         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
@@ -405,7 +425,11 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Hola, explorador",
+                    text = if (isLoggedIn && !userProfile?.nombre.isNullOrBlank()) {
+                        "Hola, ${userProfile?.nombre}"
+                    } else {
+                        "Hola, explorador"
+                    },
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground

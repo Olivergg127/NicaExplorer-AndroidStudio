@@ -109,7 +109,7 @@ fun ComerciosScreen(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         NicaButton(
-                            text = "Solicita aparecer en NicaExplorer",
+                            text = "Registra tu comercio",
                             onClick = { onSolicitarAparicion(city.id) }
                         )
                     }

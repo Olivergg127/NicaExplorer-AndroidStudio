@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
+import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
 import com.lospuntoycoma.nicaexplorer.ui.theme.BrandHeaderBrush
@@ -60,10 +63,15 @@ fun ProfileScreen(
     onSavedPlaces: () -> Unit,
     onHistory: () -> Unit,
     onSettings: () -> Unit,
-    onAbout: () -> Unit
+    onAbout: () -> Unit,
+    onLogin: () -> Unit,
+    onRegister: () -> Unit,
+    onMisComercios: () -> Unit
 ) {
     val scrollState = rememberScrollState()
     val userProfile by userViewModel.userProfile.collectAsState()
+    val currentUser = FirebaseRepository.getCurrentUser()
+    val isLoggedIn = currentUser != null
 
     Scaffold(
         topBar = {
@@ -106,9 +114,13 @@ fun ProfileScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    val currentUser = FirebaseRepository.getCurrentUser()
                     Text(
-                        text = currentUser?.displayName ?: "Usuario",
+                        text = when {
+                            !isLoggedIn -> "Visitante"
+                            !currentUser?.displayName.isNullOrBlank() -> currentUser?.displayName ?: "Usuario"
+                            !userProfile?.nombre.isNullOrBlank() -> userProfile?.nombre ?: "Usuario"
+                            else -> "Usuario"
+                        },
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
@@ -117,7 +129,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = currentUser?.email ?: "",
+                        text = currentUser?.email ?: "Explorando sin cuenta",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.85f)
                     )
@@ -150,92 +162,176 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Column {
-                    ProfileMenuItem(
-                        icon = Icons.Filled.Person,
-                        title = "Editar perfil",
-                        onClick = onEditProfile
-                    )
-                    Divider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    )
-                    ProfileMenuItem(
-                        icon = Icons.Filled.Bookmark,
-                        title = "Lugares guardados",
-                        onClick = onSavedPlaces
-                    )
-                    Divider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    )
-                    ProfileMenuItem(
-                        icon = Icons.Filled.History,
-                        title = "Historial de exploración",
-                        onClick = onHistory
-                    )
-                    Divider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    )
-                    ProfileMenuItem(
-                        icon = Icons.Filled.Settings,
-                        title = "Configuración",
-                        onClick = onSettings
-                    )
-                    Divider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    )
-                    ProfileMenuItem(
-                        icon = Icons.Filled.Info,
-                        title = "Acerca de NicaExplorer",
-                        onClick = onAbout
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .clickable { onLogout() },
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                Row(
+            if (!isLoggedIn) {
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 20.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Logout,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = "Cerrar sesión",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Medium
-                    )
+                    Column(modifier = Modifier.padding(20.dp)) {
+                        Text(
+                            text = "Explora como visitante",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Inicia sesión o crea una cuenta para guardar lugares, ver tu historial y, si eres comercio, administrar tus negocios.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        NicaButton(text = "Iniciar sesión", onClick = onLogin)
+                        Spacer(modifier = Modifier.height(10.dp))
+                        NicaButton(
+                            text = "Crear cuenta",
+                            onClick = onRegister,
+                            gradient = Brush.horizontalGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.secondary,
+                                    MaterialTheme.colorScheme.primary
+                                )
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column {
+                        ProfileMenuItem(
+                            icon = Icons.Filled.Settings,
+                            title = "Configuración",
+                            onClick = onSettings
+                        )
+                        Divider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+                        ProfileMenuItem(
+                            icon = Icons.Filled.Info,
+                            title = "Acerca de NicaExplorer",
+                            onClick = onAbout
+                        )
+                    }
+                }
+            } else {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Column {
+                        ProfileMenuItem(
+                            icon = Icons.Filled.Person,
+                            title = "Editar perfil",
+                            onClick = onEditProfile
+                        )
+                        Divider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+                        ProfileMenuItem(
+                            icon = Icons.Filled.Bookmark,
+                            title = "Lugares guardados",
+                            onClick = onSavedPlaces
+                        )
+                        Divider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+                        ProfileMenuItem(
+                            icon = Icons.Filled.History,
+                            title = "Historial de exploración",
+                            onClick = onHistory
+                        )
+                        if (userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.COMERCIO ||
+                            userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.ADMIN
+                        ) {
+                            Divider(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
+                            ProfileMenuItem(
+                                icon = Icons.Filled.Storefront,
+                                title = "Mis comercios",
+                                onClick = onMisComercios
+                            )
+                        }
+                        Divider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+                        ProfileMenuItem(
+                            icon = Icons.Filled.Settings,
+                            title = "Configuración",
+                            onClick = onSettings
+                        )
+                        Divider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+                        ProfileMenuItem(
+                            icon = Icons.Filled.Info,
+                            title = "Acerca de NicaExplorer",
+                            onClick = onAbout
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .clickable { onLogout() },
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Cerrar sesión",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
             }
 
