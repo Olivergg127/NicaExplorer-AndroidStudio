@@ -86,6 +86,7 @@ import com.lospuntoycoma.nicaexplorer.model.Place
 import com.lospuntoycoma.nicaexplorer.model.TipoValoracion
 import com.lospuntoycoma.nicaexplorer.ui.components.CoverImage
 import com.lospuntoycoma.nicaexplorer.ui.components.PlaceCard
+import com.lospuntoycoma.nicaexplorer.ui.components.RatingStars
 import com.lospuntoycoma.nicaexplorer.ui.components.ValoracionRow
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCover
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
@@ -149,6 +150,10 @@ fun CatalogScreen(
             .mapValues { (_, lista) -> lista.map { it.estrellas }.average() }
     }
     val promedioDe: (String, String) -> Double = { tipo, refId -> promedios["$tipo|$refId"] ?: 0.0 }
+    val totales = remember(valoraciones) {
+        valoraciones.groupBy { "${it.tipo}|${it.refId}" }.mapValues { it.value.size }
+    }
+    val totalDe: (String, String) -> Int = { tipo, refId -> totales["$tipo|$refId"] ?: 0 }
 
     LaunchedEffect(Unit) {
         if (ValoracionesRepository.publicas.value.isEmpty()) {
@@ -627,7 +632,9 @@ fun CatalogScreen(
                             onClick = {
                                 val idx = places.indexOfFirst { it.id == lugar.id }
                                 if (idx >= 0) currentIndex = idx
-                            }
+                            },
+                            promedio = promedioDe("lugar", lugar.id),
+                            total = totalDe("lugar", lugar.id)
                         )
                     }
                 }
@@ -685,7 +692,9 @@ fun CatalogScreen(
                         ) { comercio ->
                             ComercioMiniCard(
                                 comercio = comercio,
-                                onClick = { onComercioClick(comercio.id) }
+                                onClick = { onComercioClick(comercio.id) },
+                                promedio = promedioDe("comercio", comercio.id),
+                                total = totalDe("comercio", comercio.id)
                             )
                         }
                     }
@@ -1117,7 +1126,9 @@ private fun InfoRow(
 @Composable
 fun ComercioMiniCard(
     comercio: Comercio,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    promedio: Double = 0.0,
+    total: Int = 0
 ) {
     Card(
         onClick = onClick,
@@ -1152,6 +1163,10 @@ fun ComercioMiniCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                if (total > 0) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    RatingStars(promedio = promedio, total = total)
+                }
             }
         }
     }

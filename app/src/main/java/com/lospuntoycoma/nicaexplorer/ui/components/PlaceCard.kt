@@ -40,7 +40,9 @@ import com.lospuntoycoma.nicaexplorer.model.Place
 fun PlaceCard(
     place: Place,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    promedio: Double = 0.0,
+    total: Int = 0
 ) {
     Card(
         modifier = modifier
@@ -125,6 +127,11 @@ fun PlaceCard(
             }
 
             Spacer(modifier = Modifier.height(4.dp))
+
+            if (total > 0) {
+                RatingStars(promedio = promedio, total = total)
+                Spacer(modifier = Modifier.height(4.dp))
+            }
 
             Text(
                 text = place.description,

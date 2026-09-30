@@ -147,6 +147,10 @@ fun HomeScreen(
             .mapValues { (_, lista) -> lista.map { it.estrellas }.average() }
     }
     val promedioDe: (String, String) -> Double = { tipo, refId -> promedios["$tipo|$refId"] ?: 0.0 }
+    val totales = remember(valoraciones) {
+        valoraciones.groupBy { "${it.tipo}|${it.refId}" }.mapValues { it.value.size }
+    }
+    val totalDe: (String, String) -> Int = { tipo, refId -> totales["$tipo|$refId"] ?: 0 }
 
     val lugaresRecomendados = remember(ciudadActual, valoraciones) {
         val ciudad = ciudadActual
@@ -621,7 +625,9 @@ fun HomeScreen(
                     items(lugaresRecomendados) { place ->
                         PlaceCard(
                             place = place,
-                            onClick = { onPlaceClick(place.cityId, place.id) }
+                            onClick = { onPlaceClick(place.cityId, place.id) },
+                            promedio = promedioDe("lugar", place.id),
+                            total = totalDe("lugar", place.id)
                         )
                     }
                 }
@@ -645,7 +651,9 @@ fun HomeScreen(
                         items(comerciosRecomendados, key = { it.id }) { comercio ->
                             ComercioMiniCard(
                                 comercio = comercio,
-                                onClick = { onComercioClick(comercio.id) }
+                                onClick = { onComercioClick(comercio.id) },
+                                promedio = promedioDe("comercio", comercio.id),
+                                total = totalDe("comercio", comercio.id)
                             )
                         }
                     }

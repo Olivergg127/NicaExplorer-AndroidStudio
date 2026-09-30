@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
@@ -23,11 +24,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Place
@@ -37,6 +41,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -54,6 +59,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -62,6 +68,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.lospuntoycoma.nicaexplorer.model.Comercio
@@ -101,6 +109,7 @@ fun ComercioDetalleScreen(
     val clipboard = LocalClipboardManager.current
 
     var showMapsDialog by remember { mutableStateOf(false) }
+    var lightboxIndex by remember { mutableStateOf<Int?>(null) }
 
     Scaffold(
         topBar = {
@@ -287,11 +296,14 @@ fun ComercioDetalleScreen(
                                     items(comercio.galeria) { url ->
                                         AsyncImage(
                                             model = url,
-                                            contentDescription = null,
+                                            contentDescription = "Ampliar foto",
                                             contentScale = ContentScale.Crop,
                                             modifier = Modifier
                                                 .size(140.dp)
                                                 .clip(RoundedCornerShape(14.dp))
+                                                .clickable {
+                                                    lightboxIndex = comercio.galeria.indexOf(url)
+                                                }
                                         )
                                     }
                                 }
@@ -482,7 +494,78 @@ fun ComercioDetalleScreen(
                             }
                         )
                     }
+
+                    val indiceActual = lightboxIndex
+                    if (indiceActual != null && indiceActual in comercio.galeria.indices) {
+                        GaleriaLightbox(
+                            urls = comercio.galeria,
+                            initialIndex = indiceActual,
+                            onClose = { lightboxIndex = null }
+                        )
+                    }
                 }
+            }
+        }
+    }
+}
+
+/**
+ * Visor a pantalla completa de la galería. Permite deslizar (swipe) entre las fotos.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun GaleriaLightbox(
+    urls: List<String>,
+    initialIndex: Int,
+    onClose: () -> Unit
+) {
+    Dialog(
+        onDismissRequest = onClose,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        val pagerState = rememberPagerState(initialPage = initialIndex) { urls.size }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize()
+            ) { page ->
+                AsyncImage(
+                    model = urls[page],
+                    contentDescription = "Foto ${page + 1} de ${urls.size}",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
+                )
+            }
+
+            IconButton(
+                onClick = onClose,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Cerrar",
+                    tint = Color.White
+                )
+            }
+
+            if (urls.size > 1) {
+                Text(
+                    text = "${pagerState.currentPage + 1} / ${urls.size}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                )
             }
         }
     }

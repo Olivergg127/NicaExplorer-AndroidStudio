@@ -6,6 +6,25 @@
 
 ## 2026-09-21
 
+### App — Estrellas en recomendados y lightbox de la galería de comercios (2026-09-21)
+- Objetivo: mostrar la puntuación (estrellas + promedio + nº de reseñas) en las tarjetas
+  de los tops de recomendados, y poder ampliar las fotos de la galería de un comercio a
+  pantalla completa con gesto de swipe.
+- App Android:
+  - Nuevo `ui/components/RatingStars.kt`: puntuación compacta reutilizable (no dibuja nada
+    si no hay valoraciones).
+  - `ui/components/PlaceCard.kt`: parámetros opcionales `promedio`/`total` que pintan las
+    estrellas bajo la ubicación.
+  - `CatalogScreen.kt`: `ComercioMiniCard` acepta `promedio`/`total` y muestra estrellas;
+    se calculan `totales` y se pasan `promedio`/`total` en "Lugares recomendados" y
+    "Comercios recomendados".
+  - `HomeScreen.kt`: se pasan `promedio`/`total` a `PlaceCard` y `ComercioMiniCard` de las
+    secciones de recomendados.
+  - `ComercioDetalleScreen.kt`: la galería "Fotos" ahora es clicable y abre `GaleriaLightbox`,
+    un `Dialog` a pantalla completa con `HorizontalPager` (swipe entre fotos), botón de
+    cierre e indicador "n / total".
+- Build: `.\gradlew.bat :app:assembleDebug -PskipIl2CppBuild` — **BUILD SUCCESSFUL**.
+
 ### App/Backend — Redes sociales, correo de contacto y tops por valoración (2026-09-22)
 - Objetivo: que un comercio elija redes sociales (múltiples) y muestre sus iconos
   clicables + correo de contacto; y que las vistas de ciudad muestren un top de
