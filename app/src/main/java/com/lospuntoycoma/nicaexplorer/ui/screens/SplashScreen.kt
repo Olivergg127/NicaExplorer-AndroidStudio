@@ -58,7 +58,7 @@ fun SplashScreen(onNavigateToHome: () -> Unit) {
         ) {
             Icon(
                 painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_isotipo),
-                contentDescription = "NicaExplorer",
+                contentDescription = "NicaExplore",
                 tint = Color.Unspecified,
                 modifier = Modifier.size(120.dp)
             )

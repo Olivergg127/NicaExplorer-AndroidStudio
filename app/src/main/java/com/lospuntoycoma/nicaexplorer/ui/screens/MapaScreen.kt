@@ -76,7 +76,7 @@ fun MapaScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mapa de NicaExplorer") },
+                title = { Text("Mapa de NicaExplore") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")

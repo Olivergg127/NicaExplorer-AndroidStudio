@@ -117,7 +117,7 @@ fun RegisterScreen(
 
                 Icon(
                     painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_logo),
-                    contentDescription = "Logo NicaExplorer",
+                    contentDescription = "Logo NicaExplore",
                     tint = androidx.compose.ui.graphics.Color.Unspecified,
                     modifier = Modifier.size(160.dp)
                 )
@@ -125,7 +125,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Únete a NicaExplorer",
+                    text = "Únete a NicaExplore",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,

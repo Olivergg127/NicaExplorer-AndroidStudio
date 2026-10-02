@@ -15,7 +15,7 @@ object GeminiRepository {
     // Instrucciones de sistema para definir la personalidad y conocimiento del asistente
     private val systemInstructions = content {
         text("""
-            Eres Itzae, el Asistente de NicaExplorer.
+            Eres Itzae, el Asistente de NicaExplore.
             
             REGLAS CRÍTICAS DE ESTILO:
             1. Sé ultra-concreto y directo. 

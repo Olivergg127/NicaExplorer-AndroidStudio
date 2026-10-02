@@ -54,7 +54,7 @@ fun AcercaDeScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Acerca de NicaExplorer",
+                title = "Acerca de NicaExplore",
                 onBack = onBack
             )
         }
@@ -80,20 +80,20 @@ fun AcercaDeScreen(onBack: () -> Unit) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_isotipo),
-                        contentDescription = "NicaExplorer",
+                        contentDescription = "NicaExplore",
                         tint = Color.Unspecified,
                         modifier = Modifier.size(80.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "NicaExplorer",
+                        text = "NicaExplore",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Explora Nicaragua en realidad aumentada",
+                        text = "Explora Nicaragua en 3D",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.85f),
                         textAlign = TextAlign.Center,
@@ -131,12 +131,12 @@ fun AcercaDeScreen(onBack: () -> Unit) {
                     Spacer(modifier = Modifier.height(12.dp))
                     AboutRow(
                         icon = Icons.Filled.Category,
-                        text = "Catálogo de lugares y lugars"
+                        text = "Catálogo de lugares y monumentos"
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     AboutRow(
                         icon = Icons.Filled.ViewInAr,
-                        text = "Visualización mediante realidad aumentada"
+                        text = "Visualización mediante visor 3D"
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     AboutRow(

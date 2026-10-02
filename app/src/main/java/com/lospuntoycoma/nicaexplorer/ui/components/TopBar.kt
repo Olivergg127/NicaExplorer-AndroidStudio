@@ -36,7 +36,7 @@ fun NicaTopBar(
                 if (showIsotipo) {
                     Icon(
                         painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_isotipo),
-                        contentDescription = "NicaExplorer",
+                        contentDescription = "NicaExplore",
                         tint = androidx.compose.ui.graphics.Color.Unspecified,
                         modifier = Modifier.size(24.dp)
                     )

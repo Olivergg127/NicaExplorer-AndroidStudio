@@ -193,13 +193,13 @@ fun HomeScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Image(
                             painter = painterResource(id = R.drawable.nicaexplorer_isotipo),
-                            contentDescription = "Logo de NicaExplorer",
+                            contentDescription = "Logo de NicaExplore",
                             modifier = Modifier.size(68.dp),
                             contentScale = ContentScale.Fit
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "NicaExplorer",
+                            text = "NicaExplore",
                             style = MaterialTheme.typography.titleLarge,
                             color = Color.White,
                             fontWeight = FontWeight.Bold
@@ -326,13 +326,13 @@ fun HomeScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_isotipo),
-                                contentDescription = "NicaExplorer",
+                                contentDescription = "NicaExplore",
                                 tint = androidx.compose.ui.graphics.Color.Unspecified,
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                "NicaExplorer",
+                                "NicaExplore",
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -496,7 +496,7 @@ fun HomeScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
-                                text = "Descubre Nicaragua con NicaExplorer",
+                                text = "Descubre Nicaragua con NicaExplore",
                                 style = MaterialTheme.typography.titleLarge,
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold

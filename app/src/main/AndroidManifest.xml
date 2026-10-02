@@ -23,7 +23,7 @@
         android:name=".NicaExplorerApp"
         android:allowBackup="true"
         android:icon="@drawable/nicaexplorer_isotipo"
-        android:label="NicaExplorer"
+        android:label="NicaExplore"
         android:roundIcon="@drawable/nicaexplorer_isotipo"
         android:supportsRtl="true"
         android:theme="@style/Theme.NicaExplorer">

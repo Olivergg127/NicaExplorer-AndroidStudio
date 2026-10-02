@@ -87,7 +87,7 @@ fun LoginScreen(
 
         Icon(
             painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_logo),
-            contentDescription = "Logo NicaExplorer",
+            contentDescription = "Logo NicaExplore",
             tint = Color.Unspecified,
             modifier = Modifier.size(200.dp)
         )
@@ -104,7 +104,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Inicia sesión o explora NicaExplorer sin registrarte",
+            text = "Inicia sesión o explora NicaExplore sin registrarte",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             textAlign = TextAlign.Center

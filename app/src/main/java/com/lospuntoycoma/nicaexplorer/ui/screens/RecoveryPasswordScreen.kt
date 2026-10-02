@@ -67,7 +67,7 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
 
         Icon(
             painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_logo),
-            contentDescription = "Logo NicaExplorer",
+            contentDescription = "Logo NicaExplore",
             tint = Color.Unspecified,
             modifier = Modifier.size(200.dp)
         )

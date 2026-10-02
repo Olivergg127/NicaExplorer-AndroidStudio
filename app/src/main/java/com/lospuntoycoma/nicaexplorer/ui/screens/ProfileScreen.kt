@@ -226,7 +226,7 @@ fun ProfileScreen(
                         )
                         ProfileMenuItem(
                             icon = Icons.Filled.Info,
-                            title = "Acerca de NicaExplorer",
+                            title = "Acerca de NicaExplore",
                             onClick = onAbout
                         )
                     }
@@ -294,7 +294,7 @@ fun ProfileScreen(
                         )
                         ProfileMenuItem(
                             icon = Icons.Filled.Info,
-                            title = "Acerca de NicaExplorer",
+                            title = "Acerca de NicaExplore",
                             onClick = onAbout
                         )
                     }

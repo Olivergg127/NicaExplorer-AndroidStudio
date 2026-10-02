@@ -86,7 +86,7 @@ fun ConfiguracionScreen(
                     SettingRow(
                         icon = Icons.Filled.Notifications,
                         title = "Notificaciones",
-                        subtitle = "Recibir novedades de NicaExplorer"
+                        subtitle = "Recibir novedades de NicaExplore"
                     ) {
                         Switch(
                             checked = notifications,

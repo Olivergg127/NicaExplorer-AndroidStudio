@@ -103,7 +103,7 @@ fun SolicitudComercioScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Nuestro equipo revisará la información antes de publicar el negocio en NicaExplorer.",
+                        text = "Nuestro equipo revisará la información antes de publicar el negocio en NicaExplore.",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.72f),
                         textAlign = TextAlign.Center
@@ -128,7 +128,7 @@ fun SolicitudComercioScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "Solicita aparecer en NicaExplorer",
+                    text = "Solicita aparecer en NicaExplore",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
