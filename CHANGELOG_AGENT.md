@@ -4,6 +4,25 @@
 > cambios importantes. No sustituye al historial de Git; lo complementa con contexto.
 > Formato: fecha, objetivo, archivos, cambios, build, resultado, riesgos y pendientes.
 
+## 2026-10-01
+
+### App — Nombre visible NicaExplore y correcciones en "Acerca de" (2026-10-01)
+- Objetivo: cambiar el nombre visible de la app de **NicaExplorer** a **NicaExplore**
+  (identidad bilingüe) y corregir textos del apartado "Acerca de".
+- App Android (solo textos visibles; package e identificadores técnicos intactos):
+  - `AndroidManifest.xml` (`android:label`) y `res/values/strings.xml` (`app_name`).
+  - Pantallas/componentes: `HomeScreen` (top bar, drawer y tarjeta), `AcercaDeScreen`,
+    `ProfileScreen`, `LoginScreen`, `RegisterScreen`, `RecoveryPasswordScreen`,
+    `SolicitudComercioScreen`, `ConfiguracionScreen`, `MapaScreen`, `TopBar`, `SplashScreen`.
+  - `data/GeminiRepository.kt`: la identidad de Itzae pasa a "Asistente de NicaExplore".
+  - `AcercaDeScreen`: "Explora Nicaragua en realidad aumentada" → "Explora Nicaragua en 3D";
+    "Visualización mediante realidad aumentada" → "Visualización mediante visor 3D";
+    typo "Catálogo de lugares y lugars" → "Catálogo de lugares y monumentos".
+- No se cambió: package/applicationId `com.lospuntoycoma.nicaexplorer`, clases
+  (`NicaExplorerTheme`, `NicaExplorerApp`), tema, tags de log ni User-Agent.
+- Build: `.\gradlew.bat :app:assembleDebug -PskipIl2CppBuild` — **BUILD SUCCESSFUL**.
+- Commit `687c20c` en `main` (incluye bump `versionCode 4` / `versionName 1.1.2`).
+
 ## 2026-09-21
 
 ### App — Estrellas en recomendados y lightbox de la galería de comercios (2026-09-21)
