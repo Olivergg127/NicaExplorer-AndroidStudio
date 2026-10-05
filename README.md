@@ -64,6 +64,9 @@ Firestore (proyecto `nica-explore`):
 - Panel de administración móvil (roles `ADMIN`/`AUDITOR`).
 
 ### Panel web / Backend
+- **Landing pública** en la raíz del dominio (`/`): página promocional responsive de la app
+  Android (hero, características, cómo funciona, ciudades, comercios, galería, FAQ y
+  descarga del APK), con diseño propio e identidad oscura/turquesa.
 - **API REST v1 (JSON)** con API key y CRUD de todas las colecciones.
 - **Panel web** con tema claro/oscuro propio (`AdminLTE 4`/Bootstrap), sidebar, **DataTables**
   2 y **modales** para crear/editar/eliminar (jQuery + AJAX).
@@ -296,11 +299,13 @@ nicaexp_web/
 │   │   ├── ResourceManager.php      Acceso a repositorios por clave.
 │   │   └── PanelPermissions.php     Matriz de permisos por rol.
 │   └── Views/
+│       ├── landing.php         Landing pública de la app (raíz del dominio).
 │       ├── layout/panel.php    Layout del panel (sidebar/topbar, tema claro/oscuro).
 │       └── panel/              login, dashboard y resource (DataTable + modales).
 ├── docker/                    entrypoint.sh (puerto) y write-env.php (.env desde env vars).
 ├── Dockerfile                 Imagen PHP 8.3 + Apache.
-├── public/assets/             panel.js, panel.css, theme.js.
+├── public/assets/             panel.js, panel.css, theme.js, landing.css, landing.js.
+├── public/assets/img/         Logos, capturas y fotos de la landing.
 └── render.yaml                (en la raíz del repo) Blueprint de despliegue.
 ```
 
@@ -407,6 +412,7 @@ La app **no** consume el CRUD completo. Consume solo:
 
 | Método | Ruta | Descripción |
 |---|---|---|
+| GET | `/` | **Landing pública** de la app (`Home::index` → `Views/landing.php`). |
 | GET | `/panel/login` | Formulario de login. |
 | POST | `/panel/login` | Procesa login (CSRF). |
 | GET | `/panel/logout` | Cierra sesión. |
@@ -416,6 +422,22 @@ La app **no** consume el CRUD completo. Consume solo:
 | POST | `/panel/{recurso}/save` | Crear/actualizar (CSRF). |
 | POST | `/panel/{recurso}/delete` | Eliminar (CSRF). |
 | POST | `/panel/upload` | Subida de imágenes (CSRF). |
+
+### Landing pública (`/`)
+
+Página promocional de la app Android servida en la **raíz del dominio**
+(`GET /` → `Home::index` → `app/Views/landing.php`). Es autónoma: no usa el layout del panel
+ni Bootstrap, solo sus propios assets en `public/assets/`:
+
+- `landing.css` — diseño oscuro responsive con la identidad Guardabarranco.
+- `landing.js` — menú móvil, cabecera al hacer scroll y animaciones de aparición.
+- `img/` — logos (`nicaexplorer_logo`/`nicaexplorer_isotipo`, `itzae`), capturas de la app y
+  fotos de ciudades, monumentos y comercios.
+
+Secciones: hero y descarga del APK, características, cómo funciona, ciudades (Juigalpa, León
+y Managua), comercios locales, galería de la app, stack tecnológico, preguntas frecuentes,
+CTA final y pie de página. El enlace de descarga apunta a GitHub Releases y el panel de
+administración sigue disponible en `/panel`.
 
 ---
 
@@ -597,6 +619,8 @@ El backend se despliega como **Web Service Docker** en Render. El archivo `rende
 raíz describe el servicio (Root Directory = `nicaexp_web`, Dockerfile en `nicaexp_web/`).
 
 - **URL pública:** <https://nicaexplorer-backend.onrender.com>
+- **Landing pública:** servida en la **raíz** (`/`); el panel de administración sigue en
+  `/panel` y el `healthCheckPath` del blueprint se mantiene en `/panel/login`.
 - **Build:** `nicaexp_web/Dockerfile` (PHP 8.3 + Apache).
 - **Arranque:** `docker/entrypoint.sh` genera el `.env` desde las variables de entorno
   (`docker/write-env.php`) y ajusta Apache al `PORT`.

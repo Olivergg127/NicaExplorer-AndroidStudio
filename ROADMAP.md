@@ -6,6 +6,13 @@
 
 ## Implementado
 
+### Web pública — Landing de la app (P2, 2026-10-05)
+- Landing promocional de NicaExplore servida en la **raíz del dominio** (`GET /` →
+  `Home::index` → vista `landing`). Página autónoma y responsive con secciones de
+  características, cómo funciona, ciudades, comercios, galería, stack, FAQ y descarga del APK.
+- Assets propios: `public/assets/landing.css`, `public/assets/landing.js` y
+  `public/assets/img/` (logos, capturas y fotos). El panel permanece en `/panel`.
+
 ### Autenticación y cuenta (P1)
 - Registro, inicio de sesión y recuperación de contraseña con Firebase Auth
   (`FirebaseRepository`, `LoginScreen`, `RegisterScreen`, `RecoveryPasswordScreen`).

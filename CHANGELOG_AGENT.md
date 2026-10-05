@@ -4,6 +4,26 @@
 > cambios importantes. No sustituye al historial de Git; lo complementa con contexto.
 > Formato: fecha, objetivo, archivos, cambios, build, resultado, riesgos y pendientes.
 
+## 2026-10-05
+
+### Web — Landing page pública de la app (2026-10-05)
+- Objetivo: crear una landing promocional moderna, limpia y responsive de la app
+  Android, servida en la **raíz del dominio** (antes `/` redirigía a `/panel`).
+- Backend (`nicaexp_web/`):
+  - `app/Config/Routes.php`: `GET /` → `Home::index` (se elimina el redirect a `/panel`).
+  - `app/Controllers/Home.php`: `index()` devuelve la vista `landing` con `apkUrl`,
+    `repoUrl`, `version` y `year`.
+  - `app/Views/landing.php`: página autónoma (sin layout del panel ni Bootstrap) con hero,
+    características, cómo funciona, ciudades (Juigalpa/León/Managua), comercios locales,
+    galería, stack tecnológico, FAQ, CTA de descarga y pie de página; metadatos OG/Twitter.
+  - `public/assets/landing.css` y `public/assets/landing.js`: diseño oscuro propio
+    (identidad Guardabarranco), menú móvil, cabecera con scroll y animaciones de aparición.
+  - `public/assets/img/`: logos (`nicaexplorer_logo/isotipo`, `itzae`), capturas
+    (`app-home`, `app-map`) y fotos de ciudades, monumentos y comercios (optimizadas).
+- El panel sigue disponible en `/panel`; el health check de Render (`/panel/login`) no cambia.
+- Build/verificación: `php -l` sin errores; `php spark serve` responde **200** en `/`, CSS,
+  JS e imágenes (probado en local, puerto 8095/8096).
+
 ## 2026-10-02
 
 ### Docs — Documentación profunda de app y backend (2026-10-02)

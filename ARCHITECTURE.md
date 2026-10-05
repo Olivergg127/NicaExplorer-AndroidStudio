@@ -248,6 +248,11 @@ Implementaciones presentes en el código:
 Backend separado (**CodeIgniter 4 + Cloud Firestore**, ver `nicaexp_web/README.md`) que
 administra las mismas colecciones de Firestore y gestiona las imágenes.
 
+- **Landing pública de la app:** `GET /` → `Home::index` → vista `landing`
+  (`app/Views/landing.php`), página autónoma y responsive que promociona la app Android con
+  assets propios (`public/assets/landing.css`, `landing.js` e `img/`). El panel de
+  administración permanece en `/panel`.
+
 ```text
 Panel web (tema claro/oscuro NicaExplore sobre AdminLTE 4 + DataTables + modales, jQuery/AJAX)
   ├── CRUD -> Firestore (misma base que la app, proyecto nica-explore)

@@ -4,7 +4,8 @@ use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
 
-$routes->get('/', static fn () => redirect()->to(site_url('panel')));
+// Landing pública de la app (raíz del dominio).
+$routes->get('/', 'Home::index');
 
 // ---------------------------------------------------------------------
 // API REST v1 (protegida con API key: header X-API-KEY)
