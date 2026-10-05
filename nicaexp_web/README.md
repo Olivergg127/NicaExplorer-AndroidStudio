@@ -170,30 +170,43 @@ Los campos de imagen se definen en `app/Config/NicaResources.php` con `'type' =>
 La app Android y este backend comparten **la misma base de Firestore** (`nica-explore`),
 así que cualquier alta/edición/borrado del panel se refleja en la app.
 
-- **Datos** (ciudades, lugares, comercios, etc.): la app los lee de Firestore, la misma
-  colección que escribe/edita el backend.
-- **Imágenes**: la app carga `imagenUrl` con Coil (HTTP) y, si no hay URL o falla,
-  usa el drawable local de respaldo (`imagenKey`).
-- La app **no** necesita la API key: no consume `/api/v1`; consume Firestore y las
-  imágenes servidas por este backend. La API REST queda para integraciones externas.
-- Para desarrollo, la app tiene `android:usesCleartextTraffic="true"` porque sirve
-  imágenes por HTTP en la red local. En producción, usar HTTPS y quitarlo.
+- **Catálogo (ciudades, lugares, rutas, comercios, categorías y ranking de valoraciones):**
+  la app lo lee a través de **`/api/v1`** (con `X-API-KEY`). Por eso la API key sí se usa desde
+  la app (`BuildConfig.API_KEY`, inyectada desde `local.properties`).
+- **Escritura propia del usuario:** perfiles, comercios propios, valoraciones y solicitudes se
+  escriben **directamente en Firestore** desde la app (no por la API).
+- **Imágenes:** la app carga `imagenUrl` con Coil (HTTP) y, si no hay URL o falla, usa el
+  drawable local de respaldo (`imagenKey`).
+- **Subida desde la app:** `POST /api/v1/upload` (token de Firebase + API key).
+- Para desarrollo, la app tiene `android:usesCleartextTraffic="true"` porque sirve imágenes
+  por HTTP en la red local. En producción, usar HTTPS y quitarlo.
 
 
 ## API REST
 
 Todas las rutas requieren el header `X-API-KEY` o el parámetro `?api_key=`.
 
-| Método | Ruta | Descripción |
-|---|---|---|
-| GET | `/api/v1/health` | Estado y conectividad con Firestore |
-| GET | `/api/v1/{coleccion}` | Listar (`?search=` y `?limit=`) |
-| GET | `/api/v1/{coleccion}/{id}` | Ver un documento |
-| POST | `/api/v1/{coleccion}` | Crear |
-| PUT/PATCH | `/api/v1/{coleccion}/{id}` | Actualizar |
-| DELETE | `/api/v1/{coleccion}/{id}` | Eliminar |
+| Método | Ruta | Descripción | Auth |
+|---|---|---|---|
+| GET | `/api/v1/health` | Estado y conectividad con Firestore (conteo de `ciudades`) | API key |
+| GET | `/api/v1/version` | Versión del catálogo (`meta/catalogo.updatedAt`) | API key |
+| GET | `/api/v1/valoraciones` | Ranking público de valoraciones (sin `uid`) | API key |
+| POST | `/api/v1/upload` | Sube una imagen (campo `image`, máx. 5 MB) | API key + token Firebase (COMERCIO/EDITOR/ADMIN) |
+| GET | `/api/v1/{coleccion}` | Listar (`?search=` y `?limit=`) | API key |
+| GET | `/api/v1/{coleccion}/{id}` | Ver un documento | API key |
+| POST | `/api/v1/{coleccion}` | Crear | API key |
+| PUT/PATCH | `/api/v1/{coleccion}/{id}` | Actualizar | API key |
+| DELETE | `/api/v1/{coleccion}/{id}` | Eliminar | API key |
 
-Colecciones: `ciudades`, `lugares`, `comercios`, `solicitudes_comercios`, `usuarios`.
+Colecciones: `ciudades`, `categorias_lugares`, `categorias_comercios`, `lugares`, `rutas`,
+`comercios`, `solicitudes_comercios`, `usuarios`.
+
+Respuesta al listar:
+
+```json
+{ "resource": "ciudades", "count": 3,
+  "data": [ { "id": "juigalpa", "data": { "nombre": "Juigalpa" } } ] }
+```
 
 Ejemplo:
 

@@ -161,10 +161,11 @@
 ## En progreso
 
 - **Limpieza de mapa legado (P0).** `MapaScreen.kt` sigue **sin cablear** (la ruta `mapa`
-  ahora abre `MapaPrincipalScreen`); `MapaViewModel.kt` sí se reutiliza. Decidir si se
-  elimina `MapaScreen` y la `MapaActivity` nativa.
-- **Centrado por ciudad/monumento (P2).** `MapaConfig.NICARAGUA` tiene un comentario que
-  indica que el enfoque en Juigalpa se incorporará en la fase de comercios/marcadores.
+  ahora abre `MapaPrincipalScreen`); `MapaViewModel.kt` sí se reutiliza. `MapaActivity` (nativa)
+  queda como legado. Decidir si se eliminan ambas.
+- **Limpieza de solicitudes legado (P3).** `SolicitudComercioScreen` y `Routes.SOLICITUD_COMERCIO`
+  quedaron sin cablear tras el registro directo de comercios; el repositorio y la colección
+  `solicitudes_comercios` se conservan.
 - **Rutas para León y Managua (P2).** La UI ya muestra "Rutas próximamente"; solo Juigalpa
   tiene datos.
 - **Búsqueda en catálogo (P3).** El icono de búsqueda en `CatalogScreen`/`NicaTopBar` es un

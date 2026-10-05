@@ -17,7 +17,7 @@
   Android (`unityLibrary`) y MapLibre Native Android (variante OpenGL) con teselas de
   OpenStreetMap.
 - **Package / applicationId:** `com.lospuntoycoma.nicaexplorer` (no cambiar).
-- **Versión actual:** `versionCode = 3`, `versionName = "1.1.1"`.
+- **Versión actual:** `versionCode = 4`, `versionName = "1.1.2"`.
 
 Contexto detallado en `INIT.md`, arquitectura en `ARCHITECTURE.md`, visión de producto
 en `PROJECT_CONTEXT.md`, entorno y build en `DEVELOPMENT.md`, reglas de estilo en

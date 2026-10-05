@@ -18,15 +18,16 @@ con 3D e IA. Es un **prototipo académico**.
 
 ## Estado actual (resumen)
 
-- **Implementado y estable:** autenticación con Firebase, catálogo de 3 ciudades y 8
-  monumentos, detalle de monumento, visor 3D con Unity, asistente Itzae, comercios locales
-  con detalle/WhatsApp/Google Maps, lugares guardados, historial, perfil, panel
-  administrativo con roles, rutas turísticas (solo Juigalpa) y mapa nativo con MapLibre.
-- **En progreso / sin cablear:** `MapaScreen` (Compose) y `MapaViewModel` con marcadores de
-  comercios existen en el código pero **no están conectados a la navegación**; el mapa
-  accesible hoy es `MapaActivity` (nativa, sin marcadores, vista de todo Nicaragua).
-- **No implementado:** GPS, ubicación del usuario, rutas en tiempo real, marcadores
-  turísticos en el mapa, "Ver en el mapa" desde un monumento, recomendaciones dinámicas.
+- **Implementado y estable:** autenticación con Firebase (con exploración pública), catálogo
+  de 3 ciudades y 8 monumentos, detalle de ciudad/lugar, visor 3D con Unity, asistente Itzae,
+  comercios locales (con subcategorías), comercios propios con subida de imágenes, lugares
+  guardados, historial, perfil, panel administrativo con roles, rutas turísticas por ciudad y
+  **mapa Compose con MapLibre (`MapaPrincipalScreen`) con pines y ubicación**.
+- **En progreso / sin cablear:** `MapaScreen` (Compose alternativo) y `SolicitudComercioScreen`
+  existen en el código pero no están conectados a la navegación; `MapaActivity` (nativa) queda
+  como legado registrado pero sin lanzarse.
+- **No implementado:** GPS de navegación, rutas en tiempo real, afluencia en tiempo real,
+  notificaciones y App Check.
 
 ## ¿Qué tecnologías utiliza?
 
@@ -42,26 +43,31 @@ con 3D e IA. Es un **prototipo académico**.
 ## ¿Dónde empieza la aplicación?
 
 - `app/src/main/AndroidManifest.xml` → lanza `MainActivity`.
-- `MainActivity.kt` inicializa MapLibre y `UserPreferences`, carga el catálogo desde
-  Firestore (`SampleData.loadFromFirestore()`) y monta `NicaExplorerTheme` + `AppNavigation`.
+- `MainActivity.kt` inicializa MapLibre y `UserPreferences`, carga el catálogo desde la
+  **API REST** (`SampleData.loadCatalog()` → `ApiRepository`), activa `CatalogSync` y monta
+  `NicaExplorerTheme` + `AppNavigation`.
 - `navigation/AppNavigation.kt` define el `NavHost` (ruta inicial `splash`).
 - `navigation/Routes.kt` contiene todas las rutas.
 
 ## ¿Cómo está organizada? (paquete `com.lospuntoycoma.nicaexplorer`)
 
 - `ar/` → `UnityArActivity` (aloja Unity; legado AR + escena Visor3D).
-- `data/` → repositorios y datos: `FirebaseRepository`, `GeminiRepository`,
-  `SolicitudComercioRepository`, `UserPreferences`, `SampleData` (fallback + carga
-  Firestore), `RutasTuristicasData`.
+- `data/` → repositorios y datos: `FirebaseRepository`, `ApiRepository`, `ApiClient`,
+  `GeminiRepository`, `CatalogSync`, `ValoracionesRepository`, `ImageUploader`,
+  `SolicitudComercioRepository`, `UserPreferences`, `UbicacionHelper`, `SampleData`
+  (catálogo en memoria desde la API).
 - `map/` → `MapaConfig` (estilo OSM/URL/cámara) y `MapaMarkerFactory` (iconos).
-- `model/` → `City`, `Monument`, `Afluencia`, `Comercio`, `RutaTuristica`,
-  `SolicitudComercio`, `UserProfile`, `UserRole`.
+- `model/` → `City`, `Place` (+ `Afluencia`), `Comercio`, `CategoriaComercio`,
+  `RutaTuristica`, `Valoracion`, `RedesSociales`, `SolicitudComercio`, `UserProfile`,
+  `UserRole`.
 - `navigation/` → `Routes`, `AppNavigation`.
-- `ui/components/` → componentes reutilizables (cards, botón, top bar, empty state).
-- `ui/screens/` → todas las pantallas, incluida `MapaActivity` (nativa).
+- `ui/components/` → componentes reutilizables (cards, botón, top bar, empty state, estrellas).
+- `ui/screens/` → todas las pantallas, incluida `MapaPrincipalScreen` (Compose) y
+  `MapaActivity`/`MapaScreen` (legado).
 - `ui/theme/` → `Color.kt`, `Theme.kt`, `Type.kt`.
 - `ui/viewmodels/` → `UserViewModel`, `ComerciosViewModel`, `ComercioDetalleViewModel`,
-  `SolicitudComercioViewModel`, `MapaViewModel` (sin cablear).
+  `ComercioFormViewModel`, `MisComerciosViewModel`, `SolicitudComercioViewModel`,
+  `MapaViewModel`.
 - `util/` → `TelefonoUtils` (normalización de teléfono/WhatsApp).
 
 Además, en `nicaexp_web/` vive el **backend de administración** (CodeIgniter 4 + la misma

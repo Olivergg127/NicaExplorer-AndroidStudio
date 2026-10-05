@@ -39,7 +39,7 @@
   navegación/callbacks al final (`onBack`, `onClick`, etc.). Las pantallas usan `Scaffold`
   y `NicaTopBar` para la barra superior.
 - **Observado:** los componentes reutilizables viven en `ui/components/` y usan PascalCase
-  (`NicaTopBar`, `NicaButton`, `MonumentCard`, `ComercioCover`).
+  (`NicaTopBar`, `NicaButton`, `PlaceCard`, `ComercioCover`).
 - **Observado:** se usa `@OptIn(ExperimentalMaterial3Api::class)` cuando hace falta
   (`ModalBottomSheet`, `TopAppBar`, `ModalNavigationDrawer`).
 - **Observado:** el estado local usa `remember { mutableStateOf(...) }` +

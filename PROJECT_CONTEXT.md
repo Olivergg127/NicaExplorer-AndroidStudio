@@ -35,7 +35,7 @@ culturales, todo con una identidad visual nicaragüense.
 ## Ciudades y categorías actuales
 
 - **Ciudades vigentes (3):** Juigalpa, León y Managua. Cualquier otra ciudad no está
-  soportada y `SampleData.loadFromFirestore()` filtra por estos IDs.
+  soportada; el catálogo se carga desde la API REST (que lee Firestore).
 - **Monumentos (8):**
 
   | Ciudad | Monumento | `monumentId` |
@@ -105,8 +105,9 @@ culturales, todo con una identidad visual nicaragüense.
 ## Mapa turístico
 
 - MapLibre Native Android con teselas raster de OpenStreetMap.
-- Hoy muestra Nicaragua completa; **no** centra por ciudad, no tiene marcadores en la
-  versión accesible y no usa ubicación del usuario.
+- El mapa en uso es `MapaPrincipalScreen` (Compose): pines de lugares y comercios, filtros,
+  categorías y ubicación del usuario (ciudad conocida más cercana, ≤ 25 km).
+- `MapaActivity` (Activity nativa) y `MapaScreen` (Compose alternativo) quedan como legado.
 
 ## Decisions already made
 
@@ -115,11 +116,12 @@ culturales, todo con una identidad visual nicaragüense.
 - Android principal usa **Compose** para toda la UI.
 - **Unity continúa** como el visor 3D.
 - Se usa **MapLibre** para el mapa (no otra librería).
-- El mapa estable se ejecuta en una **Activity nativa + renderer OpenGL**, porque la
-  integración directa en Compose presentó problemas de renderer/lifecycle en el dispositivo
-  de prueba y la variante Vulkan provocaba crash nativo.
+- El mapa funcional vive en **Compose** (`MapaPrincipalScreen`) con renderer OpenGL. La
+  variante de Activity nativa (`MapaActivity`) queda como legado.
 - Se mantiene una **experiencia visual oscura con identidad turquesa/verde**.
-- **Firestore es la fuente principal** del catálogo y `SampleData` es el fallback local.
+- **La fuente del catálogo es la API REST** del backend (`nicaexp_web`), que lee Firestore;
+  la app escribe perfiles, comercios propios, valoraciones y solicitudes directamente en
+  Firestore.
 - Los **datos personales locales** (guardados/historial) se almacenan con DataStore por `uid`.
 - Toda cuenta creada desde la app empieza con rol **USUARIO**.
 - La ruta inteligente se limita a **Juigalpa** hasta tener comercios en otras ciudades.
@@ -131,7 +133,8 @@ culturales, todo con una identidad visual nicaragüense.
 - **No asumir que todos los negocios están en Firebase** ni que las imágenes remotas
   existen; hay fallbacks locales.
 - **No asumir que existen rutas** en León o Managua: solo Juigalpa.
-- **No asumir que hay ubicación del usuario** en el mapa.
+- **No asumir que hay ubicación del usuario** en el mapa: sí existe detección de ciudad
+  cercana por GPS, pero no navegación ni seguimiento.
 - **No asumir que una función del diseño o de una captura ya existe en código.** Verifica en
   `ROADMAP.md` y en el código.
 - **No asumir que `MapaScreen`/`MapaViewModel` están en uso**: no están cableados.

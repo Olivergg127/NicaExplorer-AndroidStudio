@@ -28,7 +28,7 @@
 | `compileSdk` (app) | 34 |
 | `minSdk` | 30 |
 | `targetSdk` (app) | 34 |
-| `versionCode` / `versionName` | 3 / 1.1.1 |
+| `versionCode` / `versionName` | 4 / 1.1.2 |
 | Firebase BOM | 34.16.0 |
 | MapLibre (`android-sdk-opengl`) | 12.3.1 |
 | Unity | 6000.5.1f1 |
@@ -92,8 +92,9 @@ adb logcat -c
 ```
 
 Tags relevantes en el código:
-- `NicaExplorerMapActivity` → `MapaActivity` nativa (carga de estilo/cámara).
+- `NicaExplorerMapActivity` → `MapaActivity` nativa (legado, carga de estilo/cámara).
 - `NicaExplorerMap` → `MapaScreen` (variante Compose, no cableada).
+- `NicaExplorerRutaMapa` → `RutaMapa` (mapa de rutas por OSRM).
 - `FirebaseRepository` → errores de Auth/Firestore.
 - `UnityArActivity` → ciclo de vida del visor 3D/AR.
 - `Unity` → mensajes del motor.
@@ -118,7 +119,9 @@ Tags relevantes en el código:
 ## MapLibre
 
 - **Versión real:** `org.maplibre.gl:android-sdk-opengl:12.3.1` (variante **OpenGL ES**).
-- **Activity utilizada:** `ui/screens/MapaActivity.kt` (Activity nativa, no Compose).
+- **Mapa en uso:** `ui/screens/MapaPrincipalScreen.kt` (Compose + MapLibre `textureMode`),
+  con pines de lugares/comercios y ubicación del usuario. `ui/screens/MapaActivity.kt`
+  (Activity nativa) queda como legado registrado pero sin lanzarse.
 - **Estilo/base map:** `map/MapaConfig.kt` define `STYLE_JSON` con una fuente **raster**
   de OSM: `https://tile.openstreetmap.org/{z}/{x}/{y}.png`, `tileSize 256`, `maxzoom 19` y
   atribución "© OpenStreetMap contributors". No usa estilos vectoriales ni API key.
@@ -130,12 +133,12 @@ Tags relevantes en el código:
 - **Lifecycle:** `MapLibre.getInstance(...)` se llama en `MainActivity.onCreate` y también
   en `MapaActivity.onCreate`; `MapaActivity` delega todo el ciclo de vida al `MapView`.
 - **Vista inicial:** `MapaConfig.NICARAGUA = LatLng(12.8654, -85.2072)`, zoom `6.3`.
-- **Limitaciones actuales:** sin marcadores, sin centrado por ciudad/monumento, sin
-  ubicación del usuario. `MapaScreen` (Compose con marcadores) existe pero **no está
-  cableada**.
-- **Permisos de ubicación:** el AAR declara `ACCESS_FINE/COARSE_LOCATION`; el manifest los
-  elimina con `tools:node="remove"` porque la fase GPS aún no existe. No reintroducir sin
-  implementar el flujo de permisos.
+- **Limitaciones actuales:** `MapaScreen` (Compose alternativo) existe pero **no está
+  cableado**. Lugares/comercios sin coordenadas no aparecen. Falta clustering si hay muchos
+  pines.
+- **Ubicación:** `UbicacionHelper` usa `LocationManager` para detectar la ciudad más cercana
+  (≤ 25 km) y centrar el mapa. El AAR puede declarar `ACCESS_FINE/COARSE_LOCATION`; revisar
+  el manifest si se reintroduce el flujo de permisos.
 
 ## Unity 3D Viewer
 
@@ -166,8 +169,7 @@ Tags relevantes en el código:
 Backend de administración separado de la app Android. No usa MySQL: comparte la misma
 base de Firestore (`nica-explore`). Ver `nicaexp_web/README.md` para el detalle.
 
-- **Stack:** CodeIgniter 4.7.4, `kreait/firebase-php` 8.5, `google/cloud-firestore` 2.3.
-- **Transporte Firestore:** `rest` (este PHP no tiene la extensión `grpc`).
+- **Stack:** CodeIgniter 4.7.4, `kreait/firebase-php` 8.5, `google/cloud-firestore` 2.3.- **Transporte Firestore:** `rest` (este PHP no tiene la extensión `grpc`).
 - **Credenciales:** Application Default Credentials (`gcloud`) o JSON de cuenta de
   servicio vía `Nica.credentialsFile` (nunca versionado).
 - **Interfaz:** panel con tema claro/oscuro propio de NicaExplorer (sobre AdminLTE 4/Bootstrap) +

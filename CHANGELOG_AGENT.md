@@ -4,6 +4,26 @@
 > cambios importantes. No sustituye al historial de Git; lo complementa con contexto.
 > Formato: fecha, objetivo, archivos, cambios, build, resultado, riesgos y pendientes.
 
+## 2026-10-02
+
+### Docs — Documentación profunda de app y backend (2026-10-02)
+- Objetivo: alinear la documentación con el estado real del código a la fecha.
+- README.md:
+  - Reescrito por completo: visión de los **dos componentes** (app Android + backend CI4).
+  - Arquitectura general, funcionalidades, stack/versiones, estructura de código.
+  - Sección **API REST** con todos los endpoints y detalle de **los que consume la app**.
+  - Modelo de datos Firestore, roles/seguridad, Unity, instalación, despliegue y alcance.
+- ARCHITECTURE.md:
+  - Actualizado a los nombres reales del código (`Place` en lugar de `Monument`,
+    `placeCount`), entrada pública a Home y catálogo vía **API REST**.
+  - Mapa en uso `MapaPrincipalScreen`; `MapaActivity`/`MapaScreen` como legado.
+  - Backend y flujo de imágenes revisados; `rutas.paradas` con prefijo `lugar:`/`comercio:`.
+- PROJECT_MAP.md: árbol de `app/` y de `nicaexp_web/` actualizado a los archivos reales.
+- DEVELOPMENT.md: versiones `versionCode 4 / 1.1.2`; mapa en Compose; tags de log.
+- INIT.md, ROADMAP.md y PROJECT_CONTEXT.md: estado del mapa, catálogo vía API y legado.
+- Build: no se modificó código; no requiere recompilación.
+- Commit: `(pendiente)` en `main`.
+
 ## 2026-10-01
 
 ### App — Nombre visible NicaExplore y correcciones en "Acerca de" (2026-10-01)

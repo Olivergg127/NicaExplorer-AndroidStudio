@@ -16,7 +16,8 @@ NicaExplorer/
 ├── CONVENTIONS.md            Convenciones de código y UI.
 ├── ROADMAP.md                Estado implementado / pendiente.
 ├── CHANGELOG_AGENT.md        Bitácora de cambios de agentes.
-├── README.md                 Documentación original del equipo.
+├── README.md                 Documentación completa (app + backend, API REST).
+├── render.yaml               Blueprint de despliegue del backend en Render.
 ├── settings.gradle.kts       Módulos incluidos (:app, :unityLibrary, xrmanifest).
 ├── build.gradle.kts          Plugins raíz (AGP, Kotlin, Google Services, Compose).
 ├── gradle.properties         Propiedades Gradle + configuración de export Unity.
@@ -57,47 +58,59 @@ app/
     │   ├── ar/UnityArActivity.kt        Activity que aloja Unity (visor 3D / AR legado).
     │   ├── data/
     │   │   ├── ApiClient.kt                 Cliente HTTP de la API (X-API-KEY, org.json).
-    │   │   ├── ApiRepository.kt             Contenido desde la API (ciudades, lugares, rutas, comercios).
-    │   │   ├── FirebaseRepository.kt        Auth + Firestore (usuarios, solicitudes, roles).
+    │   │   ├── ApiRepository.kt             Contenido desde la API (ciudades, lugares, rutas, comercios, valoraciones).
+    │   │   ├── FirebaseRepository.kt        Auth + Firestore (usuarios, comercios propios, roles).
     │   │   ├── GeminiRepository.kt          Itzae: Firebase AI Logic (gemini-3.5-flash-lite).
+    │   │   ├── CatalogSync.kt               Refresco del catálogo por /api/v1/version (cada 15 s).
+    │   │   ├── ValoracionesRepository.kt    Escritura en Firestore + ranking desde la API.
+    │   │   ├── ImageUploader.kt             Subida de imágenes (POST /api/v1/upload).
     │   │   ├── SolicitudComercioRepository.kt Crea solicitudes_comercios.
-    │   │   ├── SampleData.kt                Catálogo dinámico desde Firestore (ciudades, lugares, rutas).
+    │   │   ├── SampleData.kt                Catálogo dinámico en memoria desde la API.
+    │   │   ├── UbicacionHelper.kt           GPS opcional (ciudad más cercana, ≤ 25 km).
     │   │   └── UserPreferences.kt           DataStore: tema, notificaciones, guardados, historial.
     │   ├── map/
     │   │   ├── MapaConfig.kt                URL OSM, STYLE_JSON, centro/zoom.
-    │   │   └── MapaMarkerFactory.kt         Icono de marcador por categoría.
+    │   │   └── MapaMarkerFactory.kt         Icono de marcador (comercio/número/punto/ubicación).
     │   ├── model/
     │   │   ├── City.kt                      Modelo de ciudad.
-    │   │   ├── Monument.kt                  Modelo de monumento + enum Afluencia.
+    │   │   ├── Place.kt                     Modelo de lugar + enum Afluencia.
     │   │   ├── Comercio.kt                  Modelo de comercio.
+    │   │   ├── CategoriaComercio.kt         Categoría de comercio.
     │   │   ├── RutaTuristica.kt             Ruta + ReferenciaParadaRuta.
+    │   │   ├── Valoracion.kt                Valoración + TipoValoracion.
+    │   │   ├── RedesSociales.kt             Catálogo de redes y parseo "clave|valor".
     │   │   ├── SolicitudComercio.kt         Datos de solicitud de negocio.
     │   │   ├── UserProfile.kt               Perfil de usuario.
-    │   │   └── UserRole.kt                  Enum ADMIN/USUARIO/AUDITOR.
+    │   │   └── UserRole.kt                  Enum ADMIN/EDITOR/USUARIO/COMERCIO/AUDITOR.
     │   ├── navigation/
     │   │   ├── Routes.kt                    Constantes y constructores de rutas.
     │   │   └── AppNavigation.kt             NavHost con todas las pantallas.
     │   ├── ui/components/
     │   │   ├── CityCard.kt                  Tarjeta de ciudad.
+    │   │   ├── PlaceCard.kt / PlaceRow.kt   Tarjeta y fila de lugar.
     │   │   ├── ComercioCard.kt              Tarjeta y portada de comercio (Coil + fallback).
-    │   │   ├── EmptyState.kt                Estado vacío con acción.
-    │   │   ├── MonumentCard.kt              Tarjeta horizontal de monumento.
-    │   │   ├── MonumentRow.kt               Fila de monumento (lista).
-    │   │   ├── NicaButton.kt                Botón de marca con degradado.
-    │   │   └── TopBar.kt                    Barra superior reutilizable (NicaTopBar).
+    │   │   ├── CoverImage.kt                Imagen remota con fallback local.
+    │   │   ├── RatingStars.kt               Puntuación compacta (estrellas + promedio).
+    │   │   ├── ValoracionRow.kt             5 estrellas interactivas.
+    │   │   ├── TextoExpandible.kt           Texto con "Ver más"/"Ver menos".
+    │   │   ├── RutaMapa.kt                  Mapa de ruta con pines numerados y OSRM.
+    │   │   ├── EmptyState.kt / NicaRefreshBox.kt / NicaButton.kt / TopBar.kt
     │   ├── ui/screens/
-    │   │   ├── SplashScreen.kt              Splash + decisión de sesión.
-    │   │   ├── LoginScreen.kt               Inicio de sesión.
-    │   │   ├── RegisterScreen.kt            Registro.
+    │   │   ├── SplashScreen.kt              Splash + entrada pública a Home.
+    │   │   ├── LoginScreen.kt               Inicio de sesión (y "continuar sin registrarme").
+    │   │   ├── RegisterScreen.kt            Registro (USUARIO / COMERCIO).
     │   │   ├── RecoveryPasswordScreen.kt    Recuperación de contraseña.
-    │   │   ├── HomeScreen.kt                Inicio con drawer, bottom nav y destacados.
+    │   │   ├── HomeScreen.kt                Inicio con drawer, bottom nav y recomendados.
     │   │   ├── CitySelectionScreen.kt       Búsqueda/selección de ciudades.
-    │   │   ├── CatalogScreen.kt             Detalle de monumento, comercios y rutas.
+    │   │   ├── CatalogScreen.kt             Detalle de ciudad/lugar, comercios y rutas.
     │   │   ├── AssistantScreen.kt           Chat de Itzae.
     │   │   ├── ComerciosScreen.kt           Lista de comercios (filtro por ciudad).
-    │   │   ├── ComercioDetalleScreen.kt     Detalle, WhatsApp, Google Maps, copiar teléfono.
-    │   │   ├── SolicitudComercioScreen.kt   Formulario de solicitud de negocio.
-    │   │   ├── RutasInteligentesScreen.kt   Ruta turística predefinida.
+    │   │   ├── ComerciosSubcategoriasScreen.kt  Subcategorías y comercios por subcategoría.
+    │   │   ├── ComercioDetalleScreen.kt     Detalle, WhatsApp, correo, redes, Google Maps.
+    │   │   ├── ComercioFormScreen.kt        Alta/edición de comercio propio + subida de imágenes.
+    │   │   ├── MisComerciosScreen.kt        Comercios del usuario (aprobado/activo).
+    │   │   ├── SolicitudComercioScreen.kt   Formulario de solicitud (NO cableado).
+    │   │   ├── RutasInteligentesScreen.kt   Ruta turística por ciudad.
     │   │   ├── ProfileScreen.kt             Perfil y rol.
     │   │   ├── EditarPerfilScreen.kt        Edición de nombre.
     │   │   ├── LugaresGuardadosScreen.kt    Lugares guardados (DataStore).
@@ -105,22 +118,25 @@ app/
     │   │   ├── ConfiguracionScreen.kt       Tema y notificaciones.
     │   │   ├── AcercaDeScreen.kt            Información del proyecto/equipo.
     │   │   ├── AdminPanelScreen.kt          Panel de usuarios (ADMIN/AUDITOR).
-    │   │   ├── MapaActivity.kt              Mapa NATIVO con MapLibre (solución estable).
-    │   │   ├── MapaScreen.kt                Mapa Compose con marcadores (NO cableado).
+    │   │   ├── MapaPrincipalScreen.kt       Mapa Compose con pines (EN USO).
+    │   │   ├── MapaActivity.kt              Mapa NATIVO con MapLibre (legado).
+    │   │   ├── MapaScreen.kt                Mapa Compose alternativo (NO cableado).
     │   │   └── ArPlaceholderScreen.kt       Placeholder legado de AR (sin uso).
     │   ├── ui/theme/
     │   │   ├── Color.kt                     Paleta "Guardabarranco" y degradados.
     │   │   ├── Theme.kt                     NicaExplorerTheme + brushes por tema.
-    │   │   └── Type.kt                      Tipografía Material 3.
+    │   │   └── Type.kt                      Tipografía Material 3 (SansSerif/Roboto).
     │   ├── ui/viewmodels/
     │   │   ├── UserViewModel.kt             Perfil/rol del usuario actual.
     │   │   ├── ComerciosViewModel.kt        Lista de comercios activos.
     │   │   ├── ComercioDetalleViewModel.kt  Detalle de un comercio.
+    │   │   ├── ComercioFormViewModel.kt     Alta/edición de comercio propio.
+    │   │   ├── MisComerciosViewModel.kt     Comercios del usuario.
     │   │   ├── SolicitudComercioViewModel.kt Validación/envío de solicitudes.
-    │   │   └── MapaViewModel.kt             Carga comercios para el mapa (NO cableado).
+    │   │   └── MapaViewModel.kt             Carga comercios para el mapa (reutilizado).
     │   └── util/TelefonoUtils.kt            Normalización de teléfono y link de WhatsApp.
     └── res/
-        ├── drawable/                        Imágenes de ciudades/monumentos/comercios + isotipo + icono de marcador.
+        ├── drawable/                        Imágenes de ciudades/lugares/comercios + isotipo + icono de marcador.
         └── values/
             ├── strings.xml                  Solo `app_name`.
             └── themes.xml                   Tema base `Theme.NicaExplorer`.
@@ -161,20 +177,21 @@ nicaexp_web/
 │   │   ├── Filters.php                  Alias `apikey` y `panelauth`.
 │   │   └── Security.php                 CSRF (regenerate = false para AJAX).
 │   ├── Controllers/
-│   │   ├── Api/                         BaseApiController, Health (health-check), Resources (CRUD).
+│   │   ├── Api/                         BaseApiController, Health, Catalog (version), Resources (CRUD), Upload, Valoraciones.
 │   │   └── Panel/                       Auth (login/logout), Dashboard y Resources (CRUD web).
 │   ├── Filters/
 │   │   ├── ApiKeyFilter.php             Exige X-API-KEY en /api/v1/*.
-│   │   └── PanelAuthFilter.php          Exige sesión de admin en /panel/*.
+│   │   ├── PanelAuthFilter.php          Exige sesión de admin en /panel/*.
+│   │   └── PanelPermissionFilter.php    Matriz de permisos C/L/M/E por rol y módulo.
 │   ├── Libraries/
 │   │   ├── FirebaseFactory.php          Cliente Firestore (ADC o service account, REST).
 │   │   ├── FirestoreRepository.php      CRUD genérico + validación + formato de filas.
+│   │   ├── ImageStorage.php             Subida de imágenes (GitHub > Storage > local).
+│   │   ├── PanelPermissions.php         Matriz de permisos por rol.
 │   │   └── ResourceManager.php          Repositorios por clave de colección.
-│   ├── Commands/SeedPlantilla.php      Seed de la ciudad plantilla (php spark nica:seed-plantilla).
-│   ├── Commands/SeedImagenes.php       Enlaza todas las imágenes de la app en Firestore (php spark nica:seed-imagenes).
-│   ├── Commands/SeedCategorias.php     Crea el catálogo de categorías de lugares (php spark nica:seed-categorias).
+│   ├── Commands/                        Seeds y mantenimiento (ver README del backend).
 │   └── Views/
-│       ├── layout/panel.php             Layout del panel (tema oscuro NicaExplorer, sidebar y topbar).
+│       ├── layout/panel.php             Layout del panel (tema claro/oscuro, sidebar y topbar).
 │       └── panel/{login,dashboard,resource}.php  Login, dashboard y tabla+modales.
 ├── public/
 │   ├── index.php                        Front controller.
