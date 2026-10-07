@@ -64,9 +64,17 @@ módulos incluidos en la build.
   sin login obligatorio); el login es opcional ("Continuar sin registrarme").
 - **Compartición de estado:** `UserViewModel` se crea una sola vez en `AppNavigation` y se
   pasa a Home/Profile/EditarPerfil/AdminPanel.
+- **Idioma (es/en):** textos en `res/values/strings_*.xml` (español) y `res/values-en/`
+  (inglés). El selector está en `ConfiguracionScreen` (preferencia `app_language` en
+  `UserPreferences`); se aplica en `MainActivity.attachBaseContext` y la Activity se recrea
+  con `recreate()` al cambiar. El **contenido dinámico** de Firestore se resuelve en
+  `ApiRepository`/`FirebaseRepository` usando los campos `*En` (`nombreEn`, `descripcionEn`,
+  `historiaEn`, `lemaEn`, `categoriaEn`, `categoriaPadreEn`, `infoAdicionalEn`) según
+  `Locale.getDefault().language`.
 - **Componentes reutilizables:** `ui/components/` (`NicaTopBar`, `NicaButton`, `CityCard`,
   `PlaceCard`, `PlaceRow`, `ComercioCard`/`ComercioCover`, `CoverImage`, `RatingStars`,
-  `ValoracionRow`, `TextoExpandible`, `RutaMapa`, `NicaRefreshBox`, `EmptyState`).
+  `ValoracionRow`, `TextoExpandible`, `RutaMapa`, `NicaRefreshBox`, `EmptyState`,
+  `MascotaFlotante`).
 
 Pantallas registradas en el `NavHost`:
 
@@ -140,7 +148,9 @@ URL base y la API key se inyectan en `BuildConfig` desde `local.properties`
   - `mail/{id}` → bloqueada por reglas; no la usa el cliente.
 - **Firebase AI Logic** (`firebase-ai`): `GeminiRepository` usa
   `Firebase.ai(backend = GenerativeBackend.googleAI())` con el modelo
-  `gemini-3.5-flash-lite` e instrucciones de sistema para Itzae.
+  `gemini-3.5-flash-lite` e instrucciones de sistema para Itzae. El asistente responde en el
+  idioma de la app mediante una directiva de idioma añadida al prompt según
+  `Locale.getDefault().language`.
 - **App Check** (`firebase-appcheck-playintegrity`) está incluido como dependencia, pero
   **sin inicializar** en el código.
 

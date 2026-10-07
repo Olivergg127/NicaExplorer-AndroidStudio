@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AssistantScreen -->
+    <string name="assistant_que_puedo_visitar_en">What can I visit in %1$s?</string>
+    <string name="assistant_que_puedo_visitar">What can I visit?</string>
+    <string name="assistant_cuentame_sobre_este_lugar">Tell me about this place</string>
+    <string name="assistant_como_funciona_ar">How does augmented reality work?</string>
+    <string name="assistant_error_conexion">Sorry, there was a problem connecting to my artificial brain.</string>
+    <string name="assistant_ocultar_mascota">Hide mascot</string>
+    <string name="assistant_mostrar_mascota">Show mascot</string>
+    <string name="assistant_saludo">Hi, I\'m Itzae! Your tourist assistant.</string>
+    <string name="assistant_que_deseas_conocer">What would you like to know?</string>
+    <string name="assistant_consultando_sobre">You are asking about: %1$s</string>
+    <string name="assistant_preguntas_rapidas">Quick questions</string>
+    <string name="assistant_escribe_mensaje">Type a message...</string>
+    <string name="assistant_enviar">Send</string>
+    <string name="assistant_pensando">Thinking...</string>
+
+    <!-- RutasInteligentesScreen -->
+    <string name="rutas_titulo">Creative Routes</string>
+    <string name="rutas_proximamente">Routes coming soon</string>
+    <string name="rutas_proximamente_descripcion">We are preparing tours with local places and businesses in this city.</string>
+    <string name="rutas_paradas">Stops</string>
+    <string name="rutas_etiqueta_paradas">stops</string>
+    <string name="rutas_duracion_estimada">estimated duration</string>
+    <string name="rutas_objetivos">Goals of this route</string>
+    <string name="rutas_tipo_lugar">Place</string>
+    <string name="rutas_ver_lugar">View place</string>
+    <string name="rutas_comercio_no_disponible_detalle">The business planned for this route is currently unavailable.</string>
+    <string name="rutas_tipo_comercio">Business</string>
+    <string name="rutas_ver_comercio">View business</string>
+    <string name="rutas_cargando_comercio">Loading business…</string>
+    <string name="rutas_consultando_comercio">Looking up local business information.</string>
+    <string name="rutas_comercio_no_disponible">Business unavailable</string>
+    <string name="rutas_reintentar">Retry</string>
+    <string name="rutas_lugar_no_disponible">Place unavailable</string>
+    <string name="rutas_afluencia_estimada">Estimated foot traffic: %1$s</string>
+
+    <!-- MapaPrincipalScreen -->
+    <string name="mapaprincipal_ubicacion_error">Could not get your location. Check your GPS.</string>
+    <string name="mapaprincipal_sin_permiso_ubicacion">Location permission denied.</string>
+    <string name="mapaprincipal_descubre">Discover\naround you</string>
+    <string name="mapaprincipal_explora">Explore the best local spots and businesses in your city.</string>
+    <string name="mapaprincipal_mi_ubicacion">My location</string>
+    <string name="mapaprincipal_ver_todo">View all</string>
+    <string name="mapaprincipal_centrar_ubicacion">Center on my location</string>
+    <string name="mapaprincipal_todas_ciudades">All cities</string>
+    <string name="mapaprincipal_volver">Back</string>
+    <string name="mapaprincipal_elegir_ciudad">Choose city</string>
+    <string name="mapaprincipal_notificaciones">Notifications</string>
+    <string name="mapaprincipal_buscar_placeholder">Search restaurants, pharmacies...</string>
+    <string name="mapaprincipal_filtros">Filters</string>
+    <string name="mapaprincipal_filtro_todo">All</string>
+    <string name="mapaprincipal_filtro_lugares">Places</string>
+    <string name="mapaprincipal_filtro_comercios">Businesses</string>
+
+    <!-- MapaScreen -->
+    <string name="mapascreen_titulo">NicaExplore Map</string>
+    <string name="mapascreen_volver">Back</string>
+    <string name="mapascreen_no_disponible">Map unavailable</string>
+    <string name="mapascreen_cerrar">Close</string>
+    <string name="mapascreen_sin_comercios">There are no businesses with coordinates to show.</string>
+    <string name="mapascreen_comercio_local">Local business</string>
+    <string name="mapascreen_ver_detalles">View details</string>
+
+    <!-- ArPlaceholderScreen -->
+    <string name="ar_experiencia">AR Experience</string>
+    <string name="ar_unity_no_integrado">Unity has not been integrated yet</string>
+    <string name="ar_descripcion">In this section the augmented reality experience will open</string>
+    <string name="ar_volver_catalogo">Back to catalog</string>
+</resources>

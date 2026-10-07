@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -76,10 +77,10 @@ fun MapaScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mapa de NicaExplore") },
+                title = { Text(stringResource(R.string.mapascreen_titulo)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.mapascreen_volver))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -127,12 +128,12 @@ fun MapaScreen(
                 }
             }
 
-            uiState.error?.let { error ->
+            uiState.error?.let { res ->
                 AlertDialog(
                     onDismissRequest = onBack,
-                    title = { Text("Mapa no disponible") },
-                    text = { Text(error) },
-                    confirmButton = { TextButton(onClick = onBack) { Text("Cerrar") } }
+                    title = { Text(stringResource(R.string.mapascreen_no_disponible)) },
+                    text = { Text(stringResource(res)) },
+                    confirmButton = { TextButton(onClick = onBack) { Text(stringResource(R.string.mapascreen_cerrar)) } }
                 )
             }
 
@@ -146,7 +147,7 @@ fun MapaScreen(
                     shadowElevation = 4.dp
                 ) {
                     Text(
-                        text = "No hay comercios con coordenadas para mostrar.",
+                        text = stringResource(R.string.mapascreen_sin_comercios),
                         modifier = Modifier.padding(16.dp),
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -167,7 +168,7 @@ fun MapaScreen(
                     .navigationBarsPadding()
             ) {
                 Text(
-                    text = comercio.nombre.ifBlank { "Comercio local" },
+                    text = comercio.nombre.ifBlank { stringResource(R.string.mapascreen_comercio_local) },
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
@@ -198,7 +199,7 @@ fun MapaScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Ver detalles")
+                    Text(stringResource(R.string.mapascreen_ver_detalles))
                 }
                 Spacer(modifier = Modifier.height(18.dp))
             }

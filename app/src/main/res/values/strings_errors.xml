@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_cargar_comercios">No se pudieron cargar los comercios. Revisa tu conexión e intenta de nuevo.</string>
+    <string name="error_cargar_comercio">No se pudo cargar el comercio. Revisa tu conexión e intenta de nuevo.</string>
+    <string name="error_cargar_mis_comercios">No se pudieron cargar tus comercios. Revisa tu conexión.</string>
+    <string name="error_eliminar_comercio">No se pudo eliminar el comercio.</string>
+    <string name="error_sesion_requerida">Inicia sesión para administrar tus comercios.</string>
+    <string name="error_cargar_mapa">No se pudieron cargar los comercios para el mapa.</string>
+    <string name="error_comercio_no_propio">Este comercio no pertenece a tu cuenta.</string>
+    <string name="error_cargar_comercio_form">No se pudo cargar el comercio.</string>
+    <string name="error_guardar_comercio">No se pudo guardar el comercio.</string>
+    <string name="error_enviar_solicitud">No se pudo enviar la solicitud. Inténtalo nuevamente más tarde.</string>
+    <string name="validacion_obligatorio">Este campo es obligatorio</string>
+    <string name="validacion_max_caracteres">El texto supera el máximo permitido</string>
+    <string name="validacion_correo">Ingresa un correo válido</string>
+    <string name="validacion_telefono">Ingresa un teléfono válido de 7 a 15 dígitos</string>
+    <string name="validacion_whatsapp">Ingresa un WhatsApp válido de 7 a 15 dígitos</string>
+</resources>

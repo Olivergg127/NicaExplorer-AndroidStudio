@@ -38,9 +38,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
@@ -54,7 +56,7 @@ fun AcercaDeScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Acerca de NicaExplore",
+                title = stringResource(R.string.about_titulo),
                 onBack = onBack
             )
         }
@@ -93,7 +95,7 @@ fun AcercaDeScreen(onBack: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Explora Nicaragua en 3D",
+                        text = stringResource(R.string.about_tagline),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.85f),
                         textAlign = TextAlign.Center,
@@ -116,7 +118,7 @@ fun AcercaDeScreen(onBack: () -> Unit) {
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Sobre el proyecto",
+                        text = stringResource(R.string.about_sobre_proyecto),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -126,22 +128,22 @@ fun AcercaDeScreen(onBack: () -> Unit) {
 
                     AboutRow(
                         icon = Icons.Filled.LocationCity,
-                        text = "Aplicación turística de Nicaragua"
+                        text = stringResource(R.string.about_item_aplicacion)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     AboutRow(
                         icon = Icons.Filled.Category,
-                        text = "Catálogo de lugares y monumentos"
+                        text = stringResource(R.string.about_item_catalogo)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     AboutRow(
                         icon = Icons.Filled.ViewInAr,
-                        text = "Visualización mediante visor 3D"
+                        text = stringResource(R.string.about_item_visor)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     AboutRow(
                         icon = Icons.Filled.SmartToy,
-                        text = "Asistente turístico mediante IA"
+                        text = stringResource(R.string.about_item_asistente)
                     )
                 }
             }
@@ -160,7 +162,7 @@ fun AcercaDeScreen(onBack: () -> Unit) {
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Equipo del proyecto",
+                        text = stringResource(R.string.about_equipo),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -169,11 +171,11 @@ fun AcercaDeScreen(onBack: () -> Unit) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     val team = listOf(
-                        "Oliver Javier Gutiérrez Casteo" to "Desarrollador",
-                        "Joseph Esau Centeno Urbina" to "Desarrollador",
-                        "Verónica Michelle Robleto Trujillo" to "Diseño",
-                        "Arlen Rodolfo Urbina Urbina" to "Comunicador",
-                        "Elvis Josué Miranda Méndez" to "Marketing"
+                        "Oliver Javier Gutiérrez Casteo" to stringResource(R.string.about_rol_desarrollador),
+                        "Joseph Esau Centeno Urbina" to stringResource(R.string.about_rol_desarrollador),
+                        "Verónica Michelle Robleto Trujillo" to stringResource(R.string.about_rol_diseno),
+                        "Arlen Rodolfo Urbina Urbina" to stringResource(R.string.about_rol_comunicador),
+                        "Elvis Josué Miranda Méndez" to stringResource(R.string.about_rol_marketing)
                     )
 
                     team.forEachIndexed { index, (name, role) ->
@@ -211,7 +213,7 @@ fun AcercaDeScreen(onBack: () -> Unit) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "Versión",
+                            text = stringResource(R.string.about_version),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )

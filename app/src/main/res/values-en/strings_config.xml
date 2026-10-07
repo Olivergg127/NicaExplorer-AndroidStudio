@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="config_titulo">Settings</string>
+    <string name="config_notificaciones">Notifications</string>
+    <string name="config_notificaciones_desc">Receive news from NicaExplore</string>
+    <string name="config_tema_oscuro">Dark theme</string>
+    <string name="config_tema_oscuro_activado">Dark theme on</string>
+    <string name="config_tema_claro_activado">Light theme on</string>
+    <string name="config_idioma">Language</string>
+    <string name="config_idioma_desc">Choose the app language</string>
+    <string name="config_idioma_sistema">System</string>
+    <string name="config_idioma_espanol">Español</string>
+    <string name="config_idioma_ingles">English</string>
+    <string name="config_cerrar_sesion">Log out</string>
+</resources>

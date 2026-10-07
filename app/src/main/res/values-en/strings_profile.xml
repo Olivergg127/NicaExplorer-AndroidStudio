@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ProfileScreen -->
+    <string name="profile_titulo">Profile</string>
+    <string name="profile_visitante">Guest</string>
+    <string name="profile_usuario">User</string>
+    <string name="profile_explorando_sin_cuenta">Exploring without an account</string>
+    <string name="profile_explora_como_visitante">Explore as a guest</string>
+    <string name="profile_descripcion_visitante">Log in or create an account to save places, see your history and, if you are a business, manage your establishments.</string>
+    <string name="profile_iniciar_sesion">Log in</string>
+    <string name="profile_crear_cuenta">Create account</string>
+    <string name="profile_configuracion">Settings</string>
+    <string name="profile_acerca_de">About NicaExplore</string>
+    <string name="profile_editar_perfil">Edit profile</string>
+    <string name="profile_lugares_guardados">Saved places</string>
+    <string name="profile_historial">Exploration history</string>
+    <string name="profile_mis_comercios">My businesses</string>
+    <string name="profile_cerrar_sesion">Log out</string>
+
+    <!-- EditarPerfilScreen -->
+    <string name="editprofile_titulo">Edit profile</string>
+    <string name="editprofile_descripcion">Update your profile information</string>
+    <string name="editprofile_correo">Email address</string>
+    <string name="editprofile_nombre">Name</string>
+    <string name="editprofile_nombre_placeholder">Your name</string>
+    <string name="editprofile_guardando">Saving...</string>
+    <string name="editprofile_guardar_cambios">Save changes</string>
+    <string name="editprofile_cambios_guardados">Changes saved successfully</string>
+    <string name="editprofile_error_guardar">Could not save your name. Check your connection and try again.</string>
+    <string name="editprofile_volver">Back to profile</string>
+
+    <!-- AcercaDeScreen -->
+    <string name="about_titulo">About NicaExplore</string>
+    <string name="about_tagline">Explore Nicaragua in 3D</string>
+    <string name="about_sobre_proyecto">About the project</string>
+    <string name="about_item_aplicacion">Tourism app for Nicaragua</string>
+    <string name="about_item_catalogo">Catalog of places and monuments</string>
+    <string name="about_item_visor">Viewing through a 3D viewer</string>
+    <string name="about_item_asistente">AI-powered tourism assistant</string>
+    <string name="about_equipo">Project team</string>
+    <string name="about_rol_desarrollador">Developer</string>
+    <string name="about_rol_diseno">Design</string>
+    <string name="about_rol_comunicador">Communicator</string>
+    <string name="about_rol_marketing">Marketing</string>
+    <string name="about_version">Version</string>
+
+    <!-- LugaresGuardadosScreen -->
+    <string name="saved_titulo">Saved places</string>
+    <string name="saved_vacio">You don\'t have any saved places yet.</string>
+    <string name="saved_explorar">Explore places</string>
+    <string name="saved_quitar">Remove from saved</string>
+
+    <!-- HistorialExploracionScreen -->
+    <string name="history_titulo">Exploration history</string>
+    <string name="history_vacio">You haven\'t explored any place yet.</string>
+    <string name="history_explorar">Explore now</string>
+    <string name="history_ultima_visita">Last seen: %1$s</string>
+
+    <!-- AdminPanelScreen -->
+    <string name="admin_titulo_panel">Administration Panel</string>
+    <string name="admin_titulo_consulta">Administrative view</string>
+    <string name="admin_volver">Back</string>
+    <string name="admin_buscar">Search by name or email</string>
+    <string name="admin_filtro_todos">All</string>
+    <string name="admin_filtro_usuario">User</string>
+    <string name="admin_filtro_editor">Editor</string>
+    <string name="admin_filtro_admin">Admin</string>
+    <string name="admin_filtro_auditor">Auditor</string>
+    <string name="admin_gestion_usuarios">User management</string>
+    <string name="admin_usuarios_solo_lectura">Users (read-only)</string>
+    <string name="admin_confirmar_cambio_rol">Confirm role change</string>
+    <string name="admin_confirmar_rol_mensaje">Change %1$s\'s role to %2$s?</string>
+    <string name="admin_rol_actualizado">Role updated successfully</string>
+    <string name="admin_rol_error">Could not update the role</string>
+    <string name="admin_guardando">Saving...</string>
+    <string name="admin_confirmar">Confirm</string>
+    <string name="admin_cancelar">Cancel</string>
+    <string name="admin_cambiar_rol">Change role</string>
+    <string name="admin_rol_nombre_usuario">User</string>
+    <string name="admin_rol_nombre_comercio">Business</string>
+    <string name="admin_rol_nombre_editor">Editor</string>
+    <string name="admin_rol_nombre_admin">Administrator</string>
+    <string name="admin_rol_nombre_auditor">Auditor</string>
+</resources>

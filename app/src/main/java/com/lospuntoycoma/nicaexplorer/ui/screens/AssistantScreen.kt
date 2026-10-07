@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,14 +51,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.ApiRepository
 import com.lospuntoycoma.nicaexplorer.data.GeminiRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
+import com.lospuntoycoma.nicaexplorer.data.UserPreferences
 import com.lospuntoycoma.nicaexplorer.model.Place
+import com.lospuntoycoma.nicaexplorer.ui.components.EstadoMascota
+import com.lospuntoycoma.nicaexplorer.ui.components.MascotaFlotante
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
 import com.lospuntoycoma.nicaexplorer.ui.theme.nicaAppBackgroundBrush
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,21 +76,24 @@ fun AssistantScreen(
     var message by remember { mutableStateOf("") }
     val messages = remember { mutableStateListOf<ChatMessage>() }
     var isLoading by remember { mutableStateOf(false) }
+    var respondiendo by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val localPlaces = remember { SampleData.allPlaces }
+    val mascotaActiva by UserPreferences.mascotaFlow().collectAsState(initial = true)
+    val mensajeErrorConexion = stringResource(R.string.assistant_error_conexion)
 
     val citySuggestion = placeContext?.city
         ?.trim()
         ?.takeIf { it.isNotEmpty() }
-        ?.let { "¿Qué puedo visitar en $it?" }
-        ?: "¿Qué puedo visitar?"
+        ?.let { stringResource(R.string.assistant_que_puedo_visitar_en, it) }
+        ?: stringResource(R.string.assistant_que_puedo_visitar)
 
     val quickQuestions = listOf(
         citySuggestion,
-        "Cuéntame sobre este lugar",
-        "¿Cómo funciona la realidad aumentada?"
+        stringResource(R.string.assistant_cuentame_sobre_este_lugar),
+        stringResource(R.string.assistant_como_funciona_ar)
     )
 
     fun sendMessage(text: String) {
@@ -107,11 +118,15 @@ fun AssistantScreen(
             )
             messages.add(
                 ChatMessage(
-                    response ?: "Lo siento, hubo un problema al conectar con mi cerebro artificial.",
+                    response ?: mensajeErrorConexion,
                     isUser = false
                 )
             )
             isLoading = false
+            // La mascota "responde" (rebota/habla) unos segundos tras contestar.
+            respondiendo = true
+            delay(1800)
+            respondiendo = false
         }
     }
 
@@ -126,14 +141,32 @@ fun AssistantScreen(
         topBar = {
             NicaTopBar(
                 title = "Itzae",
-                onBack = onBack
+                onBack = onBack,
+                actions = {
+                    IconButton(
+                        onClick = {
+                            scope.launch { UserPreferences.setMascotaEnabled(!mascotaActiva) }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.SmartToy,
+                            contentDescription = if (mascotaActiva) stringResource(R.string.assistant_ocultar_mascota) else stringResource(R.string.assistant_mostrar_mascota),
+                            tint = if (mascotaActiva) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        )
+                    }
+                }
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+        ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
                 .imePadding()
                 .background(nicaAppBackgroundBrush())
         ) {
@@ -162,20 +195,20 @@ fun AssistantScreen(
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "¡Hola, soy Itzae! Tu asistente turístico.",
+                                    text = stringResource(R.string.assistant_saludo),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "¿Qué deseas conocer?",
+                                    text = stringResource(R.string.assistant_que_deseas_conocer),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                                 )
                                 placeContext?.let { place ->
                                     Spacer(modifier = Modifier.height(12.dp))
                                     Text(
-                                        text = "Estás consultando sobre: ${place.name}",
+                                        text = stringResource(R.string.assistant_consultando_sobre, place.name),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
                                     )
@@ -186,7 +219,7 @@ fun AssistantScreen(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "Preguntas rápidas",
+                            text = stringResource(R.string.assistant_preguntas_rapidas),
                             style = MaterialTheme.typography.titleSmall,
                             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                             modifier = Modifier.padding(bottom = 8.dp)
@@ -241,7 +274,7 @@ fun AssistantScreen(
                 OutlinedTextField(
                     value = message,
                     onValueChange = { message = it },
-                    placeholder = { Text("Escribe un mensaje...") },
+                    placeholder = { Text(stringResource(R.string.assistant_escribe_mensaje)) },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(24.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -265,11 +298,25 @@ fun AssistantScreen(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Enviar",
+                        contentDescription = stringResource(R.string.assistant_enviar),
                         tint = if (message.isNotBlank()) MaterialTheme.colorScheme.primary
                         else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     )
                 }
+            }
+        }
+
+            if (mascotaActiva) {
+                val estadoMascota = when {
+                    isLoading -> EstadoMascota.PENSANDO
+                    respondiendo -> EstadoMascota.RESPONDIENDO
+                    else -> EstadoMascota.IDLE
+                }
+                MascotaFlotante(
+                    imageRes = com.lospuntoycoma.nicaexplorer.R.drawable.mascota_itzae,
+                    estado = estadoMascota,
+                    onCerrar = { scope.launch { UserPreferences.setMascotaEnabled(false) } }
+                )
             }
         }
     }
@@ -377,7 +424,7 @@ private fun TypingIndicator() {
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Pensando...",
+                        text = stringResource(R.string.assistant_pensando),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )

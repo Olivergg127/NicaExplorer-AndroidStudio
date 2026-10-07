@@ -20,7 +20,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
@@ -47,7 +49,7 @@ fun LugaresGuardadosScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Lugares guardados",
+                title = stringResource(R.string.saved_titulo),
                 onBack = onBack
             )
         }
@@ -60,8 +62,8 @@ fun LugaresGuardadosScreen(
             ) {
                 EmptyState(
                     icon = Icons.Filled.Bookmark,
-                    message = "No tienes lugares guardados todavía.",
-                    buttonText = "Explorar lugares",
+                    message = stringResource(R.string.saved_vacio),
+                    buttonText = stringResource(R.string.saved_explorar),
                     onButtonClick = onExplore
                 )
             }
@@ -88,7 +90,7 @@ fun LugaresGuardadosScreen(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Bookmark,
-                                    contentDescription = "Quitar de guardados",
+                                    contentDescription = stringResource(R.string.saved_quitar),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }

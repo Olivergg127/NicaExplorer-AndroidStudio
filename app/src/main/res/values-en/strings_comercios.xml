@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ComerciosScreen -->
+    <string name="comercios_titulo">Businesses and restaurants</string>
+    <string name="comercios_negocio_en">Do you have a business in %1$s?</string>
+    <string name="comercios_registrar">Register your business</string>
+    <string name="comercios_reintentar">Retry</string>
+    <string name="comercios_vacio_ciudad">There are no businesses available in this city yet.</string>
+    <string name="comercios_vacio">There are no businesses available yet.</string>
+
+    <!-- ComerciosSubcategoriasScreen -->
+    <string name="comercios_sub_vacio">There are no "%1$s" businesses in this city yet.</string>
+    <string name="comercios_sub_reintentar">Retry</string>
+    <string name="comercios_sub_un_comercio">1 business</string>
+    <string name="comercios_sub_n_comercios">%1$d businesses</string>
+
+    <!-- ComercioDetalleScreen -->
+    <string name="comerciodet_comercio">Business</string>
+    <string name="comerciodet_reintentar">Retry</string>
+    <string name="comerciodet_no_encontrado">Business not found.</string>
+    <string name="comerciodet_whatsapp_disponible">WhatsApp available</string>
+    <string name="comerciodet_horario">Hours</string>
+    <string name="comerciodet_direccion">Address</string>
+    <string name="comerciodet_descripcion">Description</string>
+    <string name="comerciodet_fotos">Photos</string>
+    <string name="comerciodet_ampliar_foto">Enlarge photo</string>
+    <string name="comerciodet_dias_atencion">Business days</string>
+    <string name="comerciodet_servicios">Services</string>
+    <string name="comerciodet_productos">Products</string>
+    <string name="comerciodet_redes_sociales">Social media</string>
+    <string name="comerciodet_no_abrir_red">Couldn\'t open %1$s.</string>
+    <string name="comerciodet_correo_contacto">Contact email</string>
+    <string name="comerciodet_info_adicional">Additional information</string>
+    <string name="comerciodet_pendiente_aprobacion">This business is pending approval and is not yet publicly visible.</string>
+    <string name="comerciodet_inactivo">This business is inactive and does not appear on the map.</string>
+    <string name="comerciodet_copiar_telefono">Copy phone number</string>
+    <string name="comerciodet_numero_copiado">Number copied</string>
+    <string name="comerciodet_contactar_whatsapp">Contact via WhatsApp</string>
+    <string name="comerciodet_sin_app_whatsapp">There is no compatible app to open WhatsApp.</string>
+    <string name="comerciodet_enviar_correo">Send email</string>
+    <string name="comerciodet_sin_app_correo">There is no email app available.</string>
+    <string name="comerciodet_ver_maps">View on Google Maps</string>
+    <string name="comerciodet_abrir_maps_titulo">Open in Google Maps</string>
+    <string name="comerciodet_abrir_maps_pregunta">Do you want to open the location of %1$s in Google Maps?</string>
+    <string name="comerciodet_no_abrir_maps">Couldn\'t open Google Maps.</string>
+    <string name="comerciodet_abrir_maps">Open Maps</string>
+    <string name="comerciodet_cancelar">Cancel</string>
+    <string name="comerciodet_foto_de">Photo %1$d of %2$d</string>
+    <string name="comerciodet_cerrar">Close</string>
+
+    <!-- ComercioFormScreen -->
+    <string name="comercioform_editar_titulo">Edit business</string>
+    <string name="comercioform_nuevo_titulo">New business</string>
+    <string name="comercioform_aviso_revision">Your business will be sent for review. An administrator will approve it before it is visible; afterwards you can activate it so it appears on the map.</string>
+    <string name="comercioform_error_subir_imagen">Couldn\'t upload the image.</string>
+    <string name="comercioform_nombre">Business name</string>
+    <string name="comercioform_categoria_superior">Parent category</string>
+    <string name="comercioform_subcategoria">Subcategory</string>
+    <string name="comercioform_ciudad">City</string>
+    <string name="comercioform_direccion">Address</string>
+    <string name="comercioform_descripcion">Description</string>
+    <string name="comercioform_latitud">Latitude</string>
+    <string name="comercioform_longitud">Longitude</string>
+    <string name="comercioform_telefono">Phone</string>
+    <string name="comercioform_whatsapp">WhatsApp</string>
+    <string name="comercioform_tiene_whatsapp">Has WhatsApp</string>
+    <string name="comercioform_horario">Hours (e.g. 8:00 a.m. - 6:00 p.m.)</string>
+    <string name="comercioform_dias_atencion">Business days</string>
+    <string name="comercioform_correo_contacto">Contact email</string>
+    <string name="comercioform_redes_sociales">Social media</string>
+    <string name="comercioform_redes_ayuda">Choose one or more networks and enter the link or your username.</string>
+    <string name="comercioform_enlace_red">Link or username for %1$s</string>
+    <string name="comercioform_servicios">Services (one per line)</string>
+    <string name="comercioform_productos">Products (one per line)</string>
+    <string name="comercioform_info_adicional">Additional information</string>
+    <string name="comercioform_imagenes">Images</string>
+    <string name="comercioform_portada">Cover</string>
+    <string name="comercioform_logo">Logo</string>
+    <string name="comercioform_galeria">Photo gallery</string>
+    <string name="comercioform_quitar">Remove</string>
+    <string name="comercioform_agregar_foto">Add photo</string>
+    <string name="comercioform_subiendo_imagen">Uploading image...</string>
+    <string name="comercioform_activo">Active business (visible on the map if approved)</string>
+    <string name="comercioform_guardando">Saving...</string>
+    <string name="comercioform_guardar">Save business</string>
+    <string name="comercioform_error_nombre">Business name is required.</string>
+    <string name="comercioform_elegir_imagen">Choose image</string>
+    <string name="comercioform_cambiar">Change</string>
+
+    <!-- MisComerciosScreen -->
+    <string name="miscomercios_titulo">My businesses</string>
+    <string name="miscomercios_agregar">Add business</string>
+    <string name="miscomercios_reintentar">Retry</string>
+    <string name="miscomercios_vacio">You don\'t have any registered businesses yet. Create the first one and wait for approval.</string>
+    <string name="miscomercios_aviso">New businesses remain pending until an administrator approves them. Once approved, you can activate them so they appear on the map.</string>
+    <string name="miscomercios_eliminar_titulo">Delete business</string>
+    <string name="miscomercios_eliminar_pregunta">Are you sure you want to delete "%1$s"? This action cannot be undone.</string>
+    <string name="miscomercios_eliminar">Delete</string>
+    <string name="miscomercios_cancelar">Cancel</string>
+    <string name="miscomercios_aprobado">Approved</string>
+    <string name="miscomercios_pendiente">Pending</string>
+    <string name="miscomercios_activo">Active</string>
+    <string name="miscomercios_inactivo">Inactive</string>
+    <string name="miscomercios_editar">Edit</string>
+    <string name="miscomercios_ver">View</string>
+
+    <!-- SolicitudComercioScreen -->
+    <string name="solicitud_titulo">Business request</string>
+    <string name="solicitud_enviada">Request sent</string>
+    <string name="solicitud_exito_detalle">Our team will review the information before publishing the business on NicaExplore.</string>
+    <string name="solicitud_volver">Back to businesses</string>
+    <string name="solicitud_intro_titulo">Request to appear on NicaExplore</string>
+    <string name="solicitud_intro_detalle">Complete the information so our team can review your business.</string>
+    <string name="solicitud_nombre_negocio">Business name</string>
+    <string name="solicitud_ciudad">City</string>
+    <string name="solicitud_categoria">Category</string>
+    <string name="solicitud_direccion">Address</string>
+    <string name="solicitud_descripcion">Description</string>
+    <string name="solicitud_telefono">Phone</string>
+    <string name="solicitud_whatsapp">WhatsApp</string>
+    <string name="solicitud_horario">Hours</string>
+    <string name="solicitud_nombre_responsable">Responsible person name</string>
+    <string name="solicitud_correo_responsable">Responsible person email</string>
+    <string name="solicitud_redes">Social media (optional)</string>
+    <string name="solicitud_enviando">Sending request...</string>
+    <string name="solicitud_enviar">Send request</string>
+</resources>

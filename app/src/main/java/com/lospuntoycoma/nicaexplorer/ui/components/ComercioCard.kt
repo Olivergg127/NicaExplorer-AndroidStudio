@@ -31,12 +31,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
@@ -150,7 +152,7 @@ fun ComercioCard(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "WhatsApp disponible",
+                                text = stringResource(R.string.comp_comercio_whatsapp_disponible),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = GreenPrimary,
                                 fontWeight = FontWeight.SemiBold

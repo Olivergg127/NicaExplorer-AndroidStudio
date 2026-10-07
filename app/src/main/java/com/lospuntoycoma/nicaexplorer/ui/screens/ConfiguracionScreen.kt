@@ -1,7 +1,11 @@
 package com.lospuntoycoma.nicaexplorer.ui.screens
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,11 +21,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +41,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.isSystemInDarkTheme
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -51,15 +60,18 @@ fun ConfiguracionScreen(
 ) {
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+    val activity = context.findActivity()
     val darkThemePref by UserPreferences.darkThemeFlow().collectAsState(initial = null)
     val notifications by UserPreferences.notificationsFlow().collectAsState(initial = true)
+    val language by UserPreferences.languageFlow().collectAsState(initial = null)
 
     val isDark = darkThemePref ?: isSystemInDarkTheme()
 
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Configuración",
+                title = stringResource(R.string.config_titulo),
                 onBack = onBack
             )
         }
@@ -85,8 +97,8 @@ fun ConfiguracionScreen(
                 Column {
                     SettingRow(
                         icon = Icons.Filled.Notifications,
-                        title = "Notificaciones",
-                        subtitle = "Recibir novedades de NicaExplore"
+                        title = stringResource(R.string.config_notificaciones),
+                        subtitle = stringResource(R.string.config_notificaciones_desc)
                     ) {
                         Switch(
                             checked = notifications,
@@ -105,8 +117,9 @@ fun ConfiguracionScreen(
 
                     SettingRow(
                         icon = if (isDark) Icons.Filled.DarkMode else Icons.Filled.LightMode,
-                        title = "Tema oscuro",
-                        subtitle = if (isDark) "Tema oscuro activado" else "Tema claro activado"
+                        title = stringResource(R.string.config_tema_oscuro),
+                        subtitle = if (isDark) stringResource(R.string.config_tema_oscuro_activado)
+                        else stringResource(R.string.config_tema_claro_activado)
                     ) {
                         Switch(
                             checked = isDark,
@@ -115,6 +128,76 @@ fun ConfiguracionScreen(
                                     UserPreferences.setDarkTheme(dark)
                                 }
                             }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Filled.Language,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.config_idioma),
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = stringResource(R.string.config_idioma_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            selected = language == null,
+                            onClick = {
+                                scope.launch {
+                                    UserPreferences.setLanguage(null)
+                                    activity?.recreate()
+                                }
+                            },
+                            label = { Text(stringResource(R.string.config_idioma_sistema)) }
+                        )
+                        FilterChip(
+                            selected = language == "es",
+                            onClick = {
+                                scope.launch {
+                                    UserPreferences.setLanguage("es")
+                                    activity?.recreate()
+                                }
+                            },
+                            label = { Text(stringResource(R.string.config_idioma_espanol)) }
+                        )
+                        FilterChip(
+                            selected = language == "en",
+                            onClick = {
+                                scope.launch {
+                                    UserPreferences.setLanguage("en")
+                                    activity?.recreate()
+                                }
+                            },
+                            label = { Text(stringResource(R.string.config_idioma_ingles)) }
                         )
                     }
                 }
@@ -146,7 +229,7 @@ fun ConfiguracionScreen(
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "Cerrar sesión",
+                            text = stringResource(R.string.config_cerrar_sesion),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Medium
@@ -194,4 +277,14 @@ private fun SettingRow(
         }
         control()
     }
+}
+
+/** Encuentra la Activity a partir de un Context (para poder recrearla al cambiar idioma). */
+private fun Context.findActivity(): Activity? {
+    var ctx: Context = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
+    }
+    return null
 }

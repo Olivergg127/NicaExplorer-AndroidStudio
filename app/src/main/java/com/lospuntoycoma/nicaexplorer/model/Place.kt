@@ -1,14 +1,16 @@
 package com.lospuntoycoma.nicaexplorer.model
 
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.lospuntoycoma.nicaexplorer.R
 
 enum class Afluencia(
-    val displayName: String,
+    @StringRes val displayNameRes: Int,
     val quietnessPriority: Int
 ) {
-    BAJA(displayName = "Baja", quietnessPriority = 0),
-    MODERADA(displayName = "Moderada", quietnessPriority = 1),
-    ALTA(displayName = "Alta", quietnessPriority = 2)
+    BAJA(displayNameRes = R.string.afluencia_baja, quietnessPriority = 0),
+    MODERADA(displayNameRes = R.string.afluencia_moderada, quietnessPriority = 1),
+    ALTA(displayNameRes = R.string.afluencia_alta, quietnessPriority = 2)
 }
 
 data class Place(

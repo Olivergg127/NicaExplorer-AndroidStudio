@@ -42,10 +42,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -76,7 +78,7 @@ fun ProfileScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Perfil",
+                title = stringResource(R.string.profile_titulo),
                 onBack = onBack,
                 showTitleText = false
             )
@@ -116,10 +118,10 @@ fun ProfileScreen(
 
                     Text(
                         text = when {
-                            !isLoggedIn -> "Visitante"
-                            !currentUser?.displayName.isNullOrBlank() -> currentUser?.displayName ?: "Usuario"
-                            !userProfile?.nombre.isNullOrBlank() -> userProfile?.nombre ?: "Usuario"
-                            else -> "Usuario"
+                            !isLoggedIn -> stringResource(R.string.profile_visitante)
+                            !currentUser?.displayName.isNullOrBlank() -> currentUser?.displayName ?: stringResource(R.string.profile_usuario)
+                            !userProfile?.nombre.isNullOrBlank() -> userProfile?.nombre ?: stringResource(R.string.profile_usuario)
+                            else -> stringResource(R.string.profile_usuario)
                         },
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.White,
@@ -129,7 +131,7 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = currentUser?.email ?: "Explorando sin cuenta",
+                        text = currentUser?.email ?: stringResource(R.string.profile_explorando_sin_cuenta),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.85f)
                     )
@@ -175,22 +177,22 @@ fun ProfileScreen(
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
                         Text(
-                            text = "Explora como visitante",
+                            text = stringResource(R.string.profile_explora_como_visitante),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "Inicia sesión o crea una cuenta para guardar lugares, ver tu historial y, si eres comercio, administrar tus negocios.",
+                            text = stringResource(R.string.profile_descripcion_visitante),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        NicaButton(text = "Iniciar sesión", onClick = onLogin)
+                        NicaButton(text = stringResource(R.string.profile_iniciar_sesion), onClick = onLogin)
                         Spacer(modifier = Modifier.height(10.dp))
                         NicaButton(
-                            text = "Crear cuenta",
+                            text = stringResource(R.string.profile_crear_cuenta),
                             onClick = onRegister,
                             gradient = Brush.horizontalGradient(
                                 colors = listOf(
@@ -217,7 +219,7 @@ fun ProfileScreen(
                     Column {
                         ProfileMenuItem(
                             icon = Icons.Filled.Settings,
-                            title = "Configuración",
+                            title = stringResource(R.string.profile_configuracion),
                             onClick = onSettings
                         )
                         Divider(
@@ -226,7 +228,7 @@ fun ProfileScreen(
                         )
                         ProfileMenuItem(
                             icon = Icons.Filled.Info,
-                            title = "Acerca de NicaExplore",
+                            title = stringResource(R.string.profile_acerca_de),
                             onClick = onAbout
                         )
                     }
@@ -245,7 +247,7 @@ fun ProfileScreen(
                     Column {
                         ProfileMenuItem(
                             icon = Icons.Filled.Person,
-                            title = "Editar perfil",
+                            title = stringResource(R.string.profile_editar_perfil),
                             onClick = onEditProfile
                         )
                         Divider(
@@ -254,7 +256,7 @@ fun ProfileScreen(
                         )
                         ProfileMenuItem(
                             icon = Icons.Filled.Bookmark,
-                            title = "Lugares guardados",
+                            title = stringResource(R.string.profile_lugares_guardados),
                             onClick = onSavedPlaces
                         )
                         Divider(
@@ -263,7 +265,7 @@ fun ProfileScreen(
                         )
                         ProfileMenuItem(
                             icon = Icons.Filled.History,
-                            title = "Historial de exploración",
+                            title = stringResource(R.string.profile_historial),
                             onClick = onHistory
                         )
                         if (userProfile?.rol == com.lospuntoycoma.nicaexplorer.model.UserRole.COMERCIO ||
@@ -275,7 +277,7 @@ fun ProfileScreen(
                             )
                             ProfileMenuItem(
                                 icon = Icons.Filled.Storefront,
-                                title = "Mis comercios",
+                                title = stringResource(R.string.profile_mis_comercios),
                                 onClick = onMisComercios
                             )
                         }
@@ -285,7 +287,7 @@ fun ProfileScreen(
                         )
                         ProfileMenuItem(
                             icon = Icons.Filled.Settings,
-                            title = "Configuración",
+                            title = stringResource(R.string.profile_configuracion),
                             onClick = onSettings
                         )
                         Divider(
@@ -294,7 +296,7 @@ fun ProfileScreen(
                         )
                         ProfileMenuItem(
                             icon = Icons.Filled.Info,
-                            title = "Acerca de NicaExplore",
+                            title = stringResource(R.string.profile_acerca_de),
                             onClick = onAbout
                         )
                     }
@@ -326,7 +328,7 @@ fun ProfileScreen(
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
-                            text = "Cerrar sesión",
+                            text = stringResource(R.string.profile_cerrar_sesion),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Medium

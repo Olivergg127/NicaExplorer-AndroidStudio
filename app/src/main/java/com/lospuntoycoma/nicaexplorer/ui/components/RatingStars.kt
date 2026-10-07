@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.ui.theme.GoldAccent
 import java.util.Locale
 
@@ -45,7 +47,7 @@ fun RatingStars(
         )
         Spacer(modifier = Modifier.width(2.dp))
         Text(
-            text = "($total)",
+            text = stringResource(R.string.comp_rating_total, total),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
         )

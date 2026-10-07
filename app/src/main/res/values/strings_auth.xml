@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="splash_logo">NicaExplore</string>
+
+    <string name="login_logo">Logo NicaExplore</string>
+    <string name="login_bienvenido">Bienvenido</string>
+    <string name="login_subtitulo">Inicia sesión o explora NicaExplore sin registrarte</string>
+    <string name="login_correo">Correo electrónico</string>
+    <string name="login_correo_placeholder">tucorreo@ejemplo.com</string>
+    <string name="login_correo_invalido">Ingresa un correo válido</string>
+    <string name="login_contrasena">Contraseña</string>
+    <string name="login_ocultar">Ocultar</string>
+    <string name="login_mostrar">Mostrar</string>
+    <string name="login_contrasena_vacia">La contraseña no puede estar vacía</string>
+    <string name="login_recordarme">Recordarme</string>
+    <string name="login_olvidaste">¿Olvidaste tu contraseña?</string>
+    <string name="login_iniciando_sesion">Iniciando sesión...</string>
+    <string name="login_iniciar_sesion">Iniciar sesión</string>
+    <string name="login_error_correo_no_existe">No hay una cuenta con este correo</string>
+    <string name="login_error_contrasena">Contraseña incorrecta</string>
+    <string name="login_error_demasiados_intentos">Demasiados intentos. Intenta más tarde</string>
+    <string name="login_error_generico">Error al iniciar sesión</string>
+    <string name="login_sin_cuenta">¿No tienes una cuenta?</string>
+    <string name="login_crear_cuenta">Crear cuenta</string>
+    <string name="login_continuar_sin_registro">Continuar sin registrarme</string>
+
+    <string name="register_titulo">Crear cuenta</string>
+    <string name="register_volver">Volver</string>
+    <string name="register_logo">Logo NicaExplore</string>
+    <string name="register_unete">Únete a NicaExplore</string>
+    <string name="register_subtitulo">Crea tu cuenta para empezar a explorar</string>
+    <string name="register_tipo_cuenta">Tipo de cuenta</string>
+    <string name="register_usuario_normal">Usuario normal</string>
+    <string name="register_usuario_comercio">Usuario comercio</string>
+    <string name="register_comercio_info">Podrás registrar y administrar tus propios comercios.</string>
+    <string name="register_nombre">Nombre completo</string>
+    <string name="register_nombre_placeholder">Tu nombre</string>
+    <string name="register_nombre_error">Ingresa tu nombre</string>
+    <string name="register_correo">Correo electrónico</string>
+    <string name="register_correo_placeholder">tucorreo@ejemplo.com</string>
+    <string name="register_correo_invalido">Ingresa un correo válido</string>
+    <string name="register_contrasena">Contraseña</string>
+    <string name="register_contrasena_min">Mínimo 6 caracteres</string>
+    <string name="register_confirmar_contrasena">Confirmar contraseña</string>
+    <string name="register_contrasena_no_coincide">Las contraseñas no coinciden</string>
+    <string name="register_terminos">Acepto los términos y condiciones</string>
+    <string name="register_terminos_error">Debes aceptar los términos</string>
+    <string name="register_creando_cuenta">Creando cuenta...</string>
+    <string name="register_crear_cuenta">Crear cuenta</string>
+    <string name="register_error">Error al registrarse</string>
+    <string name="register_ya_tienes_cuenta">¿Ya tienes una cuenta?</string>
+    <string name="register_iniciar_sesion">Iniciar sesión</string>
+
+    <string name="recovery_logo">Logo NicaExplore</string>
+    <string name="recovery_titulo">Recuperar contraseña</string>
+    <string name="recovery_subtitulo">Ingresa el correo asociado a tu cuenta y te enviaremos un enlace para restablecer tu contraseña.</string>
+    <string name="recovery_correo">Correo electrónico</string>
+    <string name="recovery_correo_placeholder">tucorreo@ejemplo.com</string>
+    <string name="recovery_correo_invalido">Ingresa un correo válido</string>
+    <string name="recovery_enviando">Enviando...</string>
+    <string name="recovery_enviar">Enviar enlace</string>
+    <string name="recovery_exito">Correo enviado correctamente. Revisa tu bandeja de entrada para restablecer tu contraseña.</string>
+    <string name="recovery_error">No pudimos enviar el correo. Verifica la dirección e inténtalo nuevamente.</string>
+    <string name="recovery_volver">Volver al inicio de sesión</string>
+</resources>

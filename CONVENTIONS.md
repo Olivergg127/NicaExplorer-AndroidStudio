@@ -94,10 +94,15 @@
 
 ## Recursos
 
-- **Observado:** `res/values/strings.xml` solo contiene `app_name`; **los textos de la UI
-  están escritos en español directamente en Compose**.
-- **Regla:** por consistencia, mantén los textos nuevos en español dentro del Composable,
-  tal como el resto de pantallas. No introduzcas `strings.xml` a medias ni otro idioma.
+- **Observado (desde 2026-10-07):** la app es **bilingüe**. Los textos de la UI viven en
+  recursos: `res/values/strings_*.xml` (español) y `res/values-en/strings_*.xml` (inglés), y
+  se consumen con `stringResource(R.string.<clave>)`. `res/values/strings.xml` conserva
+  `app_name`.
+- **Regla:** todo texto visible nuevo va como recurso en **ambos** idiomas (español e inglés),
+  agrupado en un `strings_<pantalla>.xml`, y se usa `stringResource`. No vuelvas a escribir
+  texto visible directamente en Compose.
+- **Observado:** los mensajes de validación de los ViewModels se exponen como
+  `@StringRes Int?` y las pantallas los resuelven con `stringResource`.
 - **Observado:** drawables en minúsculas y sin separadores (`homenajealamadrejuigalpina.jpg`,
   `fondotarjeta.jpeg`); los iconos vectoriales usan prefijo `ic_`
   (`ic_map_marker_comercio.xml`).

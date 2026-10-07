@@ -16,7 +16,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
@@ -50,7 +52,7 @@ fun HistorialExploracionScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Historial de exploración",
+                title = stringResource(R.string.history_titulo),
                 onBack = onBack
             )
         }
@@ -63,8 +65,8 @@ fun HistorialExploracionScreen(
             ) {
                 EmptyState(
                     icon = Icons.Filled.History,
-                    message = "Todavía no has explorado ningún lugar.",
-                    buttonText = "Explorar ahora",
+                    message = stringResource(R.string.history_vacio),
+                    buttonText = stringResource(R.string.history_explorar),
                     onButtonClick = onExplore
                 )
             }
@@ -80,7 +82,7 @@ fun HistorialExploracionScreen(
                 items(entries, key = { it.place.id }) { entry ->
                     PlaceRow(
                         place = entry.place,
-                        subtitle = "Visto por última vez: ${formatTimestamp(entry.timestamp)}",
+                        subtitle = stringResource(R.string.history_ultima_visita, formatTimestamp(entry.timestamp)),
                         onClick = { onOpenPlace(entry.place.cityId, entry.place.id) }
                     )
                 }

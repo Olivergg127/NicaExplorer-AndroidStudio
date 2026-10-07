@@ -3,6 +3,7 @@ package com.lospuntoycoma.nicaexplorer.data
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,8 @@ object UserPreferences {
 
     private val DARK_THEME_KEY = booleanPreferencesKey("dark_theme")
     private val NOTIFICATIONS_KEY = booleanPreferencesKey("notifications_enabled")
+    private val MASCOT_KEY = booleanPreferencesKey("itzae_mascot_enabled")
+    private val LANGUAGE_KEY = stringPreferencesKey("app_language")
 
     fun init(context: Context) {
         appContext = context.applicationContext
@@ -34,6 +37,30 @@ object UserPreferences {
 
     fun notificationsFlow(): Flow<Boolean> =
         appContext.dataStore.data.map { it[NOTIFICATIONS_KEY] ?: true }
+
+    /** Mascota flotante de Itzae: activada por defecto. */
+    fun mascotaFlow(): Flow<Boolean> =
+        appContext.dataStore.data.map { it[MASCOT_KEY] ?: true }
+
+    suspend fun setMascotaEnabled(enabled: Boolean) {
+        appContext.dataStore.edit { prefs ->
+            prefs[MASCOT_KEY] = enabled
+        }
+    }
+
+    /** Idioma de la app: "es", "en" o null para seguir el idioma del sistema. */
+    fun languageFlow(): Flow<String?> =
+        appContext.dataStore.data.map { it[LANGUAGE_KEY] }
+
+    suspend fun setLanguage(language: String?) {
+        appContext.dataStore.edit { prefs ->
+            if (language == null) {
+                prefs.remove(LANGUAGE_KEY)
+            } else {
+                prefs[LANGUAGE_KEY] = language
+            }
+        }
+    }
 
     suspend fun setDarkTheme(enabled: Boolean?) {
         appContext.dataStore.edit { prefs ->

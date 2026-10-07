@@ -65,6 +65,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -72,6 +73,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.model.RedesSociales
 import com.lospuntoycoma.nicaexplorer.model.TipoValoracion
@@ -114,7 +116,7 @@ fun ComercioDetalleScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = uiState.comercio?.nombre ?: "Comercio",
+                title = uiState.comercio?.nombre ?: stringResource(R.string.comerciodet_comercio),
                 onBack = onBack
             )
         },
@@ -140,8 +142,8 @@ fun ComercioDetalleScreen(
                 ) {
                     EmptyState(
                         icon = Icons.Filled.Refresh,
-                        message = uiState.error ?: "",
-                        buttonText = "Reintentar",
+                        message = uiState.error?.let { stringResource(it) } ?: "",
+                        buttonText = stringResource(R.string.comerciodet_reintentar),
                         onButtonClick = { viewModel.loadComercio() }
                     )
                 }
@@ -157,12 +159,16 @@ fun ComercioDetalleScreen(
                     ) {
                         EmptyState(
                             icon = Icons.Filled.Storefront,
-                            message = "No se encontró el comercio.",
-                            buttonText = "Reintentar",
+                            message = stringResource(R.string.comerciodet_no_encontrado),
+                            buttonText = stringResource(R.string.comerciodet_reintentar),
                             onButtonClick = { viewModel.loadComercio() }
                         )
                     }
                 } else {
+                    val msgNumeroCopiado = stringResource(R.string.comerciodet_numero_copiado)
+                    val msgSinAppWhatsapp = stringResource(R.string.comerciodet_sin_app_whatsapp)
+                    val msgSinAppCorreo = stringResource(R.string.comerciodet_sin_app_correo)
+                    val msgNoAbrirMaps = stringResource(R.string.comerciodet_no_abrir_maps)
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -244,7 +250,7 @@ fun ComercioDetalleScreen(
                                         )
                                         Spacer(modifier = Modifier.width(4.dp))
                                         Text(
-                                            text = "WhatsApp disponible",
+                                            text = stringResource(R.string.comerciodet_whatsapp_disponible),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = GreenPrimary,
                                             fontWeight = FontWeight.SemiBold
@@ -257,19 +263,19 @@ fun ComercioDetalleScreen(
 
                             ComercioInfoRow(
                                 icon = Icons.Filled.AccessTime,
-                                label = "Horario",
+                                label = stringResource(R.string.comerciodet_horario),
                                 value = comercio.horario
                             )
                             ComercioInfoRow(
                                 icon = Icons.Filled.Place,
-                                label = "Dirección",
+                                label = stringResource(R.string.comerciodet_direccion),
                                 value = comercio.direccion
                             )
 
                             if (comercio.descripcion.isNotBlank()) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Descripción",
+                                    text = stringResource(R.string.comerciodet_descripcion),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onBackground
@@ -286,7 +292,7 @@ fun ComercioDetalleScreen(
                             if (comercio.galeria.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(20.dp))
                                 Text(
-                                    text = "Fotos",
+                                    text = stringResource(R.string.comerciodet_fotos),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onBackground
@@ -296,7 +302,7 @@ fun ComercioDetalleScreen(
                                     items(comercio.galeria) { url ->
                                         AsyncImage(
                                             model = url,
-                                            contentDescription = "Ampliar foto",
+                                            contentDescription = stringResource(R.string.comerciodet_ampliar_foto),
                                             contentScale = ContentScale.Crop,
                                             modifier = Modifier
                                                 .size(140.dp)
@@ -313,20 +319,20 @@ fun ComercioDetalleScreen(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 ComercioInfoRow(
                                     icon = Icons.Filled.AccessTime,
-                                    label = "Días de atención",
+                                    label = stringResource(R.string.comerciodet_dias_atencion),
                                     value = comercio.diasAtencion
                                 )
                             }
 
-                            ListaTexto("Servicios", comercio.servicios)
-                            ListaTexto("Productos", comercio.productos)
+                            ListaTexto(stringResource(R.string.comerciodet_servicios), comercio.servicios)
+                            ListaTexto(stringResource(R.string.comerciodet_productos), comercio.productos)
 
                             val redesValidas = comercio.redesSociales
                                 .mapNotNull { RedesSociales.parsear(it) }
                             if (redesValidas.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Redes sociales",
+                                    text = stringResource(R.string.comerciodet_redes_sociales),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onBackground
@@ -334,6 +340,7 @@ fun ComercioDetalleScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                                     redesValidas.forEach { (red, valor) ->
+                                        val mensajeError = stringResource(R.string.comerciodet_no_abrir_red, red.nombre)
                                         Image(
                                             painter = painterResource(id = red.icono),
                                             contentDescription = red.nombre,
@@ -346,9 +353,7 @@ fun ComercioDetalleScreen(
                                                         RedesSociales.urlDe("${red.clave}|$valor")
                                                     ) {
                                                         scope.launch {
-                                                            snackbarHostState.showSnackbar(
-                                                                "No se pudo abrir ${red.nombre}."
-                                                            )
+                                                            snackbarHostState.showSnackbar(mensajeError)
                                                         }
                                                     }
                                                 }
@@ -361,7 +366,7 @@ fun ComercioDetalleScreen(
                                 Spacer(modifier = Modifier.height(16.dp))
                                 ComercioInfoRow(
                                     icon = Icons.Filled.Email,
-                                    label = "Correo de contacto",
+                                    label = stringResource(R.string.comerciodet_correo_contacto),
                                     value = comercio.correo
                                 )
                             }
@@ -369,7 +374,7 @@ fun ComercioDetalleScreen(
                             if (comercio.infoAdicional.isNotBlank()) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Información adicional",
+                                    text = stringResource(R.string.comerciodet_info_adicional),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onBackground
@@ -391,9 +396,9 @@ fun ComercioDetalleScreen(
                                 ) {
                                     Text(
                                         text = if (!comercio.aprobado) {
-                                            "Este comercio está pendiente de aprobación y aún no es visible públicamente."
+                                            stringResource(R.string.comerciodet_pendiente_aprobacion)
                                         } else {
-                                            "Este comercio está inactivo y no aparece en el mapa."
+                                            stringResource(R.string.comerciodet_inactivo)
                                         },
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -406,11 +411,11 @@ fun ComercioDetalleScreen(
 
                             if (comercio.telefono.isNotBlank()) {
                                 NicaButton(
-                                    text = "Copiar teléfono",
+                                    text = stringResource(R.string.comerciodet_copiar_telefono),
                                     onClick = {
                                         clipboard.setText(AnnotatedString(comercio.telefono))
                                         scope.launch {
-                                            snackbarHostState.showSnackbar("Número copiado")
+                                            snackbarHostState.showSnackbar(msgNumeroCopiado)
                                         }
                                     }
                                 )
@@ -419,13 +424,11 @@ fun ComercioDetalleScreen(
 
                             if (comercio.tieneWhatsapp && comercio.whatsapp.isNotBlank()) {
                                 NicaButton(
-                                    text = "Contactar por WhatsApp",
+                                    text = stringResource(R.string.comerciodet_contactar_whatsapp),
                                     onClick = {
                                         openWhatsApp(context, comercio) {
                                             scope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    "No hay una aplicación compatible para abrir WhatsApp."
-                                                )
+                                                snackbarHostState.showSnackbar(msgSinAppWhatsapp)
                                             }
                                         }
                                     },
@@ -438,13 +441,11 @@ fun ComercioDetalleScreen(
 
                             if (comercio.correo.isNotBlank()) {
                                 NicaButton(
-                                    text = "Enviar correo",
+                                    text = stringResource(R.string.comerciodet_enviar_correo),
                                     onClick = {
                                         openCorreo(context, comercio.nombre, comercio.correo) {
                                             scope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    "No hay una aplicación de correo disponible."
-                                                )
+                                                snackbarHostState.showSnackbar(msgSinAppCorreo)
                                             }
                                         }
                                     }
@@ -454,7 +455,7 @@ fun ComercioDetalleScreen(
 
                             if (comercio.latitud != 0.0 && comercio.longitud != 0.0) {
                                 NicaButton(
-                                    text = "Ver en Google Maps",
+                                    text = stringResource(R.string.comerciodet_ver_maps),
                                     onClick = { showMapsDialog = true }
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
@@ -467,9 +468,9 @@ fun ComercioDetalleScreen(
                     if (showMapsDialog) {
                         AlertDialog(
                             onDismissRequest = { showMapsDialog = false },
-                            title = { Text("Abrir en Google Maps") },
+                            title = { Text(stringResource(R.string.comerciodet_abrir_maps_titulo)) },
                             text = {
-                                Text("¿Quieres abrir la ubicación de ${comercio.nombre} en Google Maps?")
+                                Text(stringResource(R.string.comerciodet_abrir_maps_pregunta, comercio.nombre))
                             },
                             confirmButton = {
                                 TextButton(
@@ -477,19 +478,17 @@ fun ComercioDetalleScreen(
                                         showMapsDialog = false
                                         openGoogleMaps(context, comercio) {
                                             scope.launch {
-                                                snackbarHostState.showSnackbar(
-                                                    "No se pudo abrir Google Maps."
-                                                )
+                                                snackbarHostState.showSnackbar(msgNoAbrirMaps)
                                             }
                                         }
                                     }
                                 ) {
-                                    Text("Abrir Maps")
+                                    Text(stringResource(R.string.comerciodet_abrir_maps))
                                 }
                             },
                             dismissButton = {
                                 TextButton(onClick = { showMapsDialog = false }) {
-                                    Text("Cancelar")
+                                    Text(stringResource(R.string.comerciodet_cancelar))
                                 }
                             }
                         )
@@ -536,7 +535,7 @@ private fun GaleriaLightbox(
             ) { page ->
                 AsyncImage(
                     model = urls[page],
-                    contentDescription = "Foto ${page + 1} de ${urls.size}",
+                    contentDescription = stringResource(R.string.comerciodet_foto_de, page + 1, urls.size),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxSize()
@@ -552,7 +551,7 @@ private fun GaleriaLightbox(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "Cerrar",
+                    contentDescription = stringResource(R.string.comerciodet_cerrar),
                     tint = Color.White
                 )
             }

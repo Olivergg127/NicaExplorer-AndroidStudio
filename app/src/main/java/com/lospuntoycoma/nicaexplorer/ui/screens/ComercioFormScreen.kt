@@ -55,12 +55,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.ImageUploader
 import com.lospuntoycoma.nicaexplorer.model.Comercio
@@ -161,13 +163,16 @@ fun ComercioFormScreen(
         categorias.filter { it.categoriaPadre.equals(categoriaPadre, ignoreCase = true) }.map { it.nombre }
     }
 
+    val errorSubirImagen = stringResource(R.string.comercioform_error_subir_imagen)
+    val errorNombreObligatorio = stringResource(R.string.comercioform_error_nombre)
+
     val subirImagen: (android.net.Uri, (String) -> Unit) -> Unit = { uri, onUrl ->
         scope.launch {
             subiendoImagen = true
             errorLocal = null
             ImageUploader.subir(context, uri)
                 .onSuccess { onUrl(it) }
-                .onFailure { errorLocal = it.localizedMessage ?: "No se pudo subir la imagen." }
+                .onFailure { errorLocal = it.localizedMessage ?: errorSubirImagen }
             subiendoImagen = false
         }
     }
@@ -185,7 +190,11 @@ fun ComercioFormScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = if (editando) "Editar comercio" else "Nuevo comercio",
+                title = if (editando) {
+                    stringResource(R.string.comercioform_editar_titulo)
+                } else {
+                    stringResource(R.string.comercioform_nuevo_titulo)
+                },
                 onBack = onBack
             )
         }
@@ -218,7 +227,7 @@ fun ComercioFormScreen(
                     elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     Text(
-                        text = "Tu comercio se enviará a revisión. Un administrador lo aprobará antes de que sea visible; después podrás activarlo para que aparezca en el mapa.",
+                        text = stringResource(R.string.comercioform_aviso_revision),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(14.dp)
@@ -227,10 +236,10 @@ fun ComercioFormScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            FormTextField(nombre, { nombre = it }, "Nombre del comercio", requerido = true)
+            FormTextField(nombre, { nombre = it }, stringResource(R.string.comercioform_nombre), requerido = true)
 
             DropdownSelector(
-                label = "Categoría superior",
+                label = stringResource(R.string.comercioform_categoria_superior),
                 value = categoriaPadre,
                 options = categoriasPadre,
                 onSelect = {
@@ -240,7 +249,7 @@ fun ComercioFormScreen(
             )
 
             DropdownSelector(
-                label = "Subcategoría",
+                label = stringResource(R.string.comercioform_subcategoria),
                 value = categoria,
                 options = subcategorias,
                 onSelect = { categoria = it },
@@ -248,7 +257,7 @@ fun ComercioFormScreen(
             )
 
             DropdownSelector(
-                label = "Ciudad",
+                label = stringResource(R.string.comercioform_ciudad),
                 value = ciudad,
                 options = SampleData.cities.map { it.name },
                 onSelect = { seleccion ->
@@ -258,14 +267,14 @@ fun ComercioFormScreen(
                 }
             )
 
-            FormTextField(direccion, { direccion = it }, "Dirección")
-            FormTextField(descripcion, { descripcion = it }, "Descripción", minLines = 3)
+            FormTextField(direccion, { direccion = it }, stringResource(R.string.comercioform_direccion))
+            FormTextField(descripcion, { descripcion = it }, stringResource(R.string.comercioform_descripcion), minLines = 3)
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(
                     value = latitud,
                     onValueChange = { latitud = it },
-                    label = { Text("Latitud") },
+                    label = { Text(stringResource(R.string.comercioform_latitud)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     shape = RoundedCornerShape(16.dp),
@@ -274,7 +283,7 @@ fun ComercioFormScreen(
                 OutlinedTextField(
                     value = longitud,
                     onValueChange = { longitud = it },
-                    label = { Text("Longitud") },
+                    label = { Text(stringResource(R.string.comercioform_longitud)) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     shape = RoundedCornerShape(16.dp),
@@ -282,23 +291,23 @@ fun ComercioFormScreen(
                 )
             }
 
-            FormTextField(telefono, { telefono = it }, "Teléfono", keyboardType = KeyboardType.Phone)
-            FormTextField(whatsapp, { whatsapp = it }, "WhatsApp", keyboardType = KeyboardType.Phone)
+            FormTextField(telefono, { telefono = it }, stringResource(R.string.comercioform_telefono), keyboardType = KeyboardType.Phone)
+            FormTextField(whatsapp, { whatsapp = it }, stringResource(R.string.comercioform_whatsapp), keyboardType = KeyboardType.Phone)
 
-            SwitchRow("Tiene WhatsApp", tieneWhatsapp) { tieneWhatsapp = it }
+            SwitchRow(stringResource(R.string.comercioform_tiene_whatsapp), tieneWhatsapp) { tieneWhatsapp = it }
 
-            FormTextField(horario, { horario = it }, "Horario (ej. 8:00 a.m. - 6:00 p.m.)")
-            FormTextField(diasAtencion, { diasAtencion = it }, "Días de atención")
+            FormTextField(horario, { horario = it }, stringResource(R.string.comercioform_horario))
+            FormTextField(diasAtencion, { diasAtencion = it }, stringResource(R.string.comercioform_dias_atencion))
             FormTextField(
                 value = correo,
                 onValueChange = { correo = it },
-                label = "Correo de contacto",
+                label = stringResource(R.string.comercioform_correo_contacto),
                 keyboardType = KeyboardType.Email
             )
 
-            SeccionTitulo("Redes sociales")
+            SeccionTitulo(stringResource(R.string.comercioform_redes_sociales))
             Text(
-                text = "Elige una o varias redes y escribe el enlace o tu usuario.",
+                text = stringResource(R.string.comercioform_redes_ayuda),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
@@ -332,25 +341,25 @@ fun ComercioFormScreen(
                     FormTextField(
                         value = redes[red.clave].orEmpty(),
                         onValueChange = { valor -> redes = redes + (red.clave to valor) },
-                        label = "Enlace o usuario de ${red.nombre}"
+                        label = stringResource(R.string.comercioform_enlace_red, red.nombre)
                     )
                 }
 
-            FormTextField(servicios, { servicios = it }, "Servicios (uno por línea)", minLines = 3)
-            FormTextField(productos, { productos = it }, "Productos (uno por línea)", minLines = 3)
-            FormTextField(infoAdicional, { infoAdicional = it }, "Información adicional", minLines = 2)
+            FormTextField(servicios, { servicios = it }, stringResource(R.string.comercioform_servicios), minLines = 3)
+            FormTextField(productos, { productos = it }, stringResource(R.string.comercioform_productos), minLines = 3)
+            FormTextField(infoAdicional, { infoAdicional = it }, stringResource(R.string.comercioform_info_adicional), minLines = 2)
 
-            SeccionTitulo("Imágenes")
+            SeccionTitulo(stringResource(R.string.comercioform_imagenes))
 
             ImagenUnica(
-                etiqueta = "Portada",
+                etiqueta = stringResource(R.string.comercioform_portada),
                 url = imagenUrl,
                 subiendo = subiendoImagen,
                 onElegir = { portadaLauncher.launch("image/*") },
                 onQuitar = { imagenUrl = "" }
             )
             ImagenUnica(
-                etiqueta = "Logo",
+                etiqueta = stringResource(R.string.comercioform_logo),
                 url = logoUrl,
                 subiendo = subiendoImagen,
                 onElegir = { logoLauncher.launch("image/*") },
@@ -358,7 +367,7 @@ fun ComercioFormScreen(
             )
 
             Text(
-                text = "Galería de fotos",
+                text = stringResource(R.string.comercioform_galeria),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -384,7 +393,7 @@ fun ComercioFormScreen(
                         maxLines = 1
                     )
                     IconButton(onClick = { galeria = galeria - url }) {
-                        Icon(Icons.Filled.Delete, contentDescription = "Quitar", tint = MaterialTheme.colorScheme.error)
+                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.comercioform_quitar), tint = MaterialTheme.colorScheme.error)
                     }
                 }
             }
@@ -395,7 +404,7 @@ fun ComercioFormScreen(
             ) {
                 Icon(Icons.Filled.AddPhotoAlternate, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Agregar foto")
+                Text(stringResource(R.string.comercioform_agregar_foto))
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -404,19 +413,20 @@ fun ComercioFormScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text("Subiendo imagen...", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.comercioform_subiendo_imagen), style = MaterialTheme.typography.bodySmall)
                 }
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
             if (editando) {
-                SwitchRow("Comercio activo (visible en el mapa si está aprobado)", activo) { activo = it }
+                SwitchRow(stringResource(R.string.comercioform_activo), activo) { activo = it }
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            (errorLocal ?: uiState.error)?.let { error ->
+            val errorMostrado = errorLocal ?: uiState.error?.let { stringResource(it) }
+            if (errorMostrado != null) {
                 Text(
-                    text = error,
+                    text = errorMostrado,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.fillMaxWidth()
@@ -425,11 +435,15 @@ fun ComercioFormScreen(
             }
 
             NicaButton(
-                text = if (uiState.saving) "Guardando..." else "Guardar comercio",
+                text = if (uiState.saving) {
+                    stringResource(R.string.comercioform_guardando)
+                } else {
+                    stringResource(R.string.comercioform_guardar)
+                },
                 enabled = !uiState.saving && !subiendoImagen,
                 onClick = {
                     if (nombre.isBlank()) {
-                        errorLocal = "El nombre del comercio es obligatorio."
+                        errorLocal = errorNombreObligatorio
                         return@NicaButton
                     }
                     errorLocal = null
@@ -616,12 +630,18 @@ private fun ImagenUnica(
             )
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedButton(onClick = onElegir, enabled = !subiendo) {
-                Text(if (url.isBlank()) "Elegir imagen" else "Cambiar")
+                Text(
+                    if (url.isBlank()) {
+                        stringResource(R.string.comercioform_elegir_imagen)
+                    } else {
+                        stringResource(R.string.comercioform_cambiar)
+                    }
+                )
             }
         }
         if (url.isNotBlank()) {
             IconButton(onClick = onQuitar) {
-                Icon(Icons.Filled.Close, contentDescription = "Quitar", tint = MaterialTheme.colorScheme.error)
+                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.comercioform_quitar), tint = MaterialTheme.colorScheme.error)
             }
         }
     }

@@ -44,9 +44,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.ui.components.EmptyState
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -68,7 +70,7 @@ fun MisComerciosScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Mis comercios",
+                title = stringResource(R.string.miscomercios_titulo),
                 onBack = onBack
             )
         },
@@ -77,7 +79,7 @@ fun MisComerciosScreen(
                 onClick = onCrear,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.Filled.Add, contentDescription = "Agregar comercio", tint = Color.White)
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.miscomercios_agregar), tint = Color.White)
             }
         }
     ) { padding ->
@@ -98,8 +100,8 @@ fun MisComerciosScreen(
                     Box(modifier = Modifier.fillMaxSize()) {
                         EmptyState(
                             icon = Icons.Filled.Refresh,
-                            message = uiState.error ?: "",
-                            buttonText = "Reintentar",
+                            message = uiState.error?.let { stringResource(it) } ?: "",
+                            buttonText = stringResource(R.string.miscomercios_reintentar),
                             onButtonClick = { viewModel.cargar() }
                         )
                     }
@@ -109,8 +111,8 @@ fun MisComerciosScreen(
                     Box(modifier = Modifier.fillMaxSize()) {
                         EmptyState(
                             icon = Icons.Filled.Storefront,
-                            message = "Aún no tienes comercios registrados. Crea el primero y espera la aprobación.",
-                            buttonText = "Agregar comercio",
+                            message = stringResource(R.string.miscomercios_vacio),
+                            buttonText = stringResource(R.string.miscomercios_agregar),
                             onButtonClick = onCrear
                         )
                     }
@@ -132,7 +134,7 @@ fun MisComerciosScreen(
                                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                             ) {
                                 Text(
-                                    text = "Los comercios nuevos quedan pendientes hasta que un administrador los apruebe. Una vez aprobados, podrás activarlos para que aparezcan en el mapa.",
+                                    text = stringResource(R.string.miscomercios_aviso),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(14.dp)
@@ -160,18 +162,18 @@ fun MisComerciosScreen(
     comercioAEliminar?.let { comercio ->
         AlertDialog(
             onDismissRequest = { comercioAEliminar = null },
-            title = { Text("Eliminar comercio") },
-            text = { Text("¿Seguro que deseas eliminar \"${comercio.nombre}\"? Esta acción no se puede deshacer.") },
+            title = { Text(stringResource(R.string.miscomercios_eliminar_titulo)) },
+            text = { Text(stringResource(R.string.miscomercios_eliminar_pregunta, comercio.nombre)) },
             confirmButton = {
                 TextButton(onClick = {
                     viewModel.eliminar(comercio.id)
                     comercioAEliminar = null
                 }) {
-                    Text("Eliminar", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.miscomercios_eliminar), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { comercioAEliminar = null }) { Text("Cancelar") }
+                TextButton(onClick = { comercioAEliminar = null }) { Text(stringResource(R.string.miscomercios_cancelar)) }
             }
         )
     }
@@ -211,11 +213,19 @@ private fun ComercioPropioCard(
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 EstadoChip(
-                    texto = if (comercio.aprobado) "Aprobado" else "Pendiente",
+                    texto = if (comercio.aprobado) {
+                        stringResource(R.string.miscomercios_aprobado)
+                    } else {
+                        stringResource(R.string.miscomercios_pendiente)
+                    },
                     positivo = comercio.aprobado
                 )
                 EstadoChip(
-                    texto = if (comercio.activo) "Activo" else "Inactivo",
+                    texto = if (comercio.activo) {
+                        stringResource(R.string.miscomercios_activo)
+                    } else {
+                        stringResource(R.string.miscomercios_inactivo)
+                    },
                     positivo = comercio.activo
                 )
             }
@@ -226,12 +236,12 @@ private fun ComercioPropioCard(
                 TextButton(onClick = onEditar, enabled = !eliminando) {
                     Icon(Icons.Filled.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Editar")
+                    Text(stringResource(R.string.miscomercios_editar))
                 }
                 TextButton(onClick = onVer) {
                     Icon(Icons.Filled.Visibility, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text("Ver")
+                    Text(stringResource(R.string.miscomercios_ver))
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 if (eliminando) {

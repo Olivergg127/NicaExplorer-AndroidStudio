@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="splash_logo">NicaExplore</string>
+
+    <string name="login_logo">NicaExplore logo</string>
+    <string name="login_bienvenido">Welcome</string>
+    <string name="login_subtitulo">Sign in or explore NicaExplore without registering</string>
+    <string name="login_correo">Email address</string>
+    <string name="login_correo_placeholder">youremail@example.com</string>
+    <string name="login_correo_invalido">Enter a valid email</string>
+    <string name="login_contrasena">Password</string>
+    <string name="login_ocultar">Hide</string>
+    <string name="login_mostrar">Show</string>
+    <string name="login_contrasena_vacia">Password cannot be empty</string>
+    <string name="login_recordarme">Remember me</string>
+    <string name="login_olvidaste">Forgot your password?</string>
+    <string name="login_iniciando_sesion">Signing in...</string>
+    <string name="login_iniciar_sesion">Sign in</string>
+    <string name="login_error_correo_no_existe">There is no account with this email</string>
+    <string name="login_error_contrasena">Incorrect password</string>
+    <string name="login_error_demasiados_intentos">Too many attempts. Try again later</string>
+    <string name="login_error_generico">Error signing in</string>
+    <string name="login_sin_cuenta">Do not have an account?</string>
+    <string name="login_crear_cuenta">Create account</string>
+    <string name="login_continuar_sin_registro">Continue without registering</string>
+
+    <string name="register_titulo">Create account</string>
+    <string name="register_volver">Back</string>
+    <string name="register_logo">NicaExplore logo</string>
+    <string name="register_unete">Join NicaExplore</string>
+    <string name="register_subtitulo">Create your account to start exploring</string>
+    <string name="register_tipo_cuenta">Account type</string>
+    <string name="register_usuario_normal">Regular user</string>
+    <string name="register_usuario_comercio">Business user</string>
+    <string name="register_comercio_info">You will be able to register and manage your own businesses.</string>
+    <string name="register_nombre">Full name</string>
+    <string name="register_nombre_placeholder">Your name</string>
+    <string name="register_nombre_error">Enter your name</string>
+    <string name="register_correo">Email address</string>
+    <string name="register_correo_placeholder">youremail@example.com</string>
+    <string name="register_correo_invalido">Enter a valid email</string>
+    <string name="register_contrasena">Password</string>
+    <string name="register_contrasena_min">Minimum 6 characters</string>
+    <string name="register_confirmar_contrasena">Confirm password</string>
+    <string name="register_contrasena_no_coincide">Passwords do not match</string>
+    <string name="register_terminos">I accept the terms and conditions</string>
+    <string name="register_terminos_error">You must accept the terms</string>
+    <string name="register_creando_cuenta">Creating account...</string>
+    <string name="register_crear_cuenta">Create account</string>
+    <string name="register_error">Error registering</string>
+    <string name="register_ya_tienes_cuenta">Already have an account?</string>
+    <string name="register_iniciar_sesion">Sign in</string>
+
+    <string name="recovery_logo">NicaExplore logo</string>
+    <string name="recovery_titulo">Recover password</string>
+    <string name="recovery_subtitulo">Enter the email associated with your account and we will send you a link to reset your password.</string>
+    <string name="recovery_correo">Email address</string>
+    <string name="recovery_correo_placeholder">youremail@example.com</string>
+    <string name="recovery_correo_invalido">Enter a valid email</string>
+    <string name="recovery_enviando">Sending...</string>
+    <string name="recovery_enviar">Send link</string>
+    <string name="recovery_exito">Email sent successfully. Check your inbox to reset your password.</string>
+    <string name="recovery_error">We could not send the email. Verify the address and try again.</string>
+    <string name="recovery_volver">Back to sign in</string>
+</resources>

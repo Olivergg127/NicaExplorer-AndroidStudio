@@ -21,7 +21,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.ValoracionesRepository
 import com.lospuntoycoma.nicaexplorer.ui.theme.GoldAccent
@@ -65,7 +67,7 @@ fun ValoracionRow(
             val llena = indice <= (miValoracion ?: promedio.roundToInt())
             Icon(
                 imageVector = if (llena) Icons.Filled.Star else Icons.Outlined.StarBorder,
-                contentDescription = "Valorar con $indice estrellas",
+                contentDescription = stringResource(R.string.comp_valoracion_valorar_estrellas, indice),
                 tint = if (llena) GoldAccent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f),
                 modifier = Modifier
                     .size(26.dp)
@@ -85,7 +87,7 @@ fun ValoracionRow(
             text = if (total > 0) {
                 String.format(Locale.getDefault(), "%.1f (%d)", promedio, total)
             } else {
-                "Sin valoraciones"
+                stringResource(R.string.comp_valoracion_sin_valoraciones)
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)

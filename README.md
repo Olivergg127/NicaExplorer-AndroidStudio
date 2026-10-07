@@ -61,6 +61,9 @@ Firestore (proyecto `nica-explore`):
   categorías y ubicación del usuario (ciudad conocida más cercana por GPS, ≤ 25 km).
 - **Rutas turísticas** por ciudad, con mapa de paradas numeradas y trazado por carretera.
 - **Recomendados por valoración**: top de lugares (5) y comercios (10) por estrellas.
+- **Idioma (español/inglés)**: selector en Configuración; traduce toda la UI y las respuestas
+  de Itzae.
+- **Mascota de Itzae**: mascota flotante arrastrable y animada en el chat (activar/desactivar).
 - Panel de administración móvil (roles `ADMIN`/`AUDITOR`).
 
 ### Panel web / Backend
@@ -258,6 +261,23 @@ Paleta **"Guardabarranco"** (ave nacional): turquesa (lagunas), azul (cielo/lago
 terracota (cerámica de San Juan de Oriente) y dorado reservado. Interfaz predominantemente
 oscura con acentos verde/turquesa. Tipografía: `FontFamily.SansSerif` (Roboto del sistema en
 Android estándar). Detalle en `ui/theme/Color.kt` y `docs/paleta-colores.md`.
+
+### Idiomas (español / inglés)
+
+La app es **bilingüe**. El idioma se elige en **Configuración → Idioma** (Sistema / Español /
+English) y se guarda en `UserPreferences` (`app_language`).
+
+- **UI:** todos los textos están en recursos (`res/values/strings_*.xml` en español y
+  `res/values-en/strings_*.xml` en inglés). El idioma se aplica en
+  `MainActivity.attachBaseContext` y la Activity se recrea al cambiarlo.
+- **Mensajes de validación:** los ViewModels exponen `@StringRes Int?` y las pantallas los
+  resuelven con `stringResource`.
+- **Contenido dinámico (Firestore):** los documentos pueden tener campos en inglés
+  (`nombreEn`, `descripcionEn`, `historiaEn`, `lemaEn`, `categoriaEn`, `categoriaPadreEn`,
+  `infoAdicionalEn`). Si el idioma es inglés y el campo existe, se usa; si no, se muestra el
+  español. Se editan desde el panel web.
+- **Asistente Itzae:** responde en el idioma de la app (directiva de idioma en
+  `GeminiRepository`); los nombres propios se conservan.
 
 ---
 

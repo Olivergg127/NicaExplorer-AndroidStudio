@@ -21,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
@@ -67,7 +69,7 @@ fun ArPlaceholderScreen(onBack: () -> Unit) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = "Experiencia AR",
+                    text = stringResource(R.string.ar_experiencia),
                     style = MaterialTheme.typography.displayMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -77,7 +79,7 @@ fun ArPlaceholderScreen(onBack: () -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Unity todavía no ha sido integrado",
+                    text = stringResource(R.string.ar_unity_no_integrado),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,
@@ -87,7 +89,7 @@ fun ArPlaceholderScreen(onBack: () -> Unit) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "En esta sección se abrirá la experiencia de realidad aumentada",
+                    text = stringResource(R.string.ar_descripcion),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center
@@ -96,7 +98,7 @@ fun ArPlaceholderScreen(onBack: () -> Unit) {
                 Spacer(modifier = Modifier.height(48.dp))
 
                 NicaButton(
-                    text = "Volver al catálogo",
+                    text = stringResource(R.string.ar_volver_catalogo),
                     onClick = onBack
                 )
             }

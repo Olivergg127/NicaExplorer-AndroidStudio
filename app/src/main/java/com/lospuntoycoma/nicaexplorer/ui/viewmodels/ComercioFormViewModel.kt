@@ -1,7 +1,9 @@
 package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.ApiRepository
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.model.CategoriaComercio
@@ -16,7 +18,7 @@ data class ComercioFormUiState(
     val saving: Boolean = false,
     val comercioExistente: Comercio? = null,
     val categorias: List<CategoriaComercio> = emptyList(),
-    val error: String? = null,
+    @StringRes val error: Int? = null,
     val guardadoOk: Boolean = false
 )
 
@@ -41,7 +43,7 @@ class ComercioFormViewModel(
                 .getOrDefault(emptyList())
 
             var existente: Comercio? = null
-            var error: String? = null
+            var error: Int? = null
 
             if (!comercioId.isNullOrBlank()) {
                 FirebaseRepository.getComercioById(comercioId)
@@ -49,12 +51,12 @@ class ComercioFormViewModel(
                         // Solo el propietario puede editar su comercio.
                         val uid = FirebaseRepository.getCurrentUser()?.uid
                         if (comercio.propietarioUid.isNotBlank() && comercio.propietarioUid != uid) {
-                            error = "Este comercio no pertenece a tu cuenta."
+                            error = R.string.error_comercio_no_propio
                         } else {
                             existente = comercio
                         }
                     }
-                    .onFailure { error = "No se pudo cargar el comercio." }
+                    .onFailure { error = R.string.error_cargar_comercio_form }
             }
 
             _uiState.value = ComercioFormUiState(
@@ -83,7 +85,7 @@ class ComercioFormViewModel(
                 .onFailure {
                     _uiState.value = _uiState.value.copy(
                         saving = false,
-                        error = it.localizedMessage ?: "No se pudo guardar el comercio."
+                        error = R.string.error_guardar_comercio
                     )
                 }
         }

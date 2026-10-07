@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="afluencia_baja">Baja</string>
+    <string name="afluencia_moderada">Moderada</string>
+    <string name="afluencia_alta">Alta</string>
+    <string name="categoria_restaurantes">Restaurantes</string>
+    <string name="categoria_hoteles">Hoteles</string>
+    <string name="categoria_tiendas">Tiendas</string>
+    <string name="categoria_naturaleza">Naturaleza</string>
+    <string name="categoria_entretenimiento">Entretenimiento</string>
+    <string name="categoria_transporte">Transporte</string>
+    <string name="categoria_servicios">Servicios</string>
+</resources>

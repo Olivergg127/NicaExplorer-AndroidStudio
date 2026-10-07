@@ -4,6 +4,48 @@
 > cambios importantes. No sustituye al historial de Git; lo complementa con contexto.
 > Formato: fecha, objetivo, archivos, cambios, build, resultado, riesgos y pendientes.
 
+## 2026-10-07
+
+### App/Panel — Soporte bilingüe (español/inglés), mascota de Itzae e idioma de la IA
+- Objetivo: permitir usar toda la app en **español o inglés** (selector en Configuración),
+  agregar la **mascota flotante** de Itzae en el chat y que el asistente responda en el
+  idioma de la app.
+- App Android — internacionalización:
+  - Textos de la UI movidos a recursos: `res/values/strings_*.xml` (español) y
+    `res/values-en/strings_*.xml` (inglés): `strings_auth`, `strings_home`, `strings_profile`,
+    `strings_comercios`, `strings_extras`, `strings_components`, `strings_config`,
+    `strings_errors`, `strings_common` (~370 claves).
+  - **Selector de idioma** en `ConfiguracionScreen` (Sistema / Español / English) con
+    preferencia en `UserPreferences` (`app_language`).
+  - Aplicación del idioma en `MainActivity.attachBaseContext` + `recreate()` al cambiarlo.
+    **Nota:** se descartó sobrescribir `LocalContext`/`LocalConfiguration` en Compose porque
+    rompía `LocalActivityResultRegistryOwner` (crash `IllegalStateException` al cambiar idioma).
+  - Afluencia (`Afluencia.displayNameRes`) y etiquetas de categoría del mapa localizadas.
+- App Android — mensajes de validación:
+  - ViewModels (`ComerciosViewModel`, `ComercioDetalleViewModel`, `ComercioFormViewModel`,
+    `MisComerciosViewModel`, `MapaViewModel`, `SolicitudComercioViewModel`) ahora exponen
+    `@StringRes Int?`; las pantallas resuelven con `stringResource`.
+- App Android — contenido dinámico (opción a):
+  - Campos en inglés en Firestore (`nombreEn`, `descripcionEn`, `historiaEn`, `lemaEn`,
+    `categoriaEn`, `categoriaPadreEn`, `infoAdicionalEn`) resueltos en el mapeo
+    (`ApiRepository`, `FirebaseRepository`) según `Locale.getDefault().language`. Sin tocar la UI.
+- App Android — mascota de Itzae:
+  - Nuevo `ui/components/MascotaFlotante.kt` (arrastrable + animada por estado: reposo,
+    pensando con burbuja de puntos, respondiendo). Sprites de PixelLab en
+    `res/drawable/mascota_itzae*.png` (8 rotaciones; se usa la frontal).
+  - `AssistantScreen`: integra la mascota, la conecta a los estados (`isLoading` → pensando,
+    respuesta → respondiendo) y agrega el interruptor en la barra superior. Preferencia
+    `itzae_mascot_enabled` en `UserPreferences`.
+- App Android — IA:
+  - `GeminiRepository` agrega una **directiva de idioma** al prompt para que Itzae responda
+    en inglés cuando la app está en inglés (los nombres propios se conservan).
+- Panel (`nicaexp_web`):
+  - `app/Config/NicaResources.php`: campos `*En` para ciudades, lugares, comercios, rutas y
+    categorías (editable desde el panel).
+- Build: `.\gradlew.bat :app:assembleDebug -PskipIl2CppBuild` — **BUILD SUCCESSFUL**.
+  Verificado en dispositivo (Infinix X6886): cambio a inglés sin crash; UI y respuestas de la
+  IA en inglés.
+
 ## 2026-10-05
 
 ### Web — Landing page pública de la app (2026-10-05)

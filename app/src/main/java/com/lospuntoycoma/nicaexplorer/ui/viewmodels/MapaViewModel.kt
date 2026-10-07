@@ -1,7 +1,9 @@
 package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.ApiRepository
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +14,7 @@ import kotlinx.coroutines.launch
 data class MapaUiState(
     val isLoading: Boolean = true,
     val comercios: List<Comercio> = emptyList(),
-    val error: String? = null
+    @StringRes val error: Int? = null
 )
 
 /** Carga los comercios activos y deja fuera coordenadas ausentes o imposibles. */
@@ -35,7 +37,7 @@ class MapaViewModel : ViewModel() {
             }.onFailure {
                 _uiState.value = MapaUiState(
                     isLoading = false,
-                    error = "No se pudieron cargar los comercios para el mapa."
+                    error = R.string.error_cargar_mapa
                 )
             }
         }

@@ -182,6 +182,22 @@ así que cualquier alta/edición/borrado del panel se refleja en la app.
   por HTTP en la red local. En producción, usar HTTPS y quitarlo.
 
 
+## Contenido bilingüe (español / inglés)
+
+La app Android es bilingüe. Para que el **contenido dinámico** (no solo la UI) se vea en
+inglés, los documentos pueden incluir campos en inglés que se editan desde el panel:
+
+- **ciudades:** `nombreEn`, `lemaEn`, `descripcionEn`, `historiaEn`.
+- **lugares:** `nombreEn`, `categoriaEn`, `descripcionEn`, `historiaEn`.
+- **comercios:** `nombreEn`, `categoriaPadreEn`, `categoriaEn`, `descripcionEn`,
+  `infoAdicionalEn`.
+- **rutas:** `nombreEn`, `descripcionEn`.
+- **categorías** (`categorias_lugares`, `categorias_comercios`): `nombreEn`.
+
+La app usa el campo `*En` cuando el idioma activo es inglés y el campo no está vacío; si no,
+cae al español. Los campos se definen en `app/Config/NicaResources.php` y aparecen en los
+formularios del panel.
+
 ## API REST
 
 Todas las rutas requieren el header `X-API-KEY` o el parámetro `?api_key=`.

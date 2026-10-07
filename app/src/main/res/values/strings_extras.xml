@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AssistantScreen -->
+    <string name="assistant_que_puedo_visitar_en">¿Qué puedo visitar en %1$s?</string>
+    <string name="assistant_que_puedo_visitar">¿Qué puedo visitar?</string>
+    <string name="assistant_cuentame_sobre_este_lugar">Cuéntame sobre este lugar</string>
+    <string name="assistant_como_funciona_ar">¿Cómo funciona la realidad aumentada?</string>
+    <string name="assistant_error_conexion">Lo siento, hubo un problema al conectar con mi cerebro artificial.</string>
+    <string name="assistant_ocultar_mascota">Ocultar mascota</string>
+    <string name="assistant_mostrar_mascota">Mostrar mascota</string>
+    <string name="assistant_saludo">¡Hola, soy Itzae! Tu asistente turístico.</string>
+    <string name="assistant_que_deseas_conocer">¿Qué deseas conocer?</string>
+    <string name="assistant_consultando_sobre">Estás consultando sobre: %1$s</string>
+    <string name="assistant_preguntas_rapidas">Preguntas rápidas</string>
+    <string name="assistant_escribe_mensaje">Escribe un mensaje...</string>
+    <string name="assistant_enviar">Enviar</string>
+    <string name="assistant_pensando">Pensando...</string>
+
+    <!-- RutasInteligentesScreen -->
+    <string name="rutas_titulo">Rutas Creativas</string>
+    <string name="rutas_proximamente">Rutas próximamente</string>
+    <string name="rutas_proximamente_descripcion">Estamos preparando recorridos con lugares y comercios locales de esta ciudad.</string>
+    <string name="rutas_paradas">Paradas</string>
+    <string name="rutas_etiqueta_paradas">paradas</string>
+    <string name="rutas_duracion_estimada">duración estimada</string>
+    <string name="rutas_objetivos">Objetivos de esta ruta</string>
+    <string name="rutas_tipo_lugar">Lugar</string>
+    <string name="rutas_ver_lugar">Ver lugar</string>
+    <string name="rutas_comercio_no_disponible_detalle">El comercio previsto para esta ruta no está disponible actualmente.</string>
+    <string name="rutas_tipo_comercio">Comercio</string>
+    <string name="rutas_ver_comercio">Ver comercio</string>
+    <string name="rutas_cargando_comercio">Cargando comercio…</string>
+    <string name="rutas_consultando_comercio">Consultando la información del comercio local.</string>
+    <string name="rutas_comercio_no_disponible">Comercio no disponible</string>
+    <string name="rutas_reintentar">Reintentar</string>
+    <string name="rutas_lugar_no_disponible">Lugar no disponible</string>
+    <string name="rutas_afluencia_estimada">Afluencia estimada: %1$s</string>
+
+    <!-- MapaPrincipalScreen -->
+    <string name="mapaprincipal_ubicacion_error">No se pudo obtener tu ubicación. Revisa el GPS.</string>
+    <string name="mapaprincipal_sin_permiso_ubicacion">Sin permiso de ubicación.</string>
+    <string name="mapaprincipal_descubre">Descubre\na tu alrededor</string>
+    <string name="mapaprincipal_explora">Explora los mejores locales y comercios de tu ciudad.</string>
+    <string name="mapaprincipal_mi_ubicacion">Mi ubicación</string>
+    <string name="mapaprincipal_ver_todo">Ver todo</string>
+    <string name="mapaprincipal_centrar_ubicacion">Centrar en mi ubicación</string>
+    <string name="mapaprincipal_todas_ciudades">Todas las ciudades</string>
+    <string name="mapaprincipal_volver">Volver</string>
+    <string name="mapaprincipal_elegir_ciudad">Elegir ciudad</string>
+    <string name="mapaprincipal_notificaciones">Notificaciones</string>
+    <string name="mapaprincipal_buscar_placeholder">Buscar restaurantes, farmacias...</string>
+    <string name="mapaprincipal_filtros">Filtros</string>
+    <string name="mapaprincipal_filtro_todo">Todo</string>
+    <string name="mapaprincipal_filtro_lugares">Lugares</string>
+    <string name="mapaprincipal_filtro_comercios">Comercios</string>
+
+    <!-- MapaScreen -->
+    <string name="mapascreen_titulo">Mapa de NicaExplore</string>
+    <string name="mapascreen_volver">Volver</string>
+    <string name="mapascreen_no_disponible">Mapa no disponible</string>
+    <string name="mapascreen_cerrar">Cerrar</string>
+    <string name="mapascreen_sin_comercios">No hay comercios con coordenadas para mostrar.</string>
+    <string name="mapascreen_comercio_local">Comercio local</string>
+    <string name="mapascreen_ver_detalles">Ver detalles</string>
+
+    <!-- ArPlaceholderScreen -->
+    <string name="ar_experiencia">Experiencia AR</string>
+    <string name="ar_unity_no_integrado">Unity todavía no ha sido integrado</string>
+    <string name="ar_descripcion">En esta sección se abrirá la experiencia de realidad aumentada</string>
+    <string name="ar_volver_catalogo">Volver al catálogo</string>
+</resources>

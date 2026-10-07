@@ -14,9 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 
 /**
  * Texto recortado a [maxLines] con un control "Ver más" / "Ver menos".
@@ -57,7 +59,7 @@ fun TextoExpandible(
                 modifier = Modifier.padding(top = 2.dp)
             ) {
                 Text(
-                    text = if (expanded) "Ver menos" else "Ver más",
+                    text = if (expanded) stringResource(R.string.comp_texto_ver_menos) else stringResource(R.string.comp_texto_ver_mas),
                     style = MaterialTheme.typography.labelLarge
                 )
             }

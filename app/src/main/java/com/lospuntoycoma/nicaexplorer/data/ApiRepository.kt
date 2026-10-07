@@ -10,6 +10,7 @@ import com.lospuntoycoma.nicaexplorer.model.RutaTuristica
 import com.lospuntoycoma.nicaexplorer.model.Valoracion
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Locale
 
 /**
  * Repositorio de contenido de NicaExplorer. Todo el catálogo (ciudades, lugares,
@@ -76,20 +77,27 @@ object ApiRepository {
 
     // ---- Mapeo JSON -> modelos ----
 
+    /**
+     * Contenido dinámico bilingüe: si el idioma activo es inglés y el documento
+     * trae el campo en inglés (`*En`) no vacío, se usa ese; si no, el español.
+     */
+    private fun localized(es: String, en: String): String =
+        if (Locale.getDefault().language == "en" && en.isNotBlank()) en else es
+
     private fun toCity(id: String, d: JSONObject): City? {
         if (!d.optBoolean("activo", true)) return null
         return City(
             id = id,
-            name = d.optString("nombre", d.optString("name", id)),
-            description = d.optString("descripcion", d.optString("description", "")),
+            name = localized(d.optString("nombre", d.optString("name", id)), d.optString("nombreEn")),
+            description = localized(d.optString("descripcion", d.optString("description", "")), d.optString("descripcionEn")),
             // El campo en Firestore sigue siendo "monumentCount"; en la app es placeCount.
             placeCount = d.optInt("monumentCount", 0),
             gradientStart = d.optLong("gradientStart", DEFAULT_GRADIENT_START),
             gradientEnd = d.optLong("gradientEnd", DEFAULT_GRADIENT_END),
             imagenUrl = d.optString("imagenUrl").takeIf { it.isNotBlank() },
             galeria = d.optJSONArray("galeria").toStringList(),
-            lema = d.optString("lema", ""),
-            historia = d.optString("historia", ""),
+            lema = localized(d.optString("lema", ""), d.optString("lemaEn")),
+            historia = localized(d.optString("historia", ""), d.optString("historiaEn")),
             departamento = d.optString("departamento", ""),
             latitud = d.optNullableDouble("latitud"),
             longitud = d.optNullableDouble("longitud"),
@@ -107,13 +115,13 @@ object ApiRepository {
 
         return Place(
             id = id,
-            name = d.optString("nombre", d.optString("name", id)),
+            name = localized(d.optString("nombre", d.optString("name", id)), d.optString("nombreEn")),
             city = d.optString("ciudad", d.optString("city", "")),
             cityId = cityId,
-            category = d.optString("categoria", d.optString("category", "")),
+            category = localized(d.optString("categoria", d.optString("category", "")), d.optString("categoriaEn")),
             afluencia = afluencia,
-            description = d.optString("descripcion", ""),
-            history = d.optString("historia", d.optString("history", "")),
+            description = localized(d.optString("descripcion", ""), d.optString("descripcionEn")),
+            history = localized(d.optString("historia", d.optString("history", "")), d.optString("historiaEn")),
             yearBuilt = d.optString("anioConstruccion", d.optString("yearBuilt", "")),
             modeloUnity = d.optString("modeloUnity", ""),
             gradientStart = d.optLong("gradientStart", DEFAULT_GRADIENT_START),
@@ -132,8 +140,8 @@ object ApiRepository {
         return RutaTuristica(
             id = id,
             cityId = cityId,
-            nombre = d.optString("nombre", ""),
-            descripcion = d.optString("descripcion", ""),
+            nombre = localized(d.optString("nombre", ""), d.optString("nombreEn")),
+            descripcion = localized(d.optString("descripcion", ""), d.optString("descripcionEn")),
             duracionEstimada = d.optString("duracionEstimada", ""),
             notaDuracion = d.optString("notaDuracion", ""),
             objetivos = d.optJSONArray("objetivos").toStringList(),
@@ -146,10 +154,10 @@ object ApiRepository {
 
     private fun toComercio(id: String, d: JSONObject): Comercio? = Comercio(
         id = id,
-        nombre = d.optString("nombre", ""),
-        categoria = d.optString("categoria", ""),
-        categoriaPadre = d.optString("categoriaPadre", ""),
-        descripcion = d.optString("descripcion", ""),
+        nombre = localized(d.optString("nombre", ""), d.optString("nombreEn")),
+        categoria = localized(d.optString("categoria", ""), d.optString("categoriaEn")),
+        categoriaPadre = localized(d.optString("categoriaPadre", ""), d.optString("categoriaPadreEn")),
+        descripcion = localized(d.optString("descripcion", ""), d.optString("descripcionEn")),
         ciudad = d.optString("ciudad", ""),
         cityId = d.optString("cityId", ""),
         direccion = d.optString("direccion", ""),
@@ -167,7 +175,7 @@ object ApiRepository {
         redesSociales = d.toStringListFlexible("redesSociales"),
         servicios = d.optJSONArray("servicios").toStringList(),
         productos = d.optJSONArray("productos").toStringList(),
-        infoAdicional = d.optString("infoAdicional", ""),
+        infoAdicional = localized(d.optString("infoAdicional", ""), d.optString("infoAdicionalEn")),
         activo = d.optBoolean("activo", false),
         // Los documentos antiguos no tienen "aprobado": se consideran aprobados.
         aprobado = if (d.has("aprobado")) d.optBoolean("aprobado", true) else true,
@@ -176,7 +184,7 @@ object ApiRepository {
 
     private fun toCategoriaComercio(id: String, d: JSONObject): CategoriaComercio? {
         if (!d.optBoolean("activo", true)) return null
-        val nombre = d.optString("nombre", "").trim()
+        val nombre = localized(d.optString("nombre", "").trim(), d.optString("nombreEn").trim())
         if (nombre.isBlank()) return null
 
         return CategoriaComercio(

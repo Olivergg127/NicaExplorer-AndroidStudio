@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
@@ -75,6 +77,11 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
+    val errorNoAccount = stringResource(R.string.login_error_correo_no_existe)
+    val errorWrongPassword = stringResource(R.string.login_error_contrasena)
+    val errorTooManyRequests = stringResource(R.string.login_error_demasiados_intentos)
+    val errorGeneric = stringResource(R.string.login_error_generico)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -87,7 +94,7 @@ fun LoginScreen(
 
         Icon(
             painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_logo),
-            contentDescription = "Logo NicaExplore",
+            contentDescription = stringResource(R.string.login_logo),
             tint = Color.Unspecified,
             modifier = Modifier.size(200.dp)
         )
@@ -95,7 +102,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Bienvenido",
+            text = stringResource(R.string.login_bienvenido),
             style = MaterialTheme.typography.displayMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -104,7 +111,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Inicia sesión o explora NicaExplore sin registrarte",
+            text = stringResource(R.string.login_subtitulo),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             textAlign = TextAlign.Center
@@ -119,15 +126,15 @@ fun LoginScreen(
                 emailError = false
                 showValidation = false
             },
-            label = { Text("Correo electrónico") },
-            placeholder = { Text("tucorreo@ejemplo.com") },
+            label = { Text(stringResource(R.string.login_correo)) },
+            placeholder = { Text(stringResource(R.string.login_correo_placeholder)) },
             leadingIcon = {
                 Icon(Icons.Filled.Email, contentDescription = null)
             },
             isError = emailError && showValidation,
             supportingText = {
                 if (emailError && showValidation) {
-                    Text("Ingresa un correo válido", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.login_correo_invalido), color = MaterialTheme.colorScheme.error)
                 }
             },
             singleLine = true,
@@ -152,7 +159,7 @@ fun LoginScreen(
                 passwordError = false
                 showValidation = false
             },
-            label = { Text("Contraseña") },
+            label = { Text(stringResource(R.string.login_contrasena)) },
             placeholder = { Text("••••••••") },
             leadingIcon = {
                 Icon(Icons.Filled.Lock, contentDescription = null)
@@ -161,7 +168,7 @@ fun LoginScreen(
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
-                        contentDescription = if (passwordVisible) "Ocultar" else "Mostrar"
+                        contentDescription = if (passwordVisible) stringResource(R.string.login_ocultar) else stringResource(R.string.login_mostrar)
                     )
                 }
             },
@@ -169,7 +176,7 @@ fun LoginScreen(
             isError = passwordError && showValidation,
             supportingText = {
                 if (passwordError && showValidation) {
-                    Text("La contraseña no puede estar vacía", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.login_contrasena_vacia), color = MaterialTheme.colorScheme.error)
                 }
             },
             singleLine = true,
@@ -199,13 +206,13 @@ fun LoginScreen(
                 )
             )
             Text(
-                text = "Recordarme",
+                text = stringResource(R.string.login_recordarme),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = "¿Olvidaste tu contraseña?",
+                text = stringResource(R.string.login_olvidaste),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable { onNavigateToRecovery() }
@@ -215,7 +222,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         NicaButton(
-            text = if (isLoading) "Iniciando sesión..." else "Iniciar sesión",
+            text = if (isLoading) stringResource(R.string.login_iniciando_sesion) else stringResource(R.string.login_iniciar_sesion),
             onClick = {
                 showValidation = true
                 emailError = email.isBlank() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -231,13 +238,13 @@ fun LoginScreen(
                             onFailure = {
                                 errorMessage = when {
                                     it.message?.contains("no user record", ignoreCase = true) == true ->
-                                        "No hay una cuenta con este correo"
+                                        errorNoAccount
                                     it.message?.contains("wrong password", ignoreCase = true) == true ||
                                     it.message?.contains("invalid credential", ignoreCase = true) == true ->
-                                        "Contraseña incorrecta"
+                                        errorWrongPassword
                                     it.message?.contains("too many requests", ignoreCase = true) == true ->
-                                        "Demasiados intentos. Intenta más tarde"
-                                    else -> it.localizedMessage ?: "Error al iniciar sesión"
+                                        errorTooManyRequests
+                                    else -> it.localizedMessage ?: errorGeneric
                                 }
                             }
                         )
@@ -273,13 +280,13 @@ fun LoginScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "¿No tienes una cuenta?",
+                text = stringResource(R.string.login_sin_cuenta),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
             Spacer(modifier = Modifier.padding(4.dp))
             Text(
-                text = "Crear cuenta",
+                text = stringResource(R.string.login_crear_cuenta),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
@@ -290,7 +297,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Continuar sin registrarme",
+            text = stringResource(R.string.login_continuar_sin_registro),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),

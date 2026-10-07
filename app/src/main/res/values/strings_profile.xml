@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ProfileScreen -->
+    <string name="profile_titulo">Perfil</string>
+    <string name="profile_visitante">Visitante</string>
+    <string name="profile_usuario">Usuario</string>
+    <string name="profile_explorando_sin_cuenta">Explorando sin cuenta</string>
+    <string name="profile_explora_como_visitante">Explora como visitante</string>
+    <string name="profile_descripcion_visitante">Inicia sesión o crea una cuenta para guardar lugares, ver tu historial y, si eres comercio, administrar tus negocios.</string>
+    <string name="profile_iniciar_sesion">Iniciar sesión</string>
+    <string name="profile_crear_cuenta">Crear cuenta</string>
+    <string name="profile_configuracion">Configuración</string>
+    <string name="profile_acerca_de">Acerca de NicaExplore</string>
+    <string name="profile_editar_perfil">Editar perfil</string>
+    <string name="profile_lugares_guardados">Lugares guardados</string>
+    <string name="profile_historial">Historial de exploración</string>
+    <string name="profile_mis_comercios">Mis comercios</string>
+    <string name="profile_cerrar_sesion">Cerrar sesión</string>
+
+    <!-- EditarPerfilScreen -->
+    <string name="editprofile_titulo">Editar perfil</string>
+    <string name="editprofile_descripcion">Actualiza la información de tu perfil</string>
+    <string name="editprofile_correo">Correo electrónico</string>
+    <string name="editprofile_nombre">Nombre</string>
+    <string name="editprofile_nombre_placeholder">Tu nombre</string>
+    <string name="editprofile_guardando">Guardando...</string>
+    <string name="editprofile_guardar_cambios">Guardar cambios</string>
+    <string name="editprofile_cambios_guardados">Cambios guardados correctamente</string>
+    <string name="editprofile_error_guardar">No se pudo guardar el nombre. Revisa tu conexión e inténtalo de nuevo.</string>
+    <string name="editprofile_volver">Volver al perfil</string>
+
+    <!-- AcercaDeScreen -->
+    <string name="about_titulo">Acerca de NicaExplore</string>
+    <string name="about_tagline">Explora Nicaragua en 3D</string>
+    <string name="about_sobre_proyecto">Sobre el proyecto</string>
+    <string name="about_item_aplicacion">Aplicación turística de Nicaragua</string>
+    <string name="about_item_catalogo">Catálogo de lugares y monumentos</string>
+    <string name="about_item_visor">Visualización mediante visor 3D</string>
+    <string name="about_item_asistente">Asistente turístico mediante IA</string>
+    <string name="about_equipo">Equipo del proyecto</string>
+    <string name="about_rol_desarrollador">Desarrollador</string>
+    <string name="about_rol_diseno">Diseño</string>
+    <string name="about_rol_comunicador">Comunicador</string>
+    <string name="about_rol_marketing">Marketing</string>
+    <string name="about_version">Versión</string>
+
+    <!-- LugaresGuardadosScreen -->
+    <string name="saved_titulo">Lugares guardados</string>
+    <string name="saved_vacio">No tienes lugares guardados todavía.</string>
+    <string name="saved_explorar">Explorar lugares</string>
+    <string name="saved_quitar">Quitar de guardados</string>
+
+    <!-- HistorialExploracionScreen -->
+    <string name="history_titulo">Historial de exploración</string>
+    <string name="history_vacio">Todavía no has explorado ningún lugar.</string>
+    <string name="history_explorar">Explorar ahora</string>
+    <string name="history_ultima_visita">Visto por última vez: %1$s</string>
+
+    <!-- AdminPanelScreen -->
+    <string name="admin_titulo_panel">Panel de Administración</string>
+    <string name="admin_titulo_consulta">Consulta administrativa</string>
+    <string name="admin_volver">Volver</string>
+    <string name="admin_buscar">Buscar por nombre o correo</string>
+    <string name="admin_filtro_todos">Todos</string>
+    <string name="admin_filtro_usuario">Usuario</string>
+    <string name="admin_filtro_editor">Editor</string>
+    <string name="admin_filtro_admin">Admin</string>
+    <string name="admin_filtro_auditor">Auditor</string>
+    <string name="admin_gestion_usuarios">Gestión de usuarios</string>
+    <string name="admin_usuarios_solo_lectura">Usuarios (solo lectura)</string>
+    <string name="admin_confirmar_cambio_rol">Confirmar cambio de rol</string>
+    <string name="admin_confirmar_rol_mensaje">¿Cambiar el rol de %1$s a %2$s?</string>
+    <string name="admin_rol_actualizado">Rol actualizado correctamente</string>
+    <string name="admin_rol_error">No se pudo actualizar el rol</string>
+    <string name="admin_guardando">Guardando...</string>
+    <string name="admin_confirmar">Confirmar</string>
+    <string name="admin_cancelar">Cancelar</string>
+    <string name="admin_cambiar_rol">Cambiar rol</string>
+    <string name="admin_rol_nombre_usuario">Usuario</string>
+    <string name="admin_rol_nombre_comercio">Comercio</string>
+    <string name="admin_rol_nombre_editor">Editor</string>
+    <string name="admin_rol_nombre_admin">Administrador</string>
+    <string name="admin_rol_nombre_auditor">Auditor</string>
+</resources>

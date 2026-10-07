@@ -47,11 +47,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.model.Afluencia
 import com.lospuntoycoma.nicaexplorer.model.Comercio
@@ -90,7 +92,7 @@ fun RutasInteligentesScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Rutas Creativas",
+                title = stringResource(R.string.rutas_titulo),
                 onBack = onBack
             )
         }
@@ -131,7 +133,7 @@ private fun RutasProximamente() {
         )
         Spacer(modifier = Modifier.height(18.dp))
         Text(
-            text = "Rutas próximamente",
+            text = stringResource(R.string.rutas_proximamente),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -139,7 +141,7 @@ private fun RutasProximamente() {
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Estamos preparando recorridos con lugares y comercios locales de esta ciudad.",
+            text = stringResource(R.string.rutas_proximamente_descripcion),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.68f),
             textAlign = TextAlign.Center
@@ -238,7 +240,7 @@ private fun RutaDisponible(
 
         item {
             Text(
-                text = "Paradas",
+                text = stringResource(R.string.rutas_paradas),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -314,13 +316,13 @@ private fun EncabezadoRuta(ruta: RutaTuristica) {
             DatoRuta(
                 icono = Icons.Filled.LocationOn,
                 valor = ruta.numeroParadas.toString(),
-                etiqueta = "paradas",
+                etiqueta = stringResource(R.string.rutas_etiqueta_paradas),
                 modifier = Modifier.weight(1f)
             )
             DatoRuta(
                 icono = Icons.Filled.AccessTime,
                 valor = ruta.duracionEstimada,
-                etiqueta = "duración estimada",
+                etiqueta = stringResource(R.string.rutas_duracion_estimada),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -410,7 +412,7 @@ private fun InteligenciaRuta(objetivos: List<String>) {
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Objetivos de esta ruta",
+                    text = stringResource(R.string.rutas_objetivos),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -494,7 +496,7 @@ private fun ParadaLugar(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    TipoParada(texto = "Lugar")
+                    TipoParada(texto = stringResource(R.string.rutas_tipo_lugar))
                     Spacer(modifier = Modifier.height(8.dp))
                     AfluenciaEstimada(afluencia = lugar.afluencia)
                 }
@@ -513,7 +515,7 @@ private fun ParadaLugar(
                 )
                 Spacer(modifier = Modifier.height(14.dp))
                 NicaButton(
-                    text = "Ver lugar",
+                    text = stringResource(R.string.rutas_ver_lugar),
                     onClick = onVerLugar
                 )
             }
@@ -539,7 +541,7 @@ private fun ParadaComercioDesdeFirestore(
         uiState.error != null -> {
             ParadaComercioNoDisponible(
                 numero = numero,
-                detalle = uiState.error,
+                detalle = uiState.error?.let { stringResource(it) }.orEmpty(),
                 onReintentar = onReintentar
             )
         }
@@ -560,7 +562,7 @@ private fun ParadaComercioDesdeFirestore(
             } else {
                 ParadaComercioNoDisponible(
                     numero = numero,
-                    detalle = "El comercio previsto para esta ruta no está disponible actualmente."
+                    detalle = stringResource(R.string.rutas_comercio_no_disponible_detalle)
                 )
             }
         }
@@ -600,7 +602,7 @@ private fun ParadaComercio(
             }
 
             Column(modifier = Modifier.padding(16.dp)) {
-                TipoParada(texto = "Comercio")
+                TipoParada(texto = stringResource(R.string.rutas_tipo_comercio))
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
                     text = comercio.nombre,
@@ -618,7 +620,7 @@ private fun ParadaComercio(
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 NicaButton(
-                    text = "Ver comercio",
+                    text = stringResource(R.string.rutas_ver_comercio),
                     onClick = onVerComercio
                 )
             }
@@ -646,17 +648,17 @@ private fun ParadaComercioCargando(numero: Int) {
                 NumeroParada(numero = numero, modifier = Modifier.align(Alignment.TopStart))
             }
             Column(modifier = Modifier.padding(16.dp)) {
-                TipoParada(texto = "Comercio")
+                TipoParada(texto = stringResource(R.string.rutas_tipo_comercio))
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Cargando comercio…",
+                    text = stringResource(R.string.rutas_cargando_comercio),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Consultando la información del comercio local.",
+                    text = stringResource(R.string.rutas_consultando_comercio),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
                 )
@@ -701,10 +703,10 @@ private fun ParadaComercioNoDisponible(
                 NumeroParada(numero = numero, modifier = Modifier.align(Alignment.TopStart))
             }
             Column(modifier = Modifier.padding(16.dp)) {
-                TipoParada(texto = "Comercio")
+                TipoParada(texto = stringResource(R.string.rutas_tipo_comercio))
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Comercio no disponible",
+                    text = stringResource(R.string.rutas_comercio_no_disponible),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -728,7 +730,7 @@ private fun ParadaComercioNoDisponible(
                             modifier = Modifier.size(18.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Reintentar")
+                        Text(text = stringResource(R.string.rutas_reintentar))
                     }
                 }
             }
@@ -748,11 +750,11 @@ private fun ParadaLugarNoDisponible(numero: Int) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 NumeroParada(numero = numero, compacto = true)
                 Spacer(modifier = Modifier.width(10.dp))
-                TipoParada(texto = "Lugar")
+                TipoParada(texto = stringResource(R.string.rutas_tipo_lugar))
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "Lugar no disponible",
+                text = stringResource(R.string.rutas_lugar_no_disponible),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
@@ -815,7 +817,7 @@ private fun AfluenciaEstimada(afluencia: Afluencia) {
         color = color.copy(alpha = 0.12f)
     ) {
         Text(
-            text = "Afluencia estimada: ${afluencia.displayName}",
+            text = stringResource(R.string.rutas_afluencia_estimada, stringResource(afluencia.displayNameRes)),
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.SemiBold,

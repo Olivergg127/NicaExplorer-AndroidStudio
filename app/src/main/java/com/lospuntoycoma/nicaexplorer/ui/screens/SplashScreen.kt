@@ -22,7 +22,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientEnd
 import com.lospuntoycoma.nicaexplorer.ui.theme.GradientStart
 
@@ -58,7 +60,7 @@ fun SplashScreen(onNavigateToHome: () -> Unit) {
         ) {
             Icon(
                 painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_isotipo),
-                contentDescription = "NicaExplore",
+                contentDescription = stringResource(R.string.splash_logo),
                 tint = Color.Unspecified,
                 modifier = Modifier.size(120.dp)
             )

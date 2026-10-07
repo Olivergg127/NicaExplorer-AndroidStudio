@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- HomeScreen -->
+    <string name="home_logo_desc">Logo de NicaExplore</string>
+    <string name="home_inicio">Inicio</string>
+    <string name="home_perfil">Perfil</string>
+    <string name="home_lugares_guardados">Lugares guardados</string>
+    <string name="home_mis_comercios">Mis comercios</string>
+    <string name="home_asistente_ia">Asistente IA</string>
+    <string name="home_mapa">Mapa</string>
+    <string name="home_panel_admin">Panel de Admin</string>
+    <string name="home_cerrar_sesion">Cerrar sesión</string>
+    <string name="home_iniciar_sesion">Iniciar sesión</string>
+    <string name="home_menu_desc">Menú</string>
+    <string name="home_notificaciones_desc">Notificaciones</string>
+    <string name="home_explorar">Explorar</string>
+    <string name="home_hola_nombre">Hola, %1$s</string>
+    <string name="home_hola_explorador">Hola, explorador</string>
+    <string name="home_que_deseas_descubrir">¿Qué deseas descubrir hoy?</string>
+    <string name="home_descubre_nicaragua">Descubre Nicaragua con NicaExplore</string>
+    <string name="home_hero_descripcion">Explora ciudades, conoce su historia y cultura, descubre lugars en 3D y encuentra experiencias y negocios locales en un solo lugar.</string>
+    <string name="home_explora_por_ciudad">Explora por ciudad</string>
+    <string name="home_ver_todas">Ver todas</string>
+    <string name="home_lugares_recomendados">Lugares recomendados</string>
+    <string name="home_lugares_recomendados_en">Lugares recomendados en %1$s</string>
+    <string name="home_comercios_recomendados">Comercios recomendados</string>
+    <string name="home_comercios_recomendados_en">Comercios recomendados en %1$s</string>
+
+    <!-- CitySelectionScreen -->
+    <string name="city_selecciona_una_ciudad">Selecciona una ciudad</string>
+    <string name="city_descripcion">Descubre lugars, historia y cultura</string>
+    <string name="city_buscar_ciudad">Buscar ciudad...</string>
+
+    <!-- CatalogScreen -->
+    <string name="catalog_ciudad">Ciudad</string>
+    <string name="catalog_buscar_desc">Buscar</string>
+    <string name="catalog_no_hay_lugares">No hay lugars disponibles</string>
+    <string name="catalog_quitar_guardados">Quitar de guardados</string>
+    <string name="catalog_guardar_lugar">Guardar lugar</string>
+    <string name="catalog_valora_esta_ciudad">Valora esta ciudad</string>
+    <string name="catalog_anterior">Anterior</string>
+    <string name="catalog_siguiente">Siguiente</string>
+    <string name="catalog_posicion">%1$d de %2$d</string>
+    <string name="catalog_ver_en_3d">Ver en 3D</string>
+    <string name="catalog_hablar_asistente">Hablar con el asistente IA</string>
+    <string name="catalog_info_adicional">Información adicional</string>
+    <string name="catalog_ano_construccion">Año de construcción</string>
+    <string name="catalog_historia">Historia</string>
+    <string name="catalog_turismo_responsable">Turismo responsable</string>
+    <string name="catalog_contribuye_preservar">Contribuye a preservar este lugar</string>
+    <string name="catalog_ocultar_consejos">Ocultar consejos</string>
+    <string name="catalog_ver_consejos">Ver consejos</string>
+    <string name="catalog_lugares_recomendados">Lugares recomendados</string>
+    <string name="catalog_comercios_recomendados">Comercios recomendados</string>
+    <string name="catalog_todos">Todos</string>
+    <string name="catalog_sin_comercios">Aún no hay comercios para mostrar.</string>
+    <string name="catalog_ver_todos">Ver todos</string>
+    <string name="catalog_rutas_creativas">Rutas Creativas</string>
+    <string name="catalog_rutas_proximamente">Rutas próximamente</string>
+    <string name="catalog_ruta_detalle">%1$s · %2$d paradas · %3$s</string>
+    <string name="catalog_rutas_descripcion">Estamos preparando recorridos con lugares y comercios locales de esta ciudad.</string>
+    <string name="catalog_abrir_rutas">Abrir rutas creativas</string>
+    <string name="catalog_afluencia_estimada">Afluencia estimada</string>
+    <string name="catalog_afluencia_nivel">Nivel orientativo para ayudar a distribuir las visitas.</string>
+    <string name="catalog_buscar_mas_tranquilo">¿Buscas un lugar más tranquilo?</string>
+    <string name="catalog_afluencia_estimada_valor">Afluencia estimada %1$s</string>
+    <string name="catalog_abrir_lugar">Abrir %1$s</string>
+</resources>

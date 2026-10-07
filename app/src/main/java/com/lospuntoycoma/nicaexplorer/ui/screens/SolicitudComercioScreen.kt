@@ -33,12 +33,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.model.SolicitudComercio
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -69,7 +71,7 @@ fun SolicitudComercioScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Solicitud de comercio",
+                title = stringResource(R.string.solicitud_titulo),
                 onBack = onBack
             )
         }
@@ -95,7 +97,7 @@ fun SolicitudComercioScreen(
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
-                        text = "Solicitud enviada",
+                        text = stringResource(R.string.solicitud_enviada),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground,
@@ -103,14 +105,14 @@ fun SolicitudComercioScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Nuestro equipo revisará la información antes de publicar el negocio en NicaExplore.",
+                        text = stringResource(R.string.solicitud_exito_detalle),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.72f),
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(28.dp))
                     NicaButton(
-                        text = "Volver a comercios",
+                        text = stringResource(R.string.solicitud_volver),
                         onClick = onBack
                     )
                 }
@@ -128,14 +130,14 @@ fun SolicitudComercioScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "Solicita aparecer en NicaExplore",
+                    text = stringResource(R.string.solicitud_intro_titulo),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Completa la información para que nuestro equipo pueda revisar tu negocio.",
+                    text = stringResource(R.string.solicitud_intro_detalle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
                 )
@@ -148,14 +150,14 @@ fun SolicitudComercioScreen(
                         nombreNegocio = it
                         viewModel.clearValidationError("nombreNegocio")
                     },
-                    label = "Nombre del negocio",
+                    label = stringResource(R.string.solicitud_nombre_negocio),
                     error = uiState.validationErrors["nombreNegocio"]
                 )
 
                 SolicitudTextField(
                     value = ciudad,
                     onValueChange = {},
-                    label = "Ciudad",
+                    label = stringResource(R.string.solicitud_ciudad),
                     error = uiState.validationErrors["ciudad"],
                     readOnly = true
                 )
@@ -166,7 +168,7 @@ fun SolicitudComercioScreen(
                         categoria = it
                         viewModel.clearValidationError("categoria")
                     },
-                    label = "Categoría",
+                    label = stringResource(R.string.solicitud_categoria),
                     error = uiState.validationErrors["categoria"]
                 )
 
@@ -176,7 +178,7 @@ fun SolicitudComercioScreen(
                         direccion = it
                         viewModel.clearValidationError("direccion")
                     },
-                    label = "Dirección",
+                    label = stringResource(R.string.solicitud_direccion),
                     error = uiState.validationErrors["direccion"]
                 )
 
@@ -186,7 +188,7 @@ fun SolicitudComercioScreen(
                         descripcion = it
                         viewModel.clearValidationError("descripcion")
                     },
-                    label = "Descripción",
+                    label = stringResource(R.string.solicitud_descripcion),
                     error = uiState.validationErrors["descripcion"],
                     singleLine = false,
                     minLines = 3,
@@ -199,7 +201,7 @@ fun SolicitudComercioScreen(
                         telefono = it
                         viewModel.clearValidationError("telefono")
                     },
-                    label = "Teléfono",
+                    label = stringResource(R.string.solicitud_telefono),
                     error = uiState.validationErrors["telefono"],
                     keyboardType = KeyboardType.Phone
                 )
@@ -210,7 +212,7 @@ fun SolicitudComercioScreen(
                         whatsapp = it
                         viewModel.clearValidationError("whatsapp")
                     },
-                    label = "WhatsApp",
+                    label = stringResource(R.string.solicitud_whatsapp),
                     error = uiState.validationErrors["whatsapp"],
                     keyboardType = KeyboardType.Phone
                 )
@@ -221,7 +223,7 @@ fun SolicitudComercioScreen(
                         horario = it
                         viewModel.clearValidationError("horario")
                     },
-                    label = "Horario",
+                    label = stringResource(R.string.solicitud_horario),
                     error = uiState.validationErrors["horario"]
                 )
 
@@ -231,7 +233,7 @@ fun SolicitudComercioScreen(
                         nombreResponsable = it
                         viewModel.clearValidationError("nombreResponsable")
                     },
-                    label = "Nombre del responsable",
+                    label = stringResource(R.string.solicitud_nombre_responsable),
                     error = uiState.validationErrors["nombreResponsable"]
                 )
 
@@ -241,7 +243,7 @@ fun SolicitudComercioScreen(
                         correoResponsable = it
                         viewModel.clearValidationError("correoResponsable")
                     },
-                    label = "Correo del responsable",
+                    label = stringResource(R.string.solicitud_correo_responsable),
                     error = uiState.validationErrors["correoResponsable"],
                     keyboardType = KeyboardType.Email
                 )
@@ -252,7 +254,7 @@ fun SolicitudComercioScreen(
                         redesSociales = it
                         viewModel.clearValidationError("redesSociales")
                     },
-                    label = "Redes sociales (opcional)",
+                    label = stringResource(R.string.solicitud_redes),
                     error = uiState.validationErrors["redesSociales"],
                     imeAction = ImeAction.Done
                 )
@@ -260,7 +262,11 @@ fun SolicitudComercioScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 NicaButton(
-                    text = if (uiState.isLoading) "Enviando solicitud..." else "Enviar solicitud",
+                    text = if (uiState.isLoading) {
+                        stringResource(R.string.solicitud_enviando)
+                    } else {
+                        stringResource(R.string.solicitud_enviar)
+                    },
                     enabled = !uiState.isLoading,
                     onClick = {
                         viewModel.enviarSolicitud(
@@ -293,7 +299,7 @@ fun SolicitudComercioScreen(
                 uiState.errorMessage?.let { error ->
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = error,
+                        text = stringResource(error),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
@@ -312,7 +318,7 @@ private fun SolicitudTextField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
-    error: String?,
+    error: Int?,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Next,
     readOnly: Boolean = false,
@@ -320,15 +326,16 @@ private fun SolicitudTextField(
     minLines: Int = 1,
     maxLines: Int = if (singleLine) 1 else 4
 ) {
+    val errorRes = error
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        isError = error != null,
-        supportingText = if (error != null) {
+        isError = errorRes != null,
+        supportingText = if (errorRes != null) {
             {
                 Text(
-                    text = error,
+                    text = stringResource(errorRes),
                     color = MaterialTheme.colorScheme.error
                 )
             }

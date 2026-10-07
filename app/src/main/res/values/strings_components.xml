@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- CityCard.kt -->
+    <string name="comp_city_lugares">%1$d lugares</string>
+    <string name="comp_city_explorar">Explorar</string>
+
+    <!-- ComercioCard.kt -->
+    <string name="comp_comercio_whatsapp_disponible">WhatsApp disponible</string>
+
+    <!-- RatingStars.kt -->
+    <string name="comp_rating_total">(%1$d)</string>
+
+    <!-- TextoExpandible.kt -->
+    <string name="comp_texto_ver_mas">Ver más</string>
+    <string name="comp_texto_ver_menos">Ver menos</string>
+
+    <!-- TopBar.kt -->
+    <string name="comp_topbar_volver">Volver</string>
+
+    <!-- ValoracionRow.kt -->
+    <string name="comp_valoracion_valorar_estrellas">Valorar con %1$d estrellas</string>
+    <string name="comp_valoracion_sin_valoraciones">Sin valoraciones</string>
+
+    <!-- MascotaFlotante.kt -->
+    <string name="comp_mascota_descripcion">Mascota de Itzae</string>
+    <string name="comp_mascota_ocultar">Ocultar mascota</string>
+</resources>

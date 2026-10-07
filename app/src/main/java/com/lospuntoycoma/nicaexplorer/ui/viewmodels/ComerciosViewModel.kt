@@ -1,7 +1,9 @@
 package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.ApiRepository
 import com.lospuntoycoma.nicaexplorer.model.CategoriaComercio
 import com.lospuntoycoma.nicaexplorer.model.Comercio
@@ -20,7 +22,7 @@ data class ComerciosUiState(
     val isLoading: Boolean = true,
     val comercios: List<Comercio> = emptyList(),
     val categorias: List<CategoriaComercio> = emptyList(),
-    val error: String? = null
+    @StringRes val error: Int? = null
 )
 
 /**
@@ -52,7 +54,7 @@ class ComerciosViewModel : ViewModel() {
                 _uiState.value = ComerciosUiState(
                     isLoading = false,
                     categorias = categorias,
-                    error = "No se pudieron cargar los comercios. Revisa tu conexión e intenta de nuevo."
+                    error = R.string.error_cargar_comercios
                 )
             }
         }

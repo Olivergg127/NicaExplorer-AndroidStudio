@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_cargar_comercios">Could not load the businesses. Check your connection and try again.</string>
+    <string name="error_cargar_comercio">Could not load the business. Check your connection and try again.</string>
+    <string name="error_cargar_mis_comercios">Could not load your businesses. Check your connection.</string>
+    <string name="error_eliminar_comercio">Could not delete the business.</string>
+    <string name="error_sesion_requerida">Log in to manage your businesses.</string>
+    <string name="error_cargar_mapa">Could not load the businesses for the map.</string>
+    <string name="error_comercio_no_propio">This business does not belong to your account.</string>
+    <string name="error_cargar_comercio_form">Could not load the business.</string>
+    <string name="error_guardar_comercio">Could not save the business.</string>
+    <string name="error_enviar_solicitud">Could not send the request. Please try again later.</string>
+    <string name="validacion_obligatorio">This field is required</string>
+    <string name="validacion_max_caracteres">The text exceeds the maximum allowed</string>
+    <string name="validacion_correo">Enter a valid email</string>
+    <string name="validacion_telefono">Enter a valid phone number (7 to 15 digits)</string>
+    <string name="validacion_whatsapp">Enter a valid WhatsApp number (7 to 15 digits)</string>
+</resources>

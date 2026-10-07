@@ -29,9 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.model.City
 import com.lospuntoycoma.nicaexplorer.ui.components.CityCard
@@ -58,7 +60,7 @@ fun CitySelectionScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Selecciona una ciudad",
+                title = stringResource(R.string.city_selecciona_una_ciudad),
                 onBack = onBack
             )
         }
@@ -79,7 +81,7 @@ fun CitySelectionScreen(
             ) {
                 item {
                     Text(
-                        text = "Descubre lugars, historia y cultura",
+                        text = stringResource(R.string.city_descripcion),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                         textAlign = TextAlign.Start
@@ -90,7 +92,7 @@ fun CitySelectionScreen(
                     OutlinedTextField(
                         value = searchQuery,
                         onValueChange = { searchQuery = it },
-                        placeholder = { Text("Buscar ciudad...") },
+                        placeholder = { Text(stringResource(R.string.city_buscar_ciudad)) },
                         leadingIcon = {
                             Icon(Icons.Filled.Search, contentDescription = null)
                         },

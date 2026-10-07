@@ -31,9 +31,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCard
 import com.lospuntoycoma.nicaexplorer.ui.components.EmptyState
@@ -86,8 +88,8 @@ fun ComerciosSubcategoriasScreen(
                 subcategorias.isEmpty() -> {
                     EmptyState(
                         icon = Icons.Filled.Storefront,
-                        message = "Aún no hay comercios de \"$padre\" en esta ciudad.",
-                        buttonText = "Reintentar",
+                        message = stringResource(R.string.comercios_sub_vacio, padre),
+                        buttonText = stringResource(R.string.comercios_sub_reintentar),
                         onButtonClick = { viewModel.loadComercios() }
                     )
                 }
@@ -146,7 +148,11 @@ private fun SubcategoriaCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = if (total == 1) "1 comercio" else "$total comercios",
+                    text = if (total == 1) {
+                        stringResource(R.string.comercios_sub_un_comercio)
+                    } else {
+                        stringResource(R.string.comercios_sub_n_comercios, total)
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -200,8 +206,8 @@ fun ComerciosSubcategoriaScreen(
                 comercios.isEmpty() -> {
                     EmptyState(
                         icon = Icons.Filled.Storefront,
-                        message = "Aún no hay comercios de \"$subcategoria\" en esta ciudad.",
-                        buttonText = "Reintentar",
+                        message = stringResource(R.string.comercios_sub_vacio, subcategoria),
+                        buttonText = stringResource(R.string.comercios_sub_reintentar),
                         onButtonClick = { viewModel.loadComercios() }
                     )
                 }

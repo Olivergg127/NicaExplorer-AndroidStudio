@@ -47,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,6 +55,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.model.UserRole
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
@@ -87,13 +89,15 @@ fun RegisterScreen(
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
+    val errorGeneric = stringResource(R.string.register_error)
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Crear cuenta") },
+                title = { Text(stringResource(R.string.register_titulo)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateToLogin) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.register_volver))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -117,7 +121,7 @@ fun RegisterScreen(
 
                 Icon(
                     painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_logo),
-                    contentDescription = "Logo NicaExplore",
+                    contentDescription = stringResource(R.string.register_logo),
                     tint = androidx.compose.ui.graphics.Color.Unspecified,
                     modifier = Modifier.size(160.dp)
                 )
@@ -125,7 +129,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Únete a NicaExplore",
+                    text = stringResource(R.string.register_unete),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -135,7 +139,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Crea tu cuenta para empezar a explorar",
+                text = stringResource(R.string.register_subtitulo),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center
@@ -144,7 +148,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Tipo de cuenta",
+                text = stringResource(R.string.register_tipo_cuenta),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -160,7 +164,7 @@ fun RegisterScreen(
                 FilterChip(
                     selected = accountType == UserRole.USUARIO,
                     onClick = { accountType = UserRole.USUARIO },
-                    label = { Text("Usuario normal") },
+                    label = { Text(stringResource(R.string.register_usuario_normal)) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
                     )
@@ -168,7 +172,7 @@ fun RegisterScreen(
                 FilterChip(
                     selected = accountType == UserRole.COMERCIO,
                     onClick = { accountType = UserRole.COMERCIO },
-                    label = { Text("Usuario comercio") },
+                    label = { Text(stringResource(R.string.register_usuario_comercio)) },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer
                     )
@@ -178,7 +182,7 @@ fun RegisterScreen(
             if (accountType == UserRole.COMERCIO) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Podrás registrar y administrar tus propios comercios.",
+                    text = stringResource(R.string.register_comercio_info),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                     modifier = Modifier.fillMaxWidth()
@@ -193,13 +197,13 @@ fun RegisterScreen(
                     fullName = it
                     nameError = false
                 },
-                label = { Text("Nombre completo") },
-                placeholder = { Text("Tu nombre") },
+                label = { Text(stringResource(R.string.register_nombre)) },
+                placeholder = { Text(stringResource(R.string.register_nombre_placeholder)) },
                 leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
                 isError = nameError && showValidation,
                 supportingText = {
                     if (nameError && showValidation) {
-                        Text("Ingresa tu nombre", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.register_nombre_error), color = MaterialTheme.colorScheme.error)
                     }
                 },
                 singleLine = true,
@@ -220,13 +224,13 @@ fun RegisterScreen(
                     email = it
                     emailError = false
                 },
-                label = { Text("Correo electrónico") },
-                placeholder = { Text("tucorreo@ejemplo.com") },
+                label = { Text(stringResource(R.string.register_correo)) },
+                placeholder = { Text(stringResource(R.string.register_correo_placeholder)) },
                 leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
                 isError = emailError && showValidation,
                 supportingText = {
                     if (emailError && showValidation) {
-                        Text("Ingresa un correo válido", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.register_correo_invalido), color = MaterialTheme.colorScheme.error)
                     }
                 },
                 singleLine = true,
@@ -250,7 +254,7 @@ fun RegisterScreen(
                     password = it
                     passwordError = false
                 },
-                label = { Text("Contraseña") },
+                label = { Text(stringResource(R.string.register_contrasena)) },
                 placeholder = { Text("••••••••") },
                 leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
                 trailingIcon = {
@@ -265,7 +269,7 @@ fun RegisterScreen(
                 isError = passwordError && showValidation,
                 supportingText = {
                     if (passwordError && showValidation) {
-                        Text("Mínimo 6 caracteres", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.register_contrasena_min), color = MaterialTheme.colorScheme.error)
                     }
                 },
                 singleLine = true,
@@ -289,7 +293,7 @@ fun RegisterScreen(
                     confirmPassword = it
                     confirmError = false
                 },
-                label = { Text("Confirmar contraseña") },
+                label = { Text(stringResource(R.string.register_confirmar_contrasena)) },
                 placeholder = { Text("••••••••") },
                 leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
                 trailingIcon = {
@@ -304,7 +308,7 @@ fun RegisterScreen(
                 isError = confirmError && showValidation,
                 supportingText = {
                     if (confirmError && showValidation) {
-                        Text("Las contraseñas no coinciden", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.register_contrasena_no_coincide), color = MaterialTheme.colorScheme.error)
                     }
                 },
                 singleLine = true,
@@ -337,7 +341,7 @@ fun RegisterScreen(
                     )
                 )
                 Text(
-                    text = "Acepto los términos y condiciones",
+                    text = stringResource(R.string.register_terminos),
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (termsError && showValidation)
                         MaterialTheme.colorScheme.error
@@ -347,7 +351,7 @@ fun RegisterScreen(
             }
             if (termsError && showValidation) {
                 Text(
-                    text = "Debes aceptar los términos",
+                    text = stringResource(R.string.register_terminos_error),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier
@@ -359,7 +363,7 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             NicaButton(
-                text = if (isLoading) "Creando cuenta..." else "Crear cuenta",
+                text = if (isLoading) stringResource(R.string.register_creando_cuenta) else stringResource(R.string.register_crear_cuenta),
                 onClick = {
                     showValidation = true
                     nameError = fullName.isBlank()
@@ -381,7 +385,7 @@ fun RegisterScreen(
                             isLoading = false
                             result.fold(
                                 onSuccess = { onRegisterSuccess() },
-                                onFailure = { errorMessage = it.localizedMessage ?: "Error al registrarse" }
+                                onFailure = { errorMessage = it.localizedMessage ?: errorGeneric }
                             )
                         }
                     }
@@ -415,13 +419,13 @@ fun RegisterScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "¿Ya tienes una cuenta?",
+                    text = stringResource(R.string.register_ya_tienes_cuenta),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
                 Spacer(modifier = Modifier.padding(4.dp))
                 Text(
-                    text = "Iniciar sesión",
+                    text = stringResource(R.string.register_iniciar_sesion),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,

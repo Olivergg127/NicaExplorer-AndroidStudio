@@ -6,6 +6,15 @@
 
 ## Implementado
 
+### Idiomas y mascota (P1, 2026-10-07)
+- **App bilingüe (español/inglés):** textos de la UI en recursos
+  (`values/strings_*.xml` + `values-en/strings_*.xml`) y **selector de idioma** en
+  Configuración (Sistema/Español/English). Se aplica en `MainActivity.attachBaseContext`.
+- **Mensajes de validación** localizados (ViewModels con `@StringRes`).
+- **Contenido dinámico bilingüe:** campos `*En` en Firestore resueltos en el mapeo.
+- **Mascota de Itzae** flotante, arrastrable y animada en el chat (con interruptor).
+- **Itzae responde en el idioma de la app** (directiva de idioma en `GeminiRepository`).
+
 ### Web pública — Landing de la app (P2, 2026-10-05)
 - Landing promocional de NicaExplore servida en la **raíz del dominio** (`GET /` →
   `Home::index` → vista `landing`). Página autónoma y responsive con secciones de
@@ -51,7 +60,8 @@
   el promedio de estrellas; se recalculan solos al recibir reseñas
   (`GET /api/v1/valoraciones` + caché en `ValoracionesRepository`). El Home usa top 5 y
   top 10 respectivamente. La nube de categorías de comercios agrega el chip "Todos".
-- 3 ciudades y 8 monumentos, con carga desde Firestore y **fallback local** (`SampleData`).
+- Ciudades **Juigalpa, León, Managua y Masaya** con sus lugares/monumentos, cargadas
+  desde Firestore vía **API REST** (`ApiRepository`).
 - Selección de ciudad con búsqueda (`CitySelectionScreen`).
 - Detalle de monumento (`CatalogScreen`): descripción, historia, año, categoría,
   afluencia estimada, consejos de turismo responsable, guardar lugar.
@@ -89,10 +99,12 @@
   elegir una, todos los comercios de esa subcategoría
   (`ComerciosSubcategoriasScreen` / `ComerciosSubcategoriaScreen`).
 
-### Rutas turísticas (P1)
+### Rutas turísticas / creativas (P1)
 - Rutas cargadas desde el backend por ciudad (`rutas.paradas`); la cantidad de paradas es
   dinámica. Resuelve cada parada contra los lugares y comercios existentes y muestra
   "Rutas próximamente" para ciudades sin ruta publicada.
+- **Rutas Creativas activas en Juigalpa, León y Managua** (2026-10-05). La ruta de **Masaya**
+  está próxima.
 - **Mapa de la ruta** (`ui/components/RutaMapa.kt`): pines numerados por parada y el camino
   que las une (trazado por carretera de OSRM, con líneas rectas como respaldo). Al pulsar un
   pin, la lista se desplaza a la tarjeta de esa parada. Solo aparecen las paradas que tengan
@@ -173,8 +185,8 @@
 - **Limpieza de solicitudes legado (P3).** `SolicitudComercioScreen` y `Routes.SOLICITUD_COMERCIO`
   quedaron sin cablear tras el registro directo de comercios; el repositorio y la colección
   `solicitudes_comercios` se conservan.
-- **Rutas para León y Managua (P2).** La UI ya muestra "Rutas próximamente"; solo Juigalpa
-  tiene datos.
+- **Ruta creativa de Masaya (P2).** La UI ya muestra "Rutas próximamente"; faltan los datos
+  de la ruta de Masaya (Juigalpa, León y Managua ya tienen ruta activa).
 - **Búsqueda en catálogo (P3).** El icono de búsqueda en `CatalogScreen`/`NicaTopBar` es un
   `IconButton(onClick = { })` sin implementación.
 - **Notificaciones (P3).** Existe preferencia `notifications_enabled` y el switch en
@@ -201,7 +213,7 @@ Ordenados por prioridad aproximada. **Ninguno está implementado** salvo que se 
   - "Explorar alrededor" de un punto.
 - **P2 — Descubrimiento**
   - Categorías y filtros de comercios/monumentos.
-  - Rutas turísticas para León y Managua.
+  - Ruta creativa para Masaya.
   - Búsqueda real en catálogo y comercios.
 - **P2 — Ubicación (requiere permisos)**
   - Flujo de permisos GPS (hoy eliminados del manifest) y ubicación del usuario.
@@ -255,5 +267,4 @@ concede 750 h/mes (un servicio siempre activo usa ~730 h). La app consulta
 
 - No se ofrecen GPS, navegación GPS, rutas en tiempo real ni afluencia en tiempo real.
 - La afluencia y la duración de la ruta son **orientativas del prototipo**.
-- La ruta inteligente está desarrollada principalmente para Juigalpa porque es la ciudad
-  con comercios cargados en el prototipo.
+- Las Rutas Creativas están activas en Juigalpa, León y Managua; la de Masaya está próxima.

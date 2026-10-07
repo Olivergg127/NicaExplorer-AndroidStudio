@@ -29,9 +29,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.ui.components.ComercioCard
 import com.lospuntoycoma.nicaexplorer.ui.components.EmptyState
@@ -72,7 +74,7 @@ fun ComerciosScreen(
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Comercios y restaurantes",
+                title = stringResource(R.string.comercios_titulo),
                 onBack = onBack
             )
         }
@@ -102,14 +104,14 @@ fun ComerciosScreen(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "¿Tienes un negocio en ${city.name}?",
+                            text = stringResource(R.string.comercios_negocio_en, city.name),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         NicaButton(
-                            text = "Registra tu comercio",
+                            text = stringResource(R.string.comercios_registrar),
                             onClick = { onSolicitarAparicion(city.id) }
                         )
                     }
@@ -132,12 +134,12 @@ fun ComerciosScreen(
                     }
 
                     uiState.error != null -> {
-                        val errorMessage = uiState.error ?: ""
+                        val errorMessage = uiState.error?.let { stringResource(it) } ?: ""
                         Box(modifier = Modifier.fillMaxSize()) {
                             EmptyState(
                                 icon = Icons.Filled.Refresh,
                                 message = errorMessage,
-                                buttonText = "Reintentar",
+                                buttonText = stringResource(R.string.comercios_reintentar),
                                 onButtonClick = { viewModel.loadComercios() }
                             )
                         }
@@ -148,11 +150,11 @@ fun ComerciosScreen(
                             EmptyState(
                                 icon = Icons.Filled.Storefront,
                                 message = if (cityFilter != null) {
-                                    "Aún no hay comercios disponibles en esta ciudad."
+                                    stringResource(R.string.comercios_vacio_ciudad)
                                 } else {
-                                    "Aún no hay comercios disponibles."
+                                    stringResource(R.string.comercios_vacio)
                                 },
-                                buttonText = "Reintentar",
+                                buttonText = stringResource(R.string.comercios_reintentar),
                                 onButtonClick = { viewModel.loadComercios() }
                             )
                         }

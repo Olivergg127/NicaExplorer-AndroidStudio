@@ -1,8 +1,10 @@
 package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 
 import android.util.Patterns
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SolicitudComercioRepository
 import com.lospuntoycoma.nicaexplorer.model.SolicitudComercio
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +15,8 @@ import kotlinx.coroutines.launch
 data class SolicitudComercioUiState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
-    val validationErrors: Map<String, String> = emptyMap(),
-    val errorMessage: String? = null
+    val validationErrors: Map<String, Int> = emptyMap(),
+    @StringRes val errorMessage: Int? = null
 )
 
 class SolicitudComercioViewModel : ViewModel() {
@@ -44,7 +46,7 @@ class SolicitudComercioViewModel : ViewModel() {
                 },
                 onFailure = {
                     _uiState.value = SolicitudComercioUiState(
-                        errorMessage = "No se pudo enviar la solicitud. Inténtalo nuevamente más tarde."
+                        errorMessage = R.string.error_enviar_solicitud
                     )
                 }
             )
@@ -61,14 +63,14 @@ class SolicitudComercioViewModel : ViewModel() {
         )
     }
 
-    private fun validate(solicitud: SolicitudComercio): Map<String, String> {
-        val errors = mutableMapOf<String, String>()
+    private fun validate(solicitud: SolicitudComercio): Map<String, Int> {
+        val errors = mutableMapOf<String, Int>()
 
         fun requireText(field: String, value: String, maxLength: Int) {
             when {
-                value.isBlank() -> errors[field] = "Este campo es obligatorio"
+                value.isBlank() -> errors[field] = R.string.validacion_obligatorio
                 value.trim().length > maxLength -> {
-                    errors[field] = "Máximo $maxLength caracteres"
+                    errors[field] = R.string.validacion_max_caracteres
                 }
             }
         }
@@ -86,21 +88,21 @@ class SolicitudComercioViewModel : ViewModel() {
         requireText("correoResponsable", solicitud.correoResponsable, 254)
 
         if (solicitud.redesSociales.trim().length > 500) {
-            errors["redesSociales"] = "Máximo 500 caracteres"
+            errors["redesSociales"] = R.string.validacion_max_caracteres
         }
 
         if (solicitud.correoResponsable.isNotBlank() &&
             !Patterns.EMAIL_ADDRESS.matcher(solicitud.correoResponsable.trim()).matches()
         ) {
-            errors["correoResponsable"] = "Ingresa un correo válido"
+            errors["correoResponsable"] = R.string.validacion_correo
         }
 
         if (solicitud.telefono.isNotBlank() && !isReasonablePhone(solicitud.telefono)) {
-            errors["telefono"] = "Ingresa un teléfono válido de 7 a 15 dígitos"
+            errors["telefono"] = R.string.validacion_telefono
         }
 
         if (solicitud.whatsapp.isNotBlank() && !isReasonablePhone(solicitud.whatsapp)) {
-            errors["whatsapp"] = "Ingresa un WhatsApp válido de 7 a 15 dígitos"
+            errors["whatsapp"] = R.string.validacion_whatsapp
         }
 
         return errors

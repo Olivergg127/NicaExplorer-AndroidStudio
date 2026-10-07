@@ -1,7 +1,9 @@
 package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.ApiRepository
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.model.Comercio
@@ -19,7 +21,7 @@ import kotlinx.coroutines.launch
 data class ComercioDetalleUiState(
     val isLoading: Boolean = true,
     val comercio: Comercio? = null,
-    val error: String? = null
+    @StringRes val error: Int? = null
 )
 
 /**
@@ -57,7 +59,7 @@ class ComercioDetalleViewModel(
                 }.onFailure {
                     _uiState.value = ComercioDetalleUiState(
                         isLoading = false,
-                        error = "No se pudo cargar el comercio. Revisa tu conexión e intenta de nuevo."
+                        error = R.string.error_cargar_comercio
                     )
                 }
             }

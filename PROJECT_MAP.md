@@ -94,6 +94,7 @@ app/
     │   │   ├── ValoracionRow.kt             5 estrellas interactivas.
     │   │   ├── TextoExpandible.kt           Texto con "Ver más"/"Ver menos".
     │   │   ├── RutaMapa.kt                  Mapa de ruta con pines numerados y OSRM.
+    │   │   ├── MascotaFlotante.kt           Mascota de Itzae: arrastrable y animada por estado.
     │   │   ├── EmptyState.kt / NicaRefreshBox.kt / NicaButton.kt / TopBar.kt
     │   ├── ui/screens/
     │   │   ├── SplashScreen.kt              Splash + entrada pública a Home.
@@ -136,10 +137,9 @@ app/
     │   │   └── MapaViewModel.kt             Carga comercios para el mapa (reutilizado).
     │   └── util/TelefonoUtils.kt            Normalización de teléfono y link de WhatsApp.
     └── res/
-        ├── drawable/                        Imágenes de ciudades/lugares/comercios + isotipo + icono de marcador.
-        └── values/
-            ├── strings.xml                  Solo `app_name`.
-            └── themes.xml                   Tema base `Theme.NicaExplorer`.
+        ├── drawable/                        Imágenes de ciudades/lugares/comercios + isotipo + mascota_itzae*.png.
+        ├── values/                          strings.xml, strings_*.xml (español), themes.xml.
+        └── values-en/                       strings.xml, strings_*.xml (inglés).
 ```
 
 ## unityLibrary/

@@ -66,6 +66,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -74,6 +75,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.UbicacionHelper
 import com.lospuntoycoma.nicaexplorer.map.MapaConfig
@@ -109,7 +111,7 @@ data class MapaPin(
 /** Categoría mostrada como tarjeta en la parte superior del mapa. */
 private data class CategoriaMapa(
     val nombre: String,
-    val etiqueta: String,
+    val etiquetaRes: Int?,
     val total: Int,
     val icono: ImageVector,
     val color: Color
@@ -126,6 +128,8 @@ fun MapaPrincipalScreen(
     onVerComercio: (comercioId: String) -> Unit
 ) {
     val context = LocalContext.current
+    val textoUbicacionError = stringResource(R.string.mapaprincipal_ubicacion_error)
+    val textoSinPermisoUbicacion = stringResource(R.string.mapaprincipal_sin_permiso_ubicacion)
     val scope = rememberCoroutineScope()
     val mapaViewModel: MapaViewModel = viewModel()
     val uiState by mapaViewModel.uiState.collectAsState()
@@ -147,7 +151,7 @@ fun MapaPrincipalScreen(
         scope.launch {
             val ubicacion = UbicacionHelper.ultimaUbicacion(context)
             if (ubicacion == null) {
-                Toast.makeText(context, "No se pudo obtener tu ubicación. Revisa el GPS.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, textoUbicacionError, Toast.LENGTH_SHORT).show()
                 return@launch
             }
 
@@ -173,7 +177,7 @@ fun MapaPrincipalScreen(
         if (concedido) {
             detectarUbicacion(centrar = true)
         } else {
-            Toast.makeText(context, "Sin permiso de ubicación.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, textoSinPermisoUbicacion, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -296,7 +300,7 @@ fun MapaPrincipalScreen(
 
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
             Text(
-                text = "Descubre\na tu alrededor",
+                text = stringResource(R.string.mapaprincipal_descubre),
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -306,7 +310,7 @@ fun MapaPrincipalScreen(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Explora los mejores locales y comercios de tu ciudad.",
+                text = stringResource(R.string.mapaprincipal_explora),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -366,7 +370,7 @@ fun MapaPrincipalScreen(
             ) {
                 BotonMapa(
                     icono = Icons.Filled.Navigation,
-                    descripcion = "Mi ubicación",
+                    descripcion = stringResource(R.string.mapaprincipal_mi_ubicacion),
                     onClick = {
                         if (permisoUbicacion) detectarUbicacion(centrar = true)
                         else permisoLauncher.launch(
@@ -379,7 +383,7 @@ fun MapaPrincipalScreen(
                 )
                 BotonMapa(
                     icono = Icons.Filled.Layers,
-                    descripcion = "Ver todo",
+                    descripcion = stringResource(R.string.mapaprincipal_ver_todo),
                     onClick = {
                         val map = mapaLibre ?: return@BotonMapa
                         if (centro != null) {
@@ -400,7 +404,7 @@ fun MapaPrincipalScreen(
 
             BotonMapa(
                 icono = Icons.Filled.MyLocation,
-                descripcion = "Centrar en mi ubicación",
+                descripcion = stringResource(R.string.mapaprincipal_centrar_ubicacion),
                 size = 54.dp,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -429,7 +433,7 @@ private fun EncabezadoMapa(
     onBack: () -> Unit
 ) {
     val etiqueta = ciudad?.let { listOf(it.name, it.departamento).filter { p -> p.isNotBlank() }.joinToString(", ") }
-        ?: "Todas las ciudades"
+        ?: stringResource(R.string.mapaprincipal_todas_ciudades)
 
     Row(
         modifier = Modifier
@@ -440,7 +444,7 @@ private fun EncabezadoMapa(
         IconButtonMapa(
             onClick = onBack,
             icono = Icons.AutoMirrored.Filled.ArrowBack,
-            descripcion = "Volver",
+            descripcion = stringResource(R.string.mapaprincipal_volver),
             tint = MaterialTheme.colorScheme.onBackground
         )
 
@@ -469,7 +473,7 @@ private fun EncabezadoMapa(
                 )
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "Elegir ciudad",
+                    contentDescription = stringResource(R.string.mapaprincipal_elegir_ciudad),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(20.dp)
                 )
@@ -477,7 +481,7 @@ private fun EncabezadoMapa(
 
             DropdownMenu(expanded = menuAbierto, onDismissRequest = { onMenuAbierto(false) }) {
                 DropdownMenuItem(
-                    text = { Text("Todas las ciudades") },
+                    text = { Text(stringResource(R.string.mapaprincipal_todas_ciudades)) },
                     onClick = {
                         onCiudad(null)
                         onMenuAbierto(false)
@@ -500,7 +504,7 @@ private fun EncabezadoMapa(
         IconButtonMapa(
             onClick = { },
             icono = Icons.Filled.Notifications,
-            descripcion = "Notificaciones",
+            descripcion = stringResource(R.string.mapaprincipal_notificaciones),
             tint = MaterialTheme.colorScheme.onBackground
         )
     }
@@ -557,7 +561,7 @@ private fun FilaBuscador(
                 Box(modifier = Modifier.weight(1f)) {
                     if (consulta.isEmpty()) {
                         Text(
-                            text = "Buscar restaurantes, farmacias...",
+                            text = stringResource(R.string.mapaprincipal_buscar_placeholder),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -589,7 +593,7 @@ private fun FilaBuscador(
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Filled.Tune,
-                        contentDescription = "Filtros",
+                        contentDescription = stringResource(R.string.mapaprincipal_filtros),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(22.dp)
                     )
@@ -598,7 +602,7 @@ private fun FilaBuscador(
 
             DropdownMenu(expanded = menuAbierto, onDismissRequest = { onMenuAbierto(false) }) {
                 DropdownMenuItem(
-                    text = { Text("Todo") },
+                    text = { Text(stringResource(R.string.mapaprincipal_filtro_todo)) },
                     trailingIcon = { if (tipoSeleccionado == TipoMapa.TODOS) Text("•") },
                     onClick = {
                         onTipo(TipoMapa.TODOS)
@@ -606,7 +610,7 @@ private fun FilaBuscador(
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Lugares") },
+                    text = { Text(stringResource(R.string.mapaprincipal_filtro_lugares)) },
                     trailingIcon = { if (tipoSeleccionado == TipoMapa.LUGARES) Text("•") },
                     onClick = {
                         onTipo(TipoMapa.LUGARES)
@@ -614,7 +618,7 @@ private fun FilaBuscador(
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Comercios") },
+                    text = { Text(stringResource(R.string.mapaprincipal_filtro_comercios)) },
                     trailingIcon = { if (tipoSeleccionado == TipoMapa.COMERCIOS) Text("•") },
                     onClick = {
                         onTipo(TipoMapa.COMERCIOS)
@@ -667,7 +671,7 @@ private fun TarjetaCategoria(
 
     Column(
         modifier = modifier
-            .height(90.dp)
+            .height(104.dp)
             .clip(forma)
             .background(fondo)
             .then(if (activa) Modifier.border(1.5.dp, categoria.color, forma) else Modifier)
@@ -693,14 +697,14 @@ private fun TarjetaCategoria(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = categoria.etiqueta,
+            text = categoria.etiquetaRes?.let { stringResource(it) } ?: categoria.nombre,
             style = MaterialTheme.typography.labelSmall,
             fontWeight = if (activa) FontWeight.Bold else FontWeight.Medium,
             color = if (activa) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            maxLines = 2,
+            maxLines = 3,
             overflow = TextOverflow.Ellipsis,
-            lineHeight = 12.sp
+            lineHeight = 11.sp
         )
     }
 }
@@ -864,17 +868,17 @@ private fun categoriaVisual(nombre: String): Pair<ImageVector, Color> {
     }
 }
 
-/** Etiqueta corta para las tarjetas de categoría. */
-private fun etiquetaCategoria(nombre: String): String {
+/** Etiqueta corta (recurso) para las tarjetas de categoría; null = usar el nombre. */
+private fun etiquetaCategoria(nombre: String): Int? {
     val n = nombre.lowercase()
     return when {
-        n.contains("restaurante") || n.contains("comida") -> "Restaurantes"
-        n.contains("hosped") || n.contains("hotel") || n.contains("alojam") -> "Hoteles"
-        n.contains("comercio") || n.contains("tienda") || n.contains("local") -> "Tiendas"
-        n.contains("naturaleza") -> "Naturaleza"
-        n.contains("entreten") -> "Entretenimiento"
-        n.contains("transport") -> "Transporte"
-        n.contains("servicio") -> "Servicios"
-        else -> nombre
+        n.contains("restaurante") || n.contains("comida") -> R.string.categoria_restaurantes
+        n.contains("hosped") || n.contains("hotel") || n.contains("alojam") -> R.string.categoria_hoteles
+        n.contains("comercio") || n.contains("tienda") || n.contains("local") -> R.string.categoria_tiendas
+        n.contains("naturaleza") -> R.string.categoria_naturaleza
+        n.contains("entreten") -> R.string.categoria_entretenimiento
+        n.contains("transport") -> R.string.categoria_transporte
+        n.contains("servicio") -> R.string.categoria_servicios
+        else -> null
     }
 }

@@ -12,6 +12,7 @@ import com.lospuntoycoma.nicaexplorer.model.UserProfile
 import com.lospuntoycoma.nicaexplorer.model.UserRole
 import kotlinx.coroutines.tasks.await
 import java.util.Date
+import java.util.Locale
 
 object FirebaseRepository {
     private const val TAG = "FirebaseRepository"
@@ -194,12 +195,16 @@ object FirebaseRepository {
         }
     }
 
+    /** Contenido bilingüe: usa el campo `*En` si el idioma activo es inglés. */
+    private fun localized(es: String, en: String): String =
+        if (Locale.getDefault().language == "en" && en.isNotBlank()) en else es
+
     private fun docToComercio(doc: DocumentSnapshot): Comercio = Comercio(
         id = doc.id,
-        nombre = doc.getString("nombre") ?: "",
-        categoria = doc.getString("categoria") ?: "",
-        categoriaPadre = doc.getString("categoriaPadre") ?: "",
-        descripcion = doc.getString("descripcion") ?: "",
+        nombre = localized(doc.getString("nombre") ?: "", doc.getString("nombreEn") ?: ""),
+        categoria = localized(doc.getString("categoria") ?: "", doc.getString("categoriaEn") ?: ""),
+        categoriaPadre = localized(doc.getString("categoriaPadre") ?: "", doc.getString("categoriaPadreEn") ?: ""),
+        descripcion = localized(doc.getString("descripcion") ?: "", doc.getString("descripcionEn") ?: ""),
         ciudad = doc.getString("ciudad") ?: "",
         cityId = doc.getString("cityId") ?: "",
         direccion = doc.getString("direccion") ?: "",
@@ -223,7 +228,7 @@ object FirebaseRepository {
         },
         servicios = (doc.get("servicios") as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
         productos = (doc.get("productos") as? List<*>)?.mapNotNull { it as? String } ?: emptyList(),
-        infoAdicional = doc.getString("infoAdicional") ?: "",
+        infoAdicional = localized(doc.getString("infoAdicional") ?: "", doc.getString("infoAdicionalEn") ?: ""),
         activo = doc.getBoolean("activo") ?: false,
         aprobado = doc.getBoolean("aprobado") ?: true,
         propietarioUid = doc.getString("propietarioUid") ?: ""

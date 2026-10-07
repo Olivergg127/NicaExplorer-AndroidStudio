@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ComerciosScreen -->
+    <string name="comercios_titulo">Comercios y restaurantes</string>
+    <string name="comercios_negocio_en">¿Tienes un negocio en %1$s?</string>
+    <string name="comercios_registrar">Registra tu comercio</string>
+    <string name="comercios_reintentar">Reintentar</string>
+    <string name="comercios_vacio_ciudad">Aún no hay comercios disponibles en esta ciudad.</string>
+    <string name="comercios_vacio">Aún no hay comercios disponibles.</string>
+
+    <!-- ComerciosSubcategoriasScreen -->
+    <string name="comercios_sub_vacio">Aún no hay comercios de "%1$s" en esta ciudad.</string>
+    <string name="comercios_sub_reintentar">Reintentar</string>
+    <string name="comercios_sub_un_comercio">1 comercio</string>
+    <string name="comercios_sub_n_comercios">%1$d comercios</string>
+
+    <!-- ComercioDetalleScreen -->
+    <string name="comerciodet_comercio">Comercio</string>
+    <string name="comerciodet_reintentar">Reintentar</string>
+    <string name="comerciodet_no_encontrado">No se encontró el comercio.</string>
+    <string name="comerciodet_whatsapp_disponible">WhatsApp disponible</string>
+    <string name="comerciodet_horario">Horario</string>
+    <string name="comerciodet_direccion">Dirección</string>
+    <string name="comerciodet_descripcion">Descripción</string>
+    <string name="comerciodet_fotos">Fotos</string>
+    <string name="comerciodet_ampliar_foto">Ampliar foto</string>
+    <string name="comerciodet_dias_atencion">Días de atención</string>
+    <string name="comerciodet_servicios">Servicios</string>
+    <string name="comerciodet_productos">Productos</string>
+    <string name="comerciodet_redes_sociales">Redes sociales</string>
+    <string name="comerciodet_no_abrir_red">No se pudo abrir %1$s.</string>
+    <string name="comerciodet_correo_contacto">Correo de contacto</string>
+    <string name="comerciodet_info_adicional">Información adicional</string>
+    <string name="comerciodet_pendiente_aprobacion">Este comercio está pendiente de aprobación y aún no es visible públicamente.</string>
+    <string name="comerciodet_inactivo">Este comercio está inactivo y no aparece en el mapa.</string>
+    <string name="comerciodet_copiar_telefono">Copiar teléfono</string>
+    <string name="comerciodet_numero_copiado">Número copiado</string>
+    <string name="comerciodet_contactar_whatsapp">Contactar por WhatsApp</string>
+    <string name="comerciodet_sin_app_whatsapp">No hay una aplicación compatible para abrir WhatsApp.</string>
+    <string name="comerciodet_enviar_correo">Enviar correo</string>
+    <string name="comerciodet_sin_app_correo">No hay una aplicación de correo disponible.</string>
+    <string name="comerciodet_ver_maps">Ver en Google Maps</string>
+    <string name="comerciodet_abrir_maps_titulo">Abrir en Google Maps</string>
+    <string name="comerciodet_abrir_maps_pregunta">¿Quieres abrir la ubicación de %1$s en Google Maps?</string>
+    <string name="comerciodet_no_abrir_maps">No se pudo abrir Google Maps.</string>
+    <string name="comerciodet_abrir_maps">Abrir Maps</string>
+    <string name="comerciodet_cancelar">Cancelar</string>
+    <string name="comerciodet_foto_de">Foto %1$d de %2$d</string>
+    <string name="comerciodet_cerrar">Cerrar</string>
+
+    <!-- ComercioFormScreen -->
+    <string name="comercioform_editar_titulo">Editar comercio</string>
+    <string name="comercioform_nuevo_titulo">Nuevo comercio</string>
+    <string name="comercioform_aviso_revision">Tu comercio se enviará a revisión. Un administrador lo aprobará antes de que sea visible; después podrás activarlo para que aparezca en el mapa.</string>
+    <string name="comercioform_error_subir_imagen">No se pudo subir la imagen.</string>
+    <string name="comercioform_nombre">Nombre del comercio</string>
+    <string name="comercioform_categoria_superior">Categoría superior</string>
+    <string name="comercioform_subcategoria">Subcategoría</string>
+    <string name="comercioform_ciudad">Ciudad</string>
+    <string name="comercioform_direccion">Dirección</string>
+    <string name="comercioform_descripcion">Descripción</string>
+    <string name="comercioform_latitud">Latitud</string>
+    <string name="comercioform_longitud">Longitud</string>
+    <string name="comercioform_telefono">Teléfono</string>
+    <string name="comercioform_whatsapp">WhatsApp</string>
+    <string name="comercioform_tiene_whatsapp">Tiene WhatsApp</string>
+    <string name="comercioform_horario">Horario (ej. 8:00 a.m. - 6:00 p.m.)</string>
+    <string name="comercioform_dias_atencion">Días de atención</string>
+    <string name="comercioform_correo_contacto">Correo de contacto</string>
+    <string name="comercioform_redes_sociales">Redes sociales</string>
+    <string name="comercioform_redes_ayuda">Elige una o varias redes y escribe el enlace o tu usuario.</string>
+    <string name="comercioform_enlace_red">Enlace o usuario de %1$s</string>
+    <string name="comercioform_servicios">Servicios (uno por línea)</string>
+    <string name="comercioform_productos">Productos (uno por línea)</string>
+    <string name="comercioform_info_adicional">Información adicional</string>
+    <string name="comercioform_imagenes">Imágenes</string>
+    <string name="comercioform_portada">Portada</string>
+    <string name="comercioform_logo">Logo</string>
+    <string name="comercioform_galeria">Galería de fotos</string>
+    <string name="comercioform_quitar">Quitar</string>
+    <string name="comercioform_agregar_foto">Agregar foto</string>
+    <string name="comercioform_subiendo_imagen">Subiendo imagen...</string>
+    <string name="comercioform_activo">Comercio activo (visible en el mapa si está aprobado)</string>
+    <string name="comercioform_guardando">Guardando...</string>
+    <string name="comercioform_guardar">Guardar comercio</string>
+    <string name="comercioform_error_nombre">El nombre del comercio es obligatorio.</string>
+    <string name="comercioform_elegir_imagen">Elegir imagen</string>
+    <string name="comercioform_cambiar">Cambiar</string>
+
+    <!-- MisComerciosScreen -->
+    <string name="miscomercios_titulo">Mis comercios</string>
+    <string name="miscomercios_agregar">Agregar comercio</string>
+    <string name="miscomercios_reintentar">Reintentar</string>
+    <string name="miscomercios_vacio">Aún no tienes comercios registrados. Crea el primero y espera la aprobación.</string>
+    <string name="miscomercios_aviso">Los comercios nuevos quedan pendientes hasta que un administrador los apruebe. Una vez aprobados, podrás activarlos para que aparezcan en el mapa.</string>
+    <string name="miscomercios_eliminar_titulo">Eliminar comercio</string>
+    <string name="miscomercios_eliminar_pregunta">¿Seguro que deseas eliminar "%1$s"? Esta acción no se puede deshacer.</string>
+    <string name="miscomercios_eliminar">Eliminar</string>
+    <string name="miscomercios_cancelar">Cancelar</string>
+    <string name="miscomercios_aprobado">Aprobado</string>
+    <string name="miscomercios_pendiente">Pendiente</string>
+    <string name="miscomercios_activo">Activo</string>
+    <string name="miscomercios_inactivo">Inactivo</string>
+    <string name="miscomercios_editar">Editar</string>
+    <string name="miscomercios_ver">Ver</string>
+
+    <!-- SolicitudComercioScreen -->
+    <string name="solicitud_titulo">Solicitud de comercio</string>
+    <string name="solicitud_enviada">Solicitud enviada</string>
+    <string name="solicitud_exito_detalle">Nuestro equipo revisará la información antes de publicar el negocio en NicaExplore.</string>
+    <string name="solicitud_volver">Volver a comercios</string>
+    <string name="solicitud_intro_titulo">Solicita aparecer en NicaExplore</string>
+    <string name="solicitud_intro_detalle">Completa la información para que nuestro equipo pueda revisar tu negocio.</string>
+    <string name="solicitud_nombre_negocio">Nombre del negocio</string>
+    <string name="solicitud_ciudad">Ciudad</string>
+    <string name="solicitud_categoria">Categoría</string>
+    <string name="solicitud_direccion">Dirección</string>
+    <string name="solicitud_descripcion">Descripción</string>
+    <string name="solicitud_telefono">Teléfono</string>
+    <string name="solicitud_whatsapp">WhatsApp</string>
+    <string name="solicitud_horario">Horario</string>
+    <string name="solicitud_nombre_responsable">Nombre del responsable</string>
+    <string name="solicitud_correo_responsable">Correo del responsable</string>
+    <string name="solicitud_redes">Redes sociales (opcional)</string>
+    <string name="solicitud_enviando">Enviando solicitud...</string>
+    <string name="solicitud_enviar">Enviar solicitud</string>
+</resources>

@@ -6,6 +6,7 @@ import com.google.firebase.ai.type.GenerativeBackend
 import com.google.firebase.ai.type.content
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import com.lospuntoycoma.nicaexplorer.model.Place
+import java.util.Locale
 
 /**
  * Repositorio para interactuar con Gemini a través de Firebase AI Logic.
@@ -112,8 +113,17 @@ object GeminiRepository {
             prompt
         }
 
+        // Directiva de idioma: la app puede estar en español o inglés.
+        val languageDirective = if (Locale.getDefault().language == "en") {
+            "IMPORTANT: Answer ONLY in English, regardless of the language of these instructions, " +
+                "the context, or the data. Keep proper nouns (place names) as they are."
+        } else {
+            "IMPORTANTE: Responde únicamente en español."
+        }
+        val promptWithLanguage = "$languageDirective\n\n$fullPrompt"
+
         return try {
-            val response = model.generateContent(fullPrompt)
+            val response = model.generateContent(promptWithLanguage)
             response.text
         } catch (e: Exception) {
             e.printStackTrace()

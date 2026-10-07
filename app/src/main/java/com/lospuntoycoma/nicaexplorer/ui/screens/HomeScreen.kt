@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -193,7 +194,7 @@ fun HomeScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Image(
                             painter = painterResource(id = R.drawable.nicaexplorer_isotipo),
-                            contentDescription = "Logo de NicaExplore",
+                            contentDescription = stringResource(R.string.home_logo_desc),
                             modifier = Modifier.size(68.dp),
                             contentScale = ContentScale.Fit
                         )
@@ -211,7 +212,7 @@ fun HomeScreen(
 
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Explore, contentDescription = null) },
-                    label = { Text("Inicio") },
+                        label = { Text(stringResource(R.string.home_inicio)) },
                     selected = true,
                     onClick = { scope.launch { drawerState.close() } },
                     colors = NavigationDrawerItemDefaults.colors(
@@ -220,7 +221,7 @@ fun HomeScreen(
                 )
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Person, contentDescription = null) },
-                    label = { Text("Perfil") },
+                        label = { Text(stringResource(R.string.home_perfil)) },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
@@ -232,7 +233,7 @@ fun HomeScreen(
                 )
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Star, contentDescription = null) },
-                    label = { Text("Lugares guardados") },
+                    label = { Text(stringResource(R.string.home_lugares_guardados)) },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
@@ -245,7 +246,7 @@ fun HomeScreen(
                 if (canManageComercios) {
                     NavigationDrawerItem(
                         icon = { Icon(Icons.Filled.Storefront, contentDescription = null) },
-                        label = { Text("Mis comercios") },
+                        label = { Text(stringResource(R.string.home_mis_comercios)) },
                         selected = false,
                         onClick = {
                             scope.launch { drawerState.close() }
@@ -258,7 +259,7 @@ fun HomeScreen(
                 }
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Assistant, contentDescription = null) },
-                    label = { Text("Asistente IA") },
+                        label = { Text(stringResource(R.string.home_asistente_ia)) },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
@@ -270,7 +271,7 @@ fun HomeScreen(
                 )
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Map, contentDescription = null) },
-                    label = { Text("Mapa") },
+                    label = { Text(stringResource(R.string.home_mapa)) },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
@@ -284,7 +285,7 @@ fun HomeScreen(
                 if (canAccessAdminPanel) {
                     NavigationDrawerItem(
                         icon = { Icon(Icons.Filled.AdminPanelSettings, contentDescription = null) },
-                        label = { Text("Panel de Admin") },
+                        label = { Text(stringResource(R.string.home_panel_admin)) },
                         selected = false,
                         onClick = {
                             scope.launch { drawerState.close() }
@@ -300,7 +301,12 @@ fun HomeScreen(
 
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Filled.Person, contentDescription = null) },
-                    label = { Text(if (isLoggedIn) "Cerrar sesión" else "Iniciar sesión") },
+                    label = {
+                        Text(
+                            if (isLoggedIn) stringResource(R.string.home_cerrar_sesion)
+                            else stringResource(R.string.home_iniciar_sesion)
+                        )
+                    },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
@@ -339,15 +345,15 @@ fun HomeScreen(
                     },
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Filled.Menu, contentDescription = "Menú")
+                            Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.home_menu_desc))
                         }
                     },
                     actions = {
                         IconButton(onClick = { }) {
-                            Icon(Icons.Filled.Notifications, contentDescription = "Notificaciones")
+                            Icon(Icons.Filled.Notifications, contentDescription = stringResource(R.string.home_notificaciones_desc))
                         }
                         IconButton(onClick = onProfileClick) {
-                            Icon(Icons.Filled.Person, contentDescription = "Perfil")
+                            Icon(Icons.Filled.Person, contentDescription = stringResource(R.string.home_perfil))
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -364,7 +370,7 @@ fun HomeScreen(
                 ) {
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Explore, contentDescription = null) },
-                        label = { Text("Inicio") },
+                    label = { Text(stringResource(R.string.home_inicio)) },
                         selected = selectedNavItem == 0,
                         onClick = { selectedNavItem = 0 },
                         colors = NavigationBarItemDefaults.colors(
@@ -375,7 +381,7 @@ fun HomeScreen(
                     )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Explore, contentDescription = null) },
-                        label = { Text("Explorar") },
+                        label = { Text(stringResource(R.string.home_explorar)) },
                         selected = selectedNavItem == 1,
                         onClick = {
                             selectedNavItem = 1
@@ -389,7 +395,7 @@ fun HomeScreen(
                     )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Assistant, contentDescription = null) },
-                        label = { Text("Asistente IA") },
+                    label = { Text(stringResource(R.string.home_asistente_ia)) },
                         selected = selectedNavItem == 2,
                         onClick = {
                             selectedNavItem = 2
@@ -403,7 +409,7 @@ fun HomeScreen(
                     )
                     NavigationBarItem(
                         icon = { Icon(Icons.Filled.Person, contentDescription = null) },
-                        label = { Text("Perfil") },
+                    label = { Text(stringResource(R.string.home_perfil)) },
                         selected = selectedNavItem == 3,
                         onClick = {
                             selectedNavItem = 3
@@ -435,9 +441,9 @@ fun HomeScreen(
 
                 Text(
                     text = if (isLoggedIn && !userProfile?.nombre.isNullOrBlank()) {
-                        "Hola, ${userProfile?.nombre}"
+                        stringResource(R.string.home_hola_nombre, userProfile?.nombre.orEmpty())
                     } else {
-                        "Hola, explorador"
+                        stringResource(R.string.home_hola_explorador)
                     },
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
@@ -447,7 +453,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "¿Qué deseas descubrir hoy?",
+                    text = stringResource(R.string.home_que_deseas_descubrir),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -496,7 +502,7 @@ fun HomeScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
-                                text = "Descubre Nicaragua con NicaExplore",
+                                text = stringResource(R.string.home_descubre_nicaragua),
                                 style = MaterialTheme.typography.titleLarge,
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold
@@ -505,7 +511,7 @@ fun HomeScreen(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
-                                text = "Explora ciudades, conoce su historia y cultura, descubre lugars en 3D y encuentra experiencias y negocios locales en un solo lugar.",
+                                text = stringResource(R.string.home_hero_descripcion),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.White.copy(alpha = 0.9f)
                             )
@@ -521,13 +527,13 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Explora por ciudad",
+                        text = stringResource(R.string.home_explora_por_ciudad),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = "Ver todas",
+                        text = stringResource(R.string.home_ver_todas),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.clickable { onCityClick() }
@@ -607,10 +613,10 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                val sufijoCiudad = ciudadActual?.let { " en ${it.name}" } ?: ""
-
                 Text(
-                    text = "Lugares recomendados$sufijoCiudad",
+                    text = ciudadActual?.let {
+                        stringResource(R.string.home_lugares_recomendados_en, it.name)
+                    } ?: stringResource(R.string.home_lugares_recomendados),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -636,7 +642,9 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(28.dp))
 
                     Text(
-                        text = "Comercios recomendados$sufijoCiudad",
+                        text = ciudadActual?.let {
+                            stringResource(R.string.home_comercios_recomendados_en, it.name)
+                        } ?: stringResource(R.string.home_comercios_recomendados),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground

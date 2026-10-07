@@ -31,8 +31,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.model.City
 
 @Composable
@@ -124,7 +126,7 @@ fun CityCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${city.placeCount} lugares",
+                        text = stringResource(R.string.comp_city_lugares, city.placeCount),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -132,7 +134,7 @@ fun CityCard(
 
                 Icon(
                     imageVector = Icons.Filled.Navigation,
-                    contentDescription = "Explorar",
+                    contentDescription = stringResource(R.string.comp_city_explorar),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )

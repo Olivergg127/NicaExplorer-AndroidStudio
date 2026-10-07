@@ -12,7 +12,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.model.UserProfile
 import com.lospuntoycoma.nicaexplorer.model.UserRole
@@ -34,6 +36,9 @@ fun AdminPanelScreen(userViewModel: UserViewModel, onBack: () -> Unit) {
     var pendingRole by remember { mutableStateOf<UserRole?>(null) }
     var changing by remember { mutableStateOf(false) }
 
+    val mensajeRolActualizado = stringResource(R.string.admin_rol_actualizado)
+    val mensajeRolError = stringResource(R.string.admin_rol_error)
+
     LaunchedEffect(Unit) {
         users = FirebaseRepository.getAllUsers()
         isLoading = false
@@ -46,8 +51,8 @@ fun AdminPanelScreen(userViewModel: UserViewModel, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (canEditRoles) "Panel de Administración" else "Consulta administrativa") },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, "Volver") } }
+                title = { Text(if (canEditRoles) stringResource(R.string.admin_titulo_panel) else stringResource(R.string.admin_titulo_consulta)) },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Default.ArrowBack, stringResource(R.string.admin_volver)) } }
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
@@ -68,7 +73,7 @@ fun AdminPanelScreen(userViewModel: UserViewModel, onBack: () -> Unit) {
                         onValueChange = { query = it },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
-                        label = { Text("Buscar por nombre o correo") }
+                        label = { Text(stringResource(R.string.admin_buscar)) }
                     )
                 }
                 item {
@@ -76,14 +81,14 @@ fun AdminPanelScreen(userViewModel: UserViewModel, onBack: () -> Unit) {
                         Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        RoleCount("Todos", users.size, filter == null) { filter = null }
-                        RoleCount("Usuario", users.count { it.rol == UserRole.USUARIO }, filter == UserRole.USUARIO) { filter = UserRole.USUARIO }
-                        RoleCount("Editor", users.count { it.rol == UserRole.EDITOR }, filter == UserRole.EDITOR) { filter = UserRole.EDITOR }
-                        RoleCount("Admin", users.count { it.rol == UserRole.ADMIN }, filter == UserRole.ADMIN) { filter = UserRole.ADMIN }
-                        RoleCount("Auditor", users.count { it.rol == UserRole.AUDITOR }, filter == UserRole.AUDITOR) { filter = UserRole.AUDITOR }
+                        RoleCount(stringResource(R.string.admin_filtro_todos), users.size, filter == null) { filter = null }
+                        RoleCount(stringResource(R.string.admin_filtro_usuario), users.count { it.rol == UserRole.USUARIO }, filter == UserRole.USUARIO) { filter = UserRole.USUARIO }
+                        RoleCount(stringResource(R.string.admin_filtro_editor), users.count { it.rol == UserRole.EDITOR }, filter == UserRole.EDITOR) { filter = UserRole.EDITOR }
+                        RoleCount(stringResource(R.string.admin_filtro_admin), users.count { it.rol == UserRole.ADMIN }, filter == UserRole.ADMIN) { filter = UserRole.ADMIN }
+                        RoleCount(stringResource(R.string.admin_filtro_auditor), users.count { it.rol == UserRole.AUDITOR }, filter == UserRole.AUDITOR) { filter = UserRole.AUDITOR }
                     }
                 }
-                item { Text(if (canEditRoles) "Gestión de usuarios" else "Usuarios (solo lectura)", style = MaterialTheme.typography.titleLarge) }
+                item { Text(if (canEditRoles) stringResource(R.string.admin_gestion_usuarios) else stringResource(R.string.admin_usuarios_solo_lectura), style = MaterialTheme.typography.titleLarge) }
                 items(filteredUsers, key = { it.uid }) { user ->
                     UserItem(user, canEditRoles) { selectedUser = user; pendingRole = null }
                 }
@@ -99,8 +104,8 @@ fun AdminPanelScreen(userViewModel: UserViewModel, onBack: () -> Unit) {
         val role = pendingRole!!
         AlertDialog(
             onDismissRequest = { if (!changing) { selectedUser = null; pendingRole = null } },
-            title = { Text("Confirmar cambio de rol") },
-            text = { Text("¿Cambiar el rol de ${target.nombre} a ${role.displayName()}?") },
+            title = { Text(stringResource(R.string.admin_confirmar_cambio_rol)) },
+            text = { Text(stringResource(R.string.admin_confirmar_rol_mensaje, target.nombre, role.displayName())) },
             confirmButton = {
                 Button(enabled = !changing, onClick = {
                     scope.launch {
@@ -110,11 +115,11 @@ fun AdminPanelScreen(userViewModel: UserViewModel, onBack: () -> Unit) {
                         changing = false
                         selectedUser = null
                         pendingRole = null
-                        snackbarHostState.showSnackbar(if (success) "Rol actualizado correctamente" else "No se pudo actualizar el rol")
+                        snackbarHostState.showSnackbar(if (success) mensajeRolActualizado else mensajeRolError)
                     }
-                }) { Text(if (changing) "Guardando..." else "Confirmar") }
+                }) { Text(if (changing) stringResource(R.string.admin_guardando) else stringResource(R.string.admin_confirmar)) }
             },
-            dismissButton = { TextButton(onClick = { selectedUser = null; pendingRole = null }) { Text("Cancelar") } }
+            dismissButton = { TextButton(onClick = { selectedUser = null; pendingRole = null }) { Text(stringResource(R.string.admin_cancelar)) } }
         )
     }
 }
@@ -128,7 +133,7 @@ private fun RoleCount(label: String, count: Int, selected: Boolean, onClick: () 
 private fun RolePickerDialog(user: UserProfile, onDismiss: () -> Unit, onRoleSelected: (UserRole) -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Cambiar rol") },
+        title = { Text(stringResource(R.string.admin_cambiar_rol)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(user.correo, style = MaterialTheme.typography.bodySmall)
@@ -140,7 +145,7 @@ private fun RolePickerDialog(user: UserProfile, onDismiss: () -> Unit, onRoleSel
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancelar") } }
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.admin_cancelar)) } }
     )
 }
 
@@ -158,17 +163,18 @@ private fun UserItem(user: UserProfile, canEditRoles: Boolean, onRoleChange: () 
             }
             if (canEditRoles) {
                 Button(onClick = onRoleChange, contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)) {
-                    Text("Cambiar rol")
+                    Text(stringResource(R.string.admin_cambiar_rol))
                 }
             }
         }
     }
 }
 
-private fun UserRole.displayName() = when (this) {
-    UserRole.USUARIO -> "Usuario"
-    UserRole.COMERCIO -> "Comercio"
-    UserRole.EDITOR -> "Editor"
-    UserRole.ADMIN -> "Administrador"
-    UserRole.AUDITOR -> "Auditor"
+@Composable
+private fun UserRole.displayName(): String = when (this) {
+    UserRole.USUARIO -> stringResource(R.string.admin_rol_nombre_usuario)
+    UserRole.COMERCIO -> stringResource(R.string.admin_rol_nombre_comercio)
+    UserRole.EDITOR -> stringResource(R.string.admin_rol_nombre_editor)
+    UserRole.ADMIN -> stringResource(R.string.admin_rol_nombre_admin)
+    UserRole.AUDITOR -> stringResource(R.string.admin_rol_nombre_auditor)
 }

@@ -32,11 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.theme.SuccessGreen
@@ -55,6 +57,9 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
+    val successText = stringResource(R.string.recovery_exito)
+    val errorText = stringResource(R.string.recovery_error)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +72,7 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
 
         Icon(
             painter = painterResource(id = com.lospuntoycoma.nicaexplorer.R.drawable.nicaexplorer_logo),
-            contentDescription = "Logo NicaExplore",
+            contentDescription = stringResource(R.string.recovery_logo),
             tint = Color.Unspecified,
             modifier = Modifier.size(200.dp)
         )
@@ -75,7 +80,7 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Recuperar contraseña",
+            text = stringResource(R.string.recovery_titulo),
             style = MaterialTheme.typography.displayMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -84,7 +89,7 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Ingresa el correo asociado a tu cuenta y te enviaremos un enlace para restablecer tu contraseña.",
+            text = stringResource(R.string.recovery_subtitulo),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
             textAlign = TextAlign.Center
@@ -101,15 +106,15 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
                 successMessage = null
                 errorMessage = null
             },
-            label = { Text("Correo electrónico") },
-            placeholder = { Text("tucorreo@ejemplo.com") },
+            label = { Text(stringResource(R.string.recovery_correo)) },
+            placeholder = { Text(stringResource(R.string.recovery_correo_placeholder)) },
             leadingIcon = {
                 Icon(Icons.Filled.Email, contentDescription = null)
             },
             isError = emailError && showValidation,
             supportingText = {
                 if (emailError && showValidation) {
-                    Text("Ingresa un correo válido", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.recovery_correo_invalido), color = MaterialTheme.colorScheme.error)
                 }
             },
             singleLine = true,
@@ -128,7 +133,7 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
 
         NicaButton(
-            text = if (isLoading) "Enviando..." else "Enviar enlace",
+            text = if (isLoading) stringResource(R.string.recovery_enviando) else stringResource(R.string.recovery_enviar),
             onClick = {
                 showValidation = true
                 emailError = email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -141,12 +146,10 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
                         isLoading = false
                         result.fold(
                             onSuccess = {
-                                successMessage =
-                                    "Correo enviado correctamente. Revisa tu bandeja de entrada para restablecer tu contraseña."
+                                successMessage = successText
                             },
                             onFailure = {
-                                errorMessage =
-                                    "No pudimos enviar el correo. Verifica la dirección e inténtalo nuevamente."
+                                errorMessage = errorText
                             }
                         )
                     }
@@ -188,7 +191,7 @@ fun RecoveryPasswordScreen(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Volver al inicio de sesión",
+            text = stringResource(R.string.recovery_volver),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,

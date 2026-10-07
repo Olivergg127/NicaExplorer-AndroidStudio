@@ -1,7 +1,9 @@
 package com.lospuntoycoma.nicaexplorer.ui.viewmodels
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.model.Comercio
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +14,7 @@ import kotlinx.coroutines.launch
 data class MisComerciosUiState(
     val isLoading: Boolean = true,
     val comercios: List<Comercio> = emptyList(),
-    val error: String? = null,
+    @StringRes val error: Int? = null,
     val deletingId: String? = null
 )
 
@@ -34,7 +36,7 @@ class MisComerciosViewModel : ViewModel() {
         if (uid == null) {
             _uiState.value = MisComerciosUiState(
                 isLoading = false,
-                error = "Inicia sesión para administrar tus comercios."
+                error = R.string.error_sesion_requerida
             )
             return
         }
@@ -51,7 +53,7 @@ class MisComerciosViewModel : ViewModel() {
                 .onFailure {
                     _uiState.value = MisComerciosUiState(
                         isLoading = false,
-                        error = "No se pudieron cargar tus comercios. Revisa tu conexión."
+                        error = R.string.error_cargar_mis_comercios
                     )
                 }
         }
@@ -70,7 +72,7 @@ class MisComerciosViewModel : ViewModel() {
                 .onFailure {
                     _uiState.value = _uiState.value.copy(
                         deletingId = null,
-                        error = "No se pudo eliminar el comercio."
+                        error = R.string.error_eliminar_comercio
                     )
                 }
         }

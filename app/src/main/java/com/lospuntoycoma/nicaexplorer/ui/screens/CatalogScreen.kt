@@ -69,12 +69,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
@@ -121,7 +123,7 @@ fun CatalogScreen(
     val scrollState = rememberScrollState()
 
     val city = SampleData.cities.firstOrNull { it.id == cityId }
-    val cityName = city?.name ?: "Ciudad"
+    val cityName = city?.name ?: stringResource(R.string.catalog_ciudad)
 
     val comerciosCiudad = comerciosState.comercios.filter {
         it.ciudad.trim().equals(cityId.trim(), ignoreCase = true) ||
@@ -187,7 +189,7 @@ fun CatalogScreen(
                     showTitleText = false,
                     actions = {
                         IconButton(onClick = { }) {
-                            Icon(Icons.Filled.Search, contentDescription = "Buscar")
+                            Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.catalog_buscar_desc))
                         }
                     }
                 )
@@ -200,7 +202,7 @@ fun CatalogScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "No hay lugars disponibles",
+                    text = stringResource(R.string.catalog_no_hay_lugares),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                 )
@@ -247,14 +249,14 @@ fun CatalogScreen(
                         Icon(
                             imageVector = if (isSaved) Icons.Filled.Bookmark
                             else Icons.Outlined.BookmarkBorder,
-                            contentDescription = if (isSaved) "Quitar de guardados"
-                            else "Guardar lugar",
+                            contentDescription = if (isSaved) stringResource(R.string.catalog_quitar_guardados)
+                            else stringResource(R.string.catalog_guardar_lugar),
                             tint = if (isSaved) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
                     IconButton(onClick = { }) {
-                        Icon(Icons.Filled.Search, contentDescription = "Buscar")
+                        Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.catalog_buscar_desc))
                     }
                 }
             )
@@ -281,7 +283,7 @@ fun CatalogScreen(
                 Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Valora esta ciudad",
+                        text = stringResource(R.string.catalog_valora_esta_ciudad),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onBackground
@@ -347,7 +349,7 @@ fun CatalogScreen(
                     ) {
                         Icon(
                             Icons.Filled.ChevronLeft,
-                            contentDescription = "Anterior",
+                            contentDescription = stringResource(R.string.catalog_anterior),
                             tint = Color.White,
                             modifier = Modifier.size(36.dp)
                         )
@@ -363,7 +365,7 @@ fun CatalogScreen(
                     ) {
                         Icon(
                             Icons.Filled.ChevronRight,
-                            contentDescription = "Siguiente",
+                            contentDescription = stringResource(R.string.catalog_siguiente),
                             tint = Color.White,
                             modifier = Modifier.size(36.dp)
                         )
@@ -377,7 +379,7 @@ fun CatalogScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "${currentIndex + 1} de ${places.size}",
+                    text = stringResource(R.string.catalog_posicion, currentIndex + 1, places.size),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                     modifier = Modifier
@@ -462,7 +464,7 @@ fun CatalogScreen(
                 // El botón 3D solo aparece si el lugar tiene modelo asignado.
                 if (place.modeloUnity.isNotBlank()) {
                     NicaButton(
-                        text = "Ver en 3D",
+                        text = stringResource(R.string.catalog_ver_en_3d),
                         onClick = { onVerEn3dClick(place.id) },
                         gradient = Brush.horizontalGradient(
                             colors = listOf(
@@ -476,7 +478,7 @@ fun CatalogScreen(
                 }
 
                 NicaButton(
-                    text = "Hablar con el asistente IA",
+                    text = stringResource(R.string.catalog_hablar_asistente),
                     onClick = { onAssistantClick(place.id) },
                     gradient = Brush.horizontalGradient(
                         colors = listOf(
@@ -492,7 +494,7 @@ fun CatalogScreen(
                 )
 
                 Text(
-                    text = "Información adicional",
+                    text = stringResource(R.string.catalog_info_adicional),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -510,13 +512,13 @@ fun CatalogScreen(
                     Column(modifier = Modifier.padding(16.dp)) {
                         InfoRow(
                             icon = Icons.Filled.CalendarMonth,
-                            label = "Año de construcción",
+                            label = stringResource(R.string.catalog_ano_construccion),
                             value = place.yearBuilt
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InfoRow(
                             icon = Icons.Filled.Info,
-                            label = "Historia",
+                            label = stringResource(R.string.catalog_historia),
                             value = place.history,
                             expandible = true
                         )
@@ -554,14 +556,14 @@ fun CatalogScreen(
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Turismo responsable",
+                                        text = stringResource(R.string.catalog_turismo_responsable),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onBackground
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                     Text(
-                                        text = "Contribuye a preservar este lugar",
+                                        text = stringResource(R.string.catalog_contribuye_preservar),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                                         maxLines = 1,
@@ -570,7 +572,7 @@ fun CatalogScreen(
                                 }
                                 TextButton(onClick = { consejosExpandidos = !consejosExpandidos }) {
                                     Text(
-                                        text = if (consejosExpandidos) "Ocultar consejos" else "Ver consejos",
+                                        text = if (consejosExpandidos) stringResource(R.string.catalog_ocultar_consejos) else stringResource(R.string.catalog_ver_consejos),
                                         style = MaterialTheme.typography.labelLarge
                                     )
                                 }
@@ -617,7 +619,7 @@ fun CatalogScreen(
                 )
 
                 Text(
-                    text = "Lugares recomendados",
+                    text = stringResource(R.string.catalog_lugares_recomendados),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -647,7 +649,7 @@ fun CatalogScreen(
                 )
 
                 Text(
-                    text = "Comercios recomendados",
+                    text = stringResource(R.string.catalog_comercios_recomendados),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -663,7 +665,7 @@ fun CatalogScreen(
                     FilterChip(
                         selected = padreSeleccionado == null,
                         onClick = { padreSeleccionado = null },
-                        label = { Text("Todos") }
+                        label = { Text(stringResource(R.string.catalog_todos)) }
                     )
                     categoriasPadreCiudad.forEach { padre ->
                         FilterChip(
@@ -678,7 +680,7 @@ fun CatalogScreen(
 
                 if (comerciosTop.isEmpty()) {
                     Text(
-                        text = "Aún no hay comercios para mostrar.",
+                        text = stringResource(R.string.catalog_sin_comercios),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
                     )
@@ -708,7 +710,7 @@ fun CatalogScreen(
                         onClick = { padreSeleccionado?.let(onVerSubcategoriasComercio) },
                         enabled = padreSeleccionado != null
                     ) {
-                        Text(text = "Ver todos")
+                        Text(text = stringResource(R.string.catalog_ver_todos))
                         Icon(
                             imageVector = Icons.Filled.ChevronRight,
                             contentDescription = null,
@@ -916,7 +918,7 @@ private fun RutasInteligentesAccessCard(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (ruta != null) "Rutas Creativas" else "Rutas próximamente",
+                    text = if (ruta != null) stringResource(R.string.catalog_rutas_creativas) else stringResource(R.string.catalog_rutas_proximamente),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -924,8 +926,13 @@ private fun RutasInteligentesAccessCard(
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = ruta?.let {
-                        "${it.nombre} · ${it.numeroParadas} paradas · ${it.duracionEstimada}"
-                    } ?: "Estamos preparando recorridos con lugares y comercios locales de esta ciudad.",
+                        stringResource(
+                            R.string.catalog_ruta_detalle,
+                            it.nombre,
+                            it.numeroParadas,
+                            it.duracionEstimada
+                        )
+                    } ?: stringResource(R.string.catalog_rutas_descripcion),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f),
                     maxLines = if (ruta != null) 1 else 2,
@@ -935,7 +942,7 @@ private fun RutasInteligentesAccessCard(
             if (ruta != null) {
                 Icon(
                     imageVector = Icons.Filled.ChevronRight,
-                    contentDescription = "Abrir rutas creativas",
+                    contentDescription = stringResource(R.string.catalog_abrir_rutas),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )
@@ -987,13 +994,13 @@ private fun AfluenciaCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Afluencia estimada",
+                    text = stringResource(R.string.catalog_afluencia_estimada),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = afluencia.displayName,
+                    text = stringResource(afluencia.displayNameRes),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = levelColor,
@@ -1030,7 +1037,7 @@ private fun AfluenciaCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Nivel orientativo para ayudar a distribuir las visitas.",
+                text = stringResource(R.string.catalog_afluencia_nivel),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
             )
@@ -1040,7 +1047,7 @@ private fun AfluenciaCard(
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "¿Buscas un lugar más tranquilo?",
+                    text = stringResource(R.string.catalog_buscar_mas_tranquilo),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -1061,14 +1068,17 @@ private fun AfluenciaCard(
                             overflow = TextOverflow.Ellipsis
                         )
                         Text(
-                            text = "Afluencia estimada ${quieterAlternative.afluencia.displayName.lowercase()}",
+                            text = stringResource(
+                                R.string.catalog_afluencia_estimada_valor,
+                                stringResource(quieterAlternative.afluencia.displayNameRes).lowercase()
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     }
                     Icon(
                         imageVector = Icons.Filled.ChevronRight,
-                        contentDescription = "Abrir ${quieterAlternative.name}",
+                        contentDescription = stringResource(R.string.catalog_abrir_lugar, quieterAlternative.name),
                         modifier = Modifier.size(20.dp)
                     )
                 }

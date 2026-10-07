@@ -30,7 +30,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.FirebaseRepository
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaButton
 import com.lospuntoycoma.nicaexplorer.ui.components.NicaTopBar
@@ -54,10 +56,13 @@ fun EditarPerfilScreen(
     var isLoading by remember { mutableStateOf(false) }
     var guardadoExitoso by remember { mutableStateOf(false) }
 
+    val mensajeCambiosGuardados = stringResource(R.string.editprofile_cambios_guardados)
+    val mensajeErrorGuardar = stringResource(R.string.editprofile_error_guardar)
+
     Scaffold(
         topBar = {
             NicaTopBar(
-                title = "Editar perfil",
+                title = stringResource(R.string.editprofile_titulo),
                 onBack = onBack
             )
         },
@@ -74,7 +79,7 @@ fun EditarPerfilScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Actualiza la información de tu perfil",
+                text = stringResource(R.string.editprofile_descripcion),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
@@ -84,7 +89,7 @@ fun EditarPerfilScreen(
             OutlinedTextField(
                 value = currentUser?.email ?: userProfile?.correo ?: "",
                 onValueChange = {},
-                label = { Text("Correo electrónico") },
+                label = { Text(stringResource(R.string.editprofile_correo)) },
                 leadingIcon = {
                     Icon(Icons.Filled.Email, contentDescription = null)
                 },
@@ -105,8 +110,8 @@ fun EditarPerfilScreen(
             OutlinedTextField(
                 value = nombre,
                 onValueChange = { nombre = it },
-                label = { Text("Nombre") },
-                placeholder = { Text("Tu nombre") },
+                label = { Text(stringResource(R.string.editprofile_nombre)) },
+                placeholder = { Text(stringResource(R.string.editprofile_nombre_placeholder)) },
                 leadingIcon = {
                     Icon(Icons.Filled.Person, contentDescription = null)
                 },
@@ -122,7 +127,7 @@ fun EditarPerfilScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             NicaButton(
-                text = if (isLoading) "Guardando..." else "Guardar cambios",
+                text = if (isLoading) stringResource(R.string.editprofile_guardando) else stringResource(R.string.editprofile_guardar_cambios),
                 enabled = nombre.isNotBlank() && !isLoading,
                 onClick = {
                     val uid = currentUser?.uid
@@ -135,10 +140,10 @@ fun EditarPerfilScreen(
                             if (success) {
                                 guardadoExitoso = true
                                 userViewModel.loadUserProfile()
-                                snackbarHostState.showSnackbar("Cambios guardados correctamente")
+                                snackbarHostState.showSnackbar(mensajeCambiosGuardados)
                             } else {
                                 snackbarHostState.showSnackbar(
-                                    "No se pudo guardar el nombre. Revisa tu conexión e inténtalo de nuevo."
+                                    mensajeErrorGuardar
                                 )
                             }
                         }
@@ -149,7 +154,7 @@ fun EditarPerfilScreen(
             if (guardadoExitoso) {
                 Spacer(modifier = Modifier.height(12.dp))
                 NicaButton(
-                    text = "Volver al perfil",
+                    text = stringResource(R.string.editprofile_volver),
                     onClick = onBack
                 )
             }

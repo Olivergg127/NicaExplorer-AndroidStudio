@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- HomeScreen -->
+    <string name="home_logo_desc">NicaExplore logo</string>
+    <string name="home_inicio">Home</string>
+    <string name="home_perfil">Profile</string>
+    <string name="home_lugares_guardados">Saved places</string>
+    <string name="home_mis_comercios">My businesses</string>
+    <string name="home_asistente_ia">AI Assistant</string>
+    <string name="home_mapa">Map</string>
+    <string name="home_panel_admin">Admin Panel</string>
+    <string name="home_cerrar_sesion">Log out</string>
+    <string name="home_iniciar_sesion">Log in</string>
+    <string name="home_menu_desc">Menu</string>
+    <string name="home_notificaciones_desc">Notifications</string>
+    <string name="home_explorar">Explore</string>
+    <string name="home_hola_nombre">Hello, %1$s</string>
+    <string name="home_hola_explorador">Hello, explorer</string>
+    <string name="home_que_deseas_descubrir">What do you want to discover today?</string>
+    <string name="home_descubre_nicaragua">Discover Nicaragua with NicaExplore</string>
+    <string name="home_hero_descripcion">Explore cities, learn about their history and culture, discover places in 3D, and find local experiences and businesses all in one place.</string>
+    <string name="home_explora_por_ciudad">Explore by city</string>
+    <string name="home_ver_todas">See all</string>
+    <string name="home_lugares_recomendados">Recommended places</string>
+    <string name="home_lugares_recomendados_en">Recommended places in %1$s</string>
+    <string name="home_comercios_recomendados">Recommended businesses</string>
+    <string name="home_comercios_recomendados_en">Recommended businesses in %1$s</string>
+
+    <!-- CitySelectionScreen -->
+    <string name="city_selecciona_una_ciudad">Select a city</string>
+    <string name="city_descripcion">Discover places, history, and culture</string>
+    <string name="city_buscar_ciudad">Search city...</string>
+
+    <!-- CatalogScreen -->
+    <string name="catalog_ciudad">City</string>
+    <string name="catalog_buscar_desc">Search</string>
+    <string name="catalog_no_hay_lugares">No places available</string>
+    <string name="catalog_quitar_guardados">Remove from saved</string>
+    <string name="catalog_guardar_lugar">Save place</string>
+    <string name="catalog_valora_esta_ciudad">Rate this city</string>
+    <string name="catalog_anterior">Previous</string>
+    <string name="catalog_siguiente">Next</string>
+    <string name="catalog_posicion">%1$d of %2$d</string>
+    <string name="catalog_ver_en_3d">View in 3D</string>
+    <string name="catalog_hablar_asistente">Talk to the AI assistant</string>
+    <string name="catalog_info_adicional">Additional information</string>
+    <string name="catalog_ano_construccion">Year built</string>
+    <string name="catalog_historia">History</string>
+    <string name="catalog_turismo_responsable">Responsible tourism</string>
+    <string name="catalog_contribuye_preservar">Help preserve this place</string>
+    <string name="catalog_ocultar_consejos">Hide tips</string>
+    <string name="catalog_ver_consejos">View tips</string>
+    <string name="catalog_lugares_recomendados">Recommended places</string>
+    <string name="catalog_comercios_recomendados">Recommended businesses</string>
+    <string name="catalog_todos">All</string>
+    <string name="catalog_sin_comercios">There are no businesses to show yet.</string>
+    <string name="catalog_ver_todos">See all</string>
+    <string name="catalog_rutas_creativas">Creative Routes</string>
+    <string name="catalog_rutas_proximamente">Routes coming soon</string>
+    <string name="catalog_ruta_detalle">%1$s · %2$d stops · %3$s</string>
+    <string name="catalog_rutas_descripcion">We are preparing tours with local places and businesses in this city.</string>
+    <string name="catalog_abrir_rutas">Open creative routes</string>
+    <string name="catalog_afluencia_estimada">Estimated crowds</string>
+    <string name="catalog_afluencia_nivel">Approximate level to help distribute visits.</string>
+    <string name="catalog_buscar_mas_tranquilo">Looking for a quieter place?</string>
+    <string name="catalog_afluencia_estimada_valor">Estimated crowds %1$s</string>
+    <string name="catalog_abrir_lugar">Open %1$s</string>
+</resources>
