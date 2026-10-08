@@ -5,6 +5,7 @@ import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.GenerativeBackend
 import com.google.firebase.ai.type.content
 import com.lospuntoycoma.nicaexplorer.model.Comercio
+import com.lospuntoycoma.nicaexplorer.model.City
 import com.lospuntoycoma.nicaexplorer.model.Place
 import java.util.Locale
 
@@ -57,9 +58,21 @@ object GeminiRepository {
         prompt: String,
         comercios: List<Comercio> = emptyList(),
         place: Place? = null,
-        places: List<Place> = emptyList()
+        places: List<Place> = emptyList(),
+        ciudadUsuario: City? = null
     ): String? {
         val contextSections = mutableListOf<String>()
+
+        // Ciudad donde está el usuario (solo el nombre; no se envían coordenadas).
+        // Permite que Itzae priorice recomendaciones cercanas.
+        ciudadUsuario?.let { ciudad ->
+            contextSections += """
+                UBICACIÓN ACTUAL DEL USUARIO: ${ciudad.name}
+                Si el usuario pide recomendaciones cercanas ("cerca de mí", "por aquí",
+                "qué puedo visitar", "dónde comer"), prioriza lugares y comercios de esta ciudad.
+            """.trimIndent()
+        }
+
 
         place?.let { currentPlace ->
             contextSections += """
@@ -113,13 +126,17 @@ object GeminiRepository {
             prompt
         }
 
-        // Directiva de idioma: la app puede estar en español o inglés.
+        // Directiva de idioma: las instrucciones de sistema están en español, así que sin
+        // esto Gemini respondería siempre en español. Según el idioma activo de la app
+        // (Locale.getDefault(), fijado en MainActivity.attachBaseContext) se le pide
+        // responder en inglés o en español. Los nombres propios se conservan.
         val languageDirective = if (Locale.getDefault().language == "en") {
             "IMPORTANT: Answer ONLY in English, regardless of the language of these instructions, " +
                 "the context, or the data. Keep proper nouns (place names) as they are."
         } else {
             "IMPORTANTE: Responde únicamente en español."
         }
+        // Se antepone la directiva al prompt final que se envía al modelo.
         val promptWithLanguage = "$languageDirective\n\n$fullPrompt"
 
         return try {

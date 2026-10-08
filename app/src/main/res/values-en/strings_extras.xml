@@ -15,6 +15,12 @@
     <string name="assistant_escribe_mensaje">Type a message...</string>
     <string name="assistant_enviar">Send</string>
     <string name="assistant_pensando">Thinking...</string>
+    <string name="assistant_ubicacion_actual">📍 %1$s</string>
+    <string name="assistant_ubicacion_sin">No location</string>
+    <string name="assistant_ubicacion_usar">Use my location</string>
+    <string name="assistant_ubicacion_elegir">Choose city</string>
+    <string name="assistant_ubicacion_quitar">Remove location</string>
+    <string name="assistant_ubicacion_permiso">Location permission denied</string>
 
     <!-- RutasInteligentesScreen -->
     <string name="rutas_titulo">Creative Routes</string>

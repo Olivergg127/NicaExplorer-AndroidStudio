@@ -50,6 +50,16 @@ object UbicacionHelper {
     }
 
     /**
+     * Ciudad registrada más cercana a la ubicación actual del usuario.
+     * Devuelve null si no hay permiso, no hay ubicación conocida o el usuario está
+     * lejos (> [RADIO_CIUDAD_KM]) de todas las ciudades.
+     */
+    suspend fun ciudadActual(context: Context, ciudades: List<City>): City? {
+        val ubicacion = ultimaUbicacion(context) ?: return null
+        return ciudadMasCercana(ubicacion.latitude, ubicacion.longitude, ciudades)
+    }
+
+    /**
      * Ciudad registrada más cercana dentro del radio permitido; null si el usuario
      * está lejos de todas las ciudades conocidas.
      */

@@ -1,7 +1,13 @@
 package com.lospuntoycoma.nicaexplorer.ui.screens
 
+import android.Manifest
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,10 +30,15 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +47,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,6 +61,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +71,9 @@ import com.lospuntoycoma.nicaexplorer.R
 import com.lospuntoycoma.nicaexplorer.data.ApiRepository
 import com.lospuntoycoma.nicaexplorer.data.GeminiRepository
 import com.lospuntoycoma.nicaexplorer.data.SampleData
+import com.lospuntoycoma.nicaexplorer.data.UbicacionHelper
 import com.lospuntoycoma.nicaexplorer.data.UserPreferences
+import com.lospuntoycoma.nicaexplorer.model.City
 import com.lospuntoycoma.nicaexplorer.model.Place
 import com.lospuntoycoma.nicaexplorer.ui.components.EstadoMascota
 import com.lospuntoycoma.nicaexplorer.ui.components.MascotaFlotante
@@ -84,6 +99,39 @@ fun AssistantScreen(
     val mascotaActiva by UserPreferences.mascotaFlow().collectAsState(initial = true)
     val mensajeErrorConexion = stringResource(R.string.assistant_error_conexion)
 
+    // --- Ubicación del usuario (solo la ciudad) para recomendaciones cercanas ---
+    val context = LocalContext.current
+    var ciudadUsuario by remember { mutableStateOf<City?>(null) }
+    var permisoUbicacion by remember { mutableStateOf(UbicacionHelper.tienePermiso(context)) }
+    var menuUbicacion by remember { mutableStateOf(false) }
+    var selectorCiudad by remember { mutableStateOf(false) }
+    val textoPermisoDenegado = stringResource(R.string.assistant_ubicacion_permiso)
+
+    // Detecta la ciudad más cercana usando la última ubicación conocida (sin seguimiento continuo).
+    fun detectarCiudad() {
+        scope.launch {
+            ciudadUsuario = UbicacionHelper.ciudadActual(context, SampleData.cities)
+        }
+    }
+
+    // Pide permiso de ubicación y, si se concede, detecta la ciudad.
+    val permisoLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { resultado ->
+        val concedido = resultado.values.any { it }
+        permisoUbicacion = concedido
+        if (concedido) {
+            detectarCiudad()
+        } else {
+            Toast.makeText(context, textoPermisoDenegado, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Al abrir el chat: si ya hay permiso, detecta la ciudad automáticamente.
+    LaunchedEffect(Unit) {
+        if (permisoUbicacion) detectarCiudad()
+    }
+
     val citySuggestion = placeContext?.city
         ?.trim()
         ?.takeIf { it.isNotEmpty() }
@@ -106,15 +154,27 @@ fun AssistantScreen(
         isLoading = true
 
         scope.launch {
-            // Obtenemos los comercios dinámicamente para pasarlos como contexto a Itzae
-            val comerciosResult = ApiRepository.getComercios()
-            val comercios = comerciosResult.getOrDefault(emptyList())
+            // Comercios de la API; si hay ciudad del usuario, se filtran a esa ciudad
+            // (menos datos y recomendaciones más cercanas).
+            val comerciosTodos = ApiRepository.getComercios().getOrDefault(emptyList())
+            val comercios = ciudadUsuario?.let { ciudad ->
+                comerciosTodos.filter {
+                    it.cityId.equals(ciudad.id, ignoreCase = true) ||
+                        it.ciudad.equals(ciudad.name, ignoreCase = true)
+                }
+            } ?: comerciosTodos
+
+            // Lugares: si hay ciudad del usuario, se limita el contexto a esa ciudad.
+            val places = ciudadUsuario?.let { ciudad ->
+                localPlaces.filter { it.cityId == ciudad.id }
+            } ?: localPlaces
 
             val response = GeminiRepository.generateContent(
                 prompt = trimmed,
                 comercios = comercios,
                 place = placeContext,
-                places = localPlaces
+                places = places,
+                ciudadUsuario = ciudadUsuario
             )
             messages.add(
                 ChatMessage(
@@ -170,6 +230,72 @@ fun AssistantScreen(
                 .imePadding()
                 .background(nicaAppBackgroundBrush())
         ) {
+            // Chip de ubicación: muestra la ciudad usada para recomendaciones cercanas.
+            // Al tocarlo abre el menú (usar ubicación / elegir ciudad / quitar).
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box {
+                    AssistChip(
+                        onClick = { menuUbicacion = true },
+                        label = {
+                            Text(
+                                text = ciudadUsuario?.let {
+                                    stringResource(R.string.assistant_ubicacion_actual, it.name)
+                                } ?: stringResource(R.string.assistant_ubicacion_sin)
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.LocationOn,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    )
+                    DropdownMenu(
+                        expanded = menuUbicacion,
+                        onDismissRequest = { menuUbicacion = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.assistant_ubicacion_usar)) },
+                            onClick = {
+                                menuUbicacion = false
+                                if (permisoUbicacion) {
+                                    detectarCiudad()
+                                } else {
+                                    permisoLauncher.launch(
+                                        arrayOf(
+                                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                                            Manifest.permission.ACCESS_FINE_LOCATION
+                                        )
+                                    )
+                                }
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.assistant_ubicacion_elegir)) },
+                            onClick = {
+                                menuUbicacion = false
+                                selectorCiudad = true
+                            }
+                        )
+                        if (ciudadUsuario != null) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.assistant_ubicacion_quitar)) },
+                                onClick = {
+                                    menuUbicacion = false
+                                    ciudadUsuario = null
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -306,7 +432,12 @@ fun AssistantScreen(
             }
         }
 
+            // Mascota flotante de Itzae (arrastrable). Se muestra solo si está activada.
             if (mascotaActiva) {
+                // El estado de ánimo de la mascota refleja lo que hace el asistente:
+                //  - PENSANDO mientras esperamos la respuesta de Gemini (isLoading),
+                //  - RESPONDIENDO durante unos segundos tras recibir la respuesta,
+                //  - IDLE (respirando/flotando) el resto del tiempo.
                 val estadoMascota = when {
                     isLoading -> EstadoMascota.PENSANDO
                     respondiendo -> EstadoMascota.RESPONDIENDO
@@ -316,6 +447,37 @@ fun AssistantScreen(
                     imageRes = com.lospuntoycoma.nicaexplorer.R.drawable.mascota_itzae,
                     estado = estadoMascota,
                     onCerrar = { scope.launch { UserPreferences.setMascotaEnabled(false) } }
+                )
+            }
+
+            // Diálogo para elegir la ciudad manualmente (fallback sin permiso/GPS).
+            if (selectorCiudad) {
+                AlertDialog(
+                    onDismissRequest = { selectorCiudad = false },
+                    title = { Text(stringResource(R.string.assistant_ubicacion_elegir)) },
+                    text = {
+                        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                            SampleData.cities.forEach { city ->
+                                Text(
+                                    text = city.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            ciudadUsuario = city
+                                            selectorCiudad = false
+                                        }
+                                        .padding(vertical = 12.dp)
+                                )
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { selectorCiudad = false }) {
+                            Text(stringResource(R.string.comerciodet_cancelar))
+                        }
+                    }
                 )
             }
         }

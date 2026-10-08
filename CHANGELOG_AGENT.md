@@ -6,6 +6,22 @@
 
 ## 2026-10-07
 
+### App — Itzae conoce la ciudad del usuario (recomendaciones cercanas)
+- Objetivo: que el asistente recomiende destinos y comercios **cercanos** al usuario.
+- App Android:
+  - `data/UbicacionHelper.kt`: nuevo `ciudadActual(context, ciudades)` (última ubicación
+    conocida + ciudad más cercana, radio 25 km).
+  - `ui/screens/AssistantScreen.kt`: al abrir el chat detecta la ciudad si hay permiso
+    (auto); **chip** de ubicación con menú (Usar mi ubicación / Elegir ciudad / Quitar);
+    permiso con `rememberLauncherForActivityResult`; selector de ciudad manual; **filtra**
+    comercios y lugares por la ciudad del usuario antes de enviarlos a la IA.
+  - `data/GeminiRepository.kt`: nuevo parámetro `ciudadUsuario: City?`; se añade al contexto
+    "UBICACIÓN ACTUAL DEL USUARIO: <ciudad>" y la instrucción de priorizar lo cercano.
+  - `res/values/strings_extras.xml` y `values-en/strings_extras.xml`: textos del chip/menú.
+  - Solo se envía la **ciudad** (no coordenadas). No se tocó el manifiesto (permisos ya existían).
+- Build: `.\gradlew.bat :app:assembleDebug -PskipIl2CppBuild` — **BUILD SUCCESSFUL**.
+  Verificado en dispositivo (Infinix X6886).
+
 ### App/Panel — Soporte bilingüe (español/inglés), mascota de Itzae e idioma de la IA
 - Objetivo: permitir usar toda la app en **español o inglés** (selector en Configuración),
   agregar la **mascota flotante** de Itzae en el chat y que el asistente responda en el

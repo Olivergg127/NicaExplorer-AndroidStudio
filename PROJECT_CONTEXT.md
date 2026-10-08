@@ -92,6 +92,9 @@ culturales, todo con una identidad visual nicaragüense.
 - Prioriza Juigalpa, Managua y León; el catálogo local es la fuente de verdad de los
   monumentos; para comercios usa conocimiento general pero sin inventar datos inexistentes.
 - Habla siempre de **"afluencia estimada"**, nunca de datos en tiempo real.
+- **Conoce la ciudad del usuario** (solo la ciudad, no las coordenadas): la detecta por GPS,
+  por la última ubicación conocida o por un selector manual en el chat. Con ella prioriza
+  lugares y comercios cercanos; si no hay ubicación, responde con el catálogo general.
 
 ## Comercios locales
 

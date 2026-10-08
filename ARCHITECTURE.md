@@ -151,6 +151,11 @@ URL base y la API key se inyectan en `BuildConfig` desde `local.properties`
   `gemini-3.5-flash-lite` e instrucciones de sistema para Itzae. El asistente responde en el
   idioma de la app mediante una directiva de idioma añadida al prompt según
   `Locale.getDefault().language`.
+- **Ubicación para Itzae:** `AssistantScreen` obtiene la **ciudad** del usuario
+  (`UbicacionHelper.ciudadActual`, GPS/última ubicación conocida, o selector manual) y la pasa
+  a `GeminiRepository.generateContent(ciudadUsuario=…)`. El chat filtra comercios y lugares a
+  esa ciudad y el modelo prioriza recomendaciones cercanas. Solo se envía la ciudad (no las
+  coordenadas).
 - **App Check** (`firebase-appcheck-playintegrity`) está incluido como dependencia, pero
   **sin inicializar** en el código.
 
