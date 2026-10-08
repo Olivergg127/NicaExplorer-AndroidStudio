@@ -13,9 +13,9 @@
  *   @var string $year     Año actual para el pie de página.
  */
 
-$apkUrl  = $apkUrl  ?? 'https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/latest/download/NicaExplorer.apk';
+$apkUrl  = $apkUrl  ?? 'https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/download/v1.1.3/NicaExplorer.apk';
 $repoUrl = $repoUrl ?? 'https://github.com/Olivergg127/NicaExplorer-AndroidStudio';
-$version = $version ?? '1.1.2';
+$version = $version ?? '1.1.3';
 $year    = $year    ?? date('Y');
 
 /** Iconos SVG en línea (trazo, 24x24) para no depender de librerías externas. */
@@ -60,7 +60,7 @@ $features = [
 ];
 
 $steps = [
-    ['01', 'Elige tu ciudad',    'Empieza por Juigalpa, León o Managua y abre su catálogo de lugares.'],
+    ['01', 'Elige tu ciudad',    'Empieza por Juigalpa, León, Managua o Masaya y abre su catálogo de lugares.'],
     ['02', 'Explóralo todo',     'Lee la historia, el año, la categoría y la afluencia estimada de cada monumento.'],
     ['03', 'Míralo en 3D',       'Abre el visor 3D y recorre el monumento desde cualquier ángulo.'],
     ['04', 'Pregunta a Itzae',   'Chatea con el asistente y descubre comercios locales para tu visita.'],
@@ -226,7 +226,7 @@ $faqs = [
 
             <div class="shell">
                 <ul class="stats reveal" data-delay="2">
-                    <li class="stat"><b>3</b><span>ciudades para explorar</span></li>
+                    <li class="stat"><b>4</b><span>ciudades para explorar</span></li>
                     <li class="stat"><b>8+</b><span>monumentos en el catálogo</span></li>
                     <li class="stat"><b>3D</b><span>visión interactiva con Unity</span></li>
                     <li class="stat"><b>IA</b><span>asistente con contexto local</span></li>
