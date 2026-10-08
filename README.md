@@ -591,6 +591,8 @@ Instálalo por ADB (`adb install -r NicaExplorer.apk`) o directamente en el tel�
 
 > Si venías usando un APK `debug`, desinstálalo antes: la firma de release es distinta y
 > Android rechazará la instalación por conflicto de firmas.
+>[![Video Demostrativo](thumbnail.png)](https://1drv.ms/v/c/e683e50932555566/IQCg00QGLx98SrSgNmavCydKAYYYDBJmWsQIV1FDox7vXWQ?e=S7z2aZ)
+
 
 ### Panel web / Backend
 
