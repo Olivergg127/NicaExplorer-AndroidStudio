@@ -201,7 +201,7 @@ object FirebaseRepository {
 
     private fun docToComercio(doc: DocumentSnapshot): Comercio = Comercio(
         id = doc.id,
-        nombre = localized(doc.getString("nombre") ?: "", doc.getString("nombreEn") ?: ""),
+        nombre = doc.getString("nombre") ?: "",
         categoria = localized(doc.getString("categoria") ?: "", doc.getString("categoriaEn") ?: ""),
         categoriaPadre = localized(doc.getString("categoriaPadre") ?: "", doc.getString("categoriaPadreEn") ?: ""),
         descripcion = localized(doc.getString("descripcion") ?: "", doc.getString("descripcionEn") ?: ""),

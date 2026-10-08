@@ -84,11 +84,14 @@ object ApiRepository {
     private fun localized(es: String, en: String): String =
         if (Locale.getDefault().language == "en" && en.isNotBlank()) en else es
 
+    private fun localizedList(es: List<String>, en: List<String>): List<String> =
+        if (Locale.getDefault().language == "en" && en.isNotEmpty()) en else es
+
     private fun toCity(id: String, d: JSONObject): City? {
         if (!d.optBoolean("activo", true)) return null
         return City(
             id = id,
-            name = localized(d.optString("nombre", d.optString("name", id)), d.optString("nombreEn")),
+            name = d.optString("nombre", d.optString("name", id)),
             description = localized(d.optString("descripcion", d.optString("description", "")), d.optString("descripcionEn")),
             // El campo en Firestore sigue siendo "monumentCount"; en la app es placeCount.
             placeCount = d.optInt("monumentCount", 0),
@@ -115,7 +118,7 @@ object ApiRepository {
 
         return Place(
             id = id,
-            name = localized(d.optString("nombre", d.optString("name", id)), d.optString("nombreEn")),
+            name = d.optString("nombre", d.optString("name", id)),
             city = d.optString("ciudad", d.optString("city", "")),
             cityId = cityId,
             category = localized(d.optString("categoria", d.optString("category", "")), d.optString("categoriaEn")),
@@ -140,11 +143,11 @@ object ApiRepository {
         return RutaTuristica(
             id = id,
             cityId = cityId,
-            nombre = localized(d.optString("nombre", ""), d.optString("nombreEn")),
+            nombre = d.optString("nombre", ""),
             descripcion = localized(d.optString("descripcion", ""), d.optString("descripcionEn")),
-            duracionEstimada = d.optString("duracionEstimada", ""),
-            notaDuracion = d.optString("notaDuracion", ""),
-            objetivos = d.optJSONArray("objetivos").toStringList(),
+            duracionEstimada = localized(d.optString("duracionEstimada", ""), d.optString("duracionEstimadaEn")),
+            notaDuracion = localized(d.optString("notaDuracion", ""), d.optString("notaDuracionEn")),
+            objetivos = localizedList(d.optJSONArray("objetivos").toStringList(), d.optJSONArray("objetivosEn").toStringList()),
             paradas = d.optJSONArray("paradas").toStringList().mapNotNull(::parseReferenciaParada),
             imagenUrl = d.optString("imagenUrl").takeIf { it.isNotBlank() },
             orden = d.optInt("orden", 0),
@@ -154,7 +157,7 @@ object ApiRepository {
 
     private fun toComercio(id: String, d: JSONObject): Comercio? = Comercio(
         id = id,
-        nombre = localized(d.optString("nombre", ""), d.optString("nombreEn")),
+        nombre = d.optString("nombre", ""),
         categoria = localized(d.optString("categoria", ""), d.optString("categoriaEn")),
         categoriaPadre = localized(d.optString("categoriaPadre", ""), d.optString("categoriaPadreEn")),
         descripcion = localized(d.optString("descripcion", ""), d.optString("descripcionEn")),
@@ -173,8 +176,8 @@ object ApiRepository {
         tieneWhatsapp = d.optBoolean("tieneWhatsapp", false),
         correo = d.optString("correo", ""),
         redesSociales = d.toStringListFlexible("redesSociales"),
-        servicios = d.optJSONArray("servicios").toStringList(),
-        productos = d.optJSONArray("productos").toStringList(),
+        servicios = localizedList(d.optJSONArray("servicios").toStringList(), d.optJSONArray("serviciosEn").toStringList()),
+        productos = localizedList(d.optJSONArray("productos").toStringList(), d.optJSONArray("productosEn").toStringList()),
         infoAdicional = localized(d.optString("infoAdicional", ""), d.optString("infoAdicionalEn")),
         activo = d.optBoolean("activo", false),
         // Los documentos antiguos no tienen "aprobado": se consideran aprobados.

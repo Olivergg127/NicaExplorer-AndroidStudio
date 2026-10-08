@@ -1,0 +1,411 @@
+{
+  "ciudades": {
+    "juigalpa": {
+      "lemaEn": "Heart of Chontal culture",
+      "descripcionEn": "Cattle and cultural city in central Nicaragua, capital of the Chontales department.",
+      "historiaEn": "Juigalpa is the capital of the Chontales department. Its name comes from \"Xiuatlpan\" and its history is tied to cattle ranching, archaeology and the cultural life of central Nicaragua. Its Central Park gathers monuments that honor the Juigalpina mother, the cattle tradition and the region's pre-Columbian legacy."
+    },
+    "leon": {
+      "lemaEn": "León, cradle of poetry, revolution and Nicaraguan faith",
+      "descripcionEn": "Colonial city and cradle of Nicaraguan poetry",
+      "historiaEn": "León was founded in 1524, but in 1610 it was moved to its current location after being destroyed by the Momotombo volcano. A former capital of Nicaragua, it became known as the \"University City\" and the intellectual heart of the country, home to the legacy and tomb of Rubén Darío. In the 20th century it became a stronghold of popular struggle, proclaimed the \"First Capital of the Revolution\" after leading the liberation against the Somoza dictatorship in 1979."
+    },
+    "managua": {
+      "lemaEn": "Managua, heart of Nicaraguan history and folklore",
+      "descripcionEn": "Capital full of history and modernity",
+      "historiaEn": "Managua began as an indigenous settlement on the shores of Lake Xolotlán and officially became the capital of Nicaragua on February 5, 1852, to resolve the power conflict between the cities of León and Granada."
+    },
+    "masaya": {
+      "lemaEn": "Masaya, cradle of folklore and heart of Nicaraguan identity",
+      "descripcionEn": "Masaya is the \"Capital of Nicaraguan Folklore\", a vibrant city famous for its cultural identity, traditional crafts, the historic indigenous neighborhood of Monimbó and the imposing Masaya Volcano.",
+      "historiaEn": "Masaya originated as a prosperous indigenous Chorotega and Nicarao settlement called Masāyān (\"Place of deer\"). After the Spanish conquest in 1524, it became a strategic commercial hub between León and Granada, giving rise to a deep cultural and religious mixing. It was elevated to city status in 1839, becoming a temporary capital of the Republic. Over the centuries it consolidated its identity as a bastion of national bravery and resistance, standing out in the battles against the filibuster William Walker, the defense of General Benjamín Zeledón at the El Coyotepe fortress, and the uprising of the indigenous neighborhood of Monimbó in the 1970s. Today it is formally recognized as Cultural Heritage of the Nation."
+    }
+  },
+  "lugares": {
+    "arbol_vida": {
+      "nombreEn": "Tree of Life",
+      "categoriaEn": "Monuments",
+      "descripcionEn": "Decorative structure widely recognized in Managua.",
+      "historiaEn": "One of the best-known urban features of the capital."
+    },
+    "avenida_bolivar_avenida_de_bolivar_a_chavez": {
+      "nombreEn": "Bolívar Avenue (Avenue from Bolívar to Chávez)",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Avenue that runs north to south through the historic center of the city, linking Lake Xolotlán with the Hugo Chávez roundabout and Tiscapa hill. Along its sides are food fairs, state institutions and public spaces.",
+      "historiaEn": "It has been the capital's main thoroughfare, serving as the setting for patriotic parades, processions and important political and social events throughout the city's history."
+    },
+    "basilica_catedral_leon": {
+      "nombreEn": "León Cathedral Basilica",
+      "categoriaEn": "Churches",
+      "descripcionEn": "It is the largest cathedral in Central America, famous for its robust, low-height design, strategically planned to withstand the region's constant earthquakes. Its exterior façade shows a Baroque style transitioning to Neoclassical, with sober yet imposing lines and two symmetrical bell towers. Inside, the space is divided into five naves, brightly lit thanks to a central lantern. Its greatest visual and tourist attraction is its rooftop, made up of a complex system of domes and lanterns, all white, offering a panoramic view of the city and the volcanic range.",
+      "historiaEn": "Its construction was the result of a monumental colonial and diocesan effort to give the province a definitive temple, after several previous temples were destroyed by earthquakes and pirate attacks. Designed by Guatemalan architect Diego José de Porres y Esquivel, the work combined funds from the Spanish crown with the labor of local indigenous communities. In 2011, UNESCO declared it a World Heritage Site for its immense architectural, historical and cultural value, also establishing it as the sanctuary where the remains of the country's greatest intellectuals rest, notably the poet Rubén Darío."
+    },
+    "bunuelos_calientes_baho_vilma": {
+      "nombreEn": "Buñuelos Calientes / Baho Vilma",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Iconic food spot specializing in yuca and cheese buñuelos dipped in honey, and the traditional preparation of Nicaraguan baho.",
+      "historiaEn": "It began as a family business focused on keeping alive the ancestral pastry and cuisine of Masaya, passing down recipes and traditional cooking techniques from generation to generation."
+    },
+    "campana_de_la_paz": {
+      "nombreEn": "Bell of Peace",
+      "categoriaEn": "Monuments",
+      "descripcionEn": "Monument in the historic center of Managua, on the Avenue from Bolívar to Chávez. Its bell tower is about 20 meters tall.",
+      "historiaEn": "Built and inaugurated in 2020 as a symbol dedicated to peace and coexistence."
+    },
+    "casa_de_la_cultura": {
+      "nombreEn": "House of Culture",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "The Gregorio Aguilar Barea House of Culture and Creativity in Juigalpa, Chontales, is a cultural center offering free workshops and classes in various artistic disciplines such as dance, music, theater, visual arts and literature. Supported by the Juigalpa mayor's office and the central government, this space is open to all ages to foster the community's identity and creativity."
+    },
+    "casa_de_las_artesanias": {
+      "nombreEn": "House of Crafts",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Public center dedicated to training new artisans and exhibiting crafts in wood, clay, leather and textiles, where visitors interact directly with master artisans.",
+      "historiaEn": "Founded by local authorities and cultural institutions to guarantee the intergenerational transmission of Masaya's traditional trades, preventing the loss of popular manufacturing techniques."
+    },
+    "casa_josefa_toledo_de_aguerri": {
+      "nombreEn": "Casa Josefa Toledo de Aguerri",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Birthplace of Josefa Toledo de Aguerri. It is the residence where the distinguished educator, writer and pioneering feminist in Nicaragua, Josefa Toledo de Aguerri (1866-1962), was born. This building was declared Cultural Heritage of the Nation in 2005 and is located on the corner opposite the Central Park of Juigalpa, northwest side."
+    },
+    "casa_museo_archivo_ruben_dario": {
+      "nombreEn": "Rubén Darío House Museum Archive",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Voluntary contribution for nationals; for foreign visitors, the entrance fee is about 37 córdobas. It is the house where the \"Prince of Castilian Letters\" lived during his childhood and preserves manuscripts, first editions of his books and personal objects."
+    },
+    "centro_cultural_ruben_dario": {
+      "nombreEn": "Rubén Darío Cultural Center",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "The Rubén Darío National Theater (originally conceived as a cultural center complex) began construction on September 12, 1966 and was officially inaugurated on December 6, 1969. It is considered one of the most important architectural and historical monuments in Nicaragua and a landmark of modern design in Central America.",
+      "historiaEn": "The idea of creating this great temple of culture arose in 1964 through the initiative of intellectuals, artists and engineers organized under the Rubén Darío Pro Art Institute. The main goal was to provide the country with a first-class space dedicated to the fine arts to commemorate the centenary of the birth of the great poet Rubén Darío (1867-1967). The main design was by the outstanding Nicaraguan architect José Francisco Terán Callejas together with a select committee of engineers. Its structural solidity and anti-seismic engineering were put to a definitive test during the catastrophic 1972 Managua earthquake; the theater was one of the very few structures in the city center that withstood the impact without severe structural damage, becoming a symbol of resilience for the country."
+    },
+    "escuela_de_bellas_artes_mariana_sanson_arguello": {
+      "nombreEn": "Mariana Sanson Arguello School of Fine Arts",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "It is a classic colonial-style mansion, characterized by its wide corridors, high tile roofs and a large open central courtyard that naturally ventilates and lights the classrooms. Its interior spaces were transformed into specialized painting workshops, exhibition galleries, theory classrooms and a modern ballet hall with wooden floors and finishes, combining the preservation of León's architectural heritage with educational purposes.",
+      "historiaEn": "The creation of the center was part of a plan by the León mayor's office and the Central Government to expand public cultural spaces in the city's historic center. The building selected to house the institution has an important local background, as it previously operated as the old Casa de Salud Debayle. In honor of the anniversary of the Day of Joy and the Sandinista Popular Revolution, the colonial infrastructure was fully restored, remodeling its halls with wood and adapting its areas for comprehensive artistic education. It was named to honor the legacy of Mariana Sansón Argüello (1918-2002), a famous Leonese artist who stood out as a poet, primitivist painter and the first woman admitted to the Nicaraguan Academy of Language."
+    },
+    "estatua_museo_juigalpa": {
+      "nombreEn": "Juigalpa Museum Statue",
+      "categoriaEn": "Museums",
+      "descripcionEn": "Sculpture inspired by the pre-Columbian statuary of the Gregorio Aguilar Barea Archaeological Museum.",
+      "historiaEn": "The collection gathers monumental stone sculptures associated with ancient populations of Chontales."
+    },
+    "estatua_san_benito": {
+      "nombreEn": "Statue of San Benito",
+      "categoriaEn": "Churches",
+      "descripcionEn": "Religious image of San Benito de Palermo kept in León.",
+      "historiaEn": "Devotion to San Benito de Palermo is an important religious tradition of the city."
+    },
+    "fortaleza_de_el_coyotepe": {
+      "nombreEn": "El Coyotepe Fortress",
+      "categoriaEn": "Historic sites",
+      "descripcionEn": "Military complex and fortification on top of El Coyotepe hill, made up of observation towers, underground dungeon systems and a 360-degree panoramic view over the city of Masaya and its volcanoes.",
+      "historiaEn": "Built under the mandate of President José Santos Zelaya, it was the scene of historic battles such as the 1912 battle led by General Benjamin Zeledón against the U.S. intervention. It later served as a military prison during the 20th century."
+    },
+    "hamacas_cmk": {
+      "nombreEn": "Hamacas CMK",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Workshop and point of sale dedicated to making dyed and hand-woven hammocks. It offers an interactive experience where visitors observe the loom and weaving technique in cabuya and cotton.",
+      "historiaEn": "Masaya is recognized as the cradle of hammock weaving in the country. This workshop was born to project local utilitarian crafts to the national and international market, preserving native knots and designs."
+    },
+    "homenaje_madre_juigalpina": {
+      "nombreEn": "Tribute to the Juigalpina Mother",
+      "categoriaEn": "Monuments",
+      "descripcionEn": "Monument in the Central Park of Juigalpa as a tribute to Juigalpina mothers.",
+      "historiaEn": "The Statue to the Mother is part of the cultural elements of the Central Park of Juigalpa."
+    },
+    "iglesia_nuestra_senora_de_la_asuncion_y_parque_central_de_masaya": {
+      "nombreEn": "Church of Our Lady of the Assumption and Central Park of Masaya",
+      "categoriaEn": "Churches",
+      "descripcionEn": "Parish church with a mestizo Baroque façade located in front of the Central Park of Masaya. It is the starting point of the main patron saint festivities in honor of San Jerónimo.",
+      "historiaEn": "Built to replace old wooden and straw temples destroyed by natural events. The temple has been the center of the municipality's religious and folkloric life for nearly two centuries."
+    },
+    "los_motivos_del_lobo_escultura": {
+      "nombreEn": "Los Motivos del Lobo (Sculpture)",
+      "categoriaEn": "Monuments",
+      "descripcionEn": "Symbol of the literary heritage of the poet Rubén Darío, as a universal message of coexistence and compassion, inviting visitors to discover the cultural and spiritual richness that defines Nicaraguan identity.",
+      "historiaEn": "Located in the atrium of the historic Diocesan Sanctuary of San Francisco de Asís (originally built in 1639), this bronze and marble sculpture group was inaugurated in 2017. It is a work by the outstanding Nicaraguan artist Maruca César de Gómez, faithfully inspired by the famous poem \"Los Motivos del Lobo\" (1913) by the greatest exponent of literary modernism, Rubén Darío. The piece captures the mystical encounter of reconciliation between Saint Francis and the wolf of Gubbio. As an interactive detail for the visitor, the marble base of the sculpture has the complete poem by Darío engraved on it, allowing a reflective reading while contemplating the expressive strength of the bronze faces. The work was managed and installed with the support of the Ortiz Gurdián Foundation."
+    },
+    "mercado_de_artesanias_de_masaya_centro_cultural_antiguo_mercado": {
+      "nombreEn": "Masaya Crafts Market (Old Market Cultural Center)",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Neo-Gothic structure in volcanic stone housing workshops, hammock sales, crafts in clay, wood, leather and weekly folk dance performances.",
+      "historiaEn": "Erected at the end of the 19th century as a municipal market, it survived the 1978 fire during the urban insurrection and was transformed into the nerve center of Nicaraguan art and crafts."
+    },
+    "mirador_de_catarina_y_laguna_de_apoyo": {
+      "nombreEn": "Catarina Viewpoint and Apoyo Lagoon",
+      "categoriaEn": "Viewpoints",
+      "descripcionEn": "Natural balcony at the highest point of the Apoyo Lagoon crater, with panoramic views of Lake Granada and the Mombacho volcano, surrounded by nurseries, local food and marimba music.",
+      "historiaEn": "The lagoon was formed about 23,000 years ago after the explosion of the original volcanic cone. The municipality of Catarina was historically consolidated as a town of artisans, ornamental plants and musical tradition."
+    },
+    "museo_gregorio_aguilar_barea": {
+      "nombreEn": "Gregorio Aguilar Barea Museum",
+      "categoriaEn": "Museums",
+      "descripcionEn": "The archaeological museum of Juigalpa, Chontales, is called the Gregorio Aguilar Barea Archaeological Museum. It has one of the largest collections of indigenous statuary in Nicaragua, including some of the tallest statues in Central America."
+    },
+    "palacio_municipal_de_la_cultura": {
+      "nombreEn": "Municipal Palace of Culture",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "The Palace of Culture offers a variety of artistic and cultural activities for all ages:\n\nWorkshops: Include classes in painting, dance, music, theater, choir, visual arts and literature.\nExhibitions: Exhibitions are held on the history, customs and traditions of the municipality.\nEvents: It hosts cultural events, such as museum gatherings and other artistic activities.\nMuseum: The community museum exhibits the local history and cultural heritage of Juigalpa."
+    },
+    "parque_centenario_de_la_dignidad_ruben_dario": {
+      "nombreEn": "Rubén Darío Centennial Park of Dignity",
+      "categoriaEn": "Parks",
+      "descripcionEn": "Strategically located at the southern entrance of León (on the junction of the León-Managua Highway), this urban park marks the official start of the circuit known as the \"Paseo de los Leones\".",
+      "historiaEn": "Construction of this park began in mid-2015 under the management of the León mayor's office and the Central Government. The main purpose of the work was to pay permanent tribute to the literary feat and identity legacy of Rubén Darío. The site was inaugurated with a solemn cultural ceremony and an artistic gala that included the local ecclesiastical blessing and the performance of the Nicaraguan Folkloric Ballet Ronald Abud Vivas."
+    },
+    "parque_central_de_juigalpa": {
+      "nombreEn": "Central Park of Juigalpa",
+      "categoriaEn": "Parks",
+      "descripcionEn": "The Central Park of Juigalpa, officially called Josefa Toledo de Aguerri, is a social and family gathering point in Chontales. It is located on Josefa Toledo Avenue. It is a space with walking areas, children's games and benches to sit on."
+    },
+    "parque_central_de_managua": {
+      "nombreEn": "Central Park of Managua",
+      "categoriaEn": "Parks",
+      "descripcionEn": "Public space with a traditional layout surrounded by marble monuments, vegetation and the historic Music Pavilion (Templete de la Música). It is located in front of the old Managua Cathedral and the Plaza of the Revolution.",
+      "historiaEn": "Originally designed in Neoclassical style by architect Louis Lairac at the end of the 19th century, the park has been a central stage of the country's political and social transformations. After the 1931 earthquake and later remodeling, it adopted architectural elements such as the kiosk designed by architect Víctor Sabater."
+    },
+    "parque_de_los_poetas": {
+      "nombreEn": "Park of the Poets",
+      "categoriaEn": "Parks",
+      "descripcionEn": "The Park of the Poets in León is an emblematic cultural corner designed as a pedestrianized public space, whose last major remodeling and inauguration with its current concept of a literary plaza concluded between 2016 and 2017. This was part of the municipal plans for reorganizing the historic center and the tributes for the centenary of the passing into immortality of Rubén Darío.",
+      "historiaEn": "Historically, the space was a common street or small square in the historic center of León, surrounded by important colonial-era landmarks such as the Museum of the Revolution and the Church of San Francisco. However, León's strong identity as the \"University City\" and cradle of Nicaraguan literature led local authorities to transform the place to formally commemorate its intellectuals."
+    },
+    "parque_historico_nacional_loma_de_tiscapa": {
+      "nombreEn": "Tiscapa Hill National Historic Park",
+      "categoriaEn": "Parks",
+      "descripcionEn": "Natural elevation of volcanic origin on the edge of the Tiscapa Lagoon crater. It offers the highest viewpoint in downtown Managua, dominated by the emblematic silhouette of General Augusto C. Sandino.",
+      "historiaEn": "It was formerly the site of the Presidential Palace (destroyed by the 1931 and 1972 earthquakes) and a military facility. After the political transition of the 1990s, the area was transformed into a historic memory park and ecological natural viewpoint."
+    },
+    "parque_mirador_el_malecon_de_masaya": {
+      "nombreEn": "\"El Malecón\" Viewpoint Park of Masaya",
+      "categoriaEn": "Viewpoints",
+      "descripcionEn": "Recreational space on the slope of the crater offering a wide panoramic view of the Masaya Lagoon and the volcanic complex. It has walking areas, food and open-air performances.",
+      "historiaEn": "It has historically been the connection point between the upper city and the ancestral descent toward the lagoon. It has served as a community recreation space and a source of inspiration for local poets, musicians and legends."
+    },
+    "parque_mirador_sandino": {
+      "nombreEn": "Sandino Viewpoint Park",
+      "categoriaEn": "Viewpoints",
+      "descripcionEn": "The Sandino viewpoint, built on the popular Támanes hill, offers a complete panorama of the city and the natural surroundings of the municipality. The Sandino Viewpoint is quite busy, since from this tourist destination one can fully observe the majestic Amerrisque mountain range, considered the Pride of My Country. The attractive park now has a perimeter fence for the safety of its visitors, wide walkways, gardens and a stage for performances."
+    },
+    "parque_nacional_volcan_masaya": {
+      "nombreEn": "Masaya Volcano National Park",
+      "categoriaEn": "Parks",
+      "descripcionEn": "Volcanic complex that includes the Santiago crater with visible magmatic activity, a visitor center with a geological museum, perimeter trails and nighttime views of the lava lake.",
+      "historiaEn": "Known by the original inhabitants as Popogatepe (\"Mountain that burns\") and renamed by the Spanish in the 16th century as the \"Mouth of Hell\", who installed the Cross of Bobadilla on its summit in 1529 to exorcise the site."
+    },
+    "paseo_xolotlan": {
+      "nombreEn": "Xolotlán Promenade",
+      "categoriaEn": "Parks",
+      "descripcionEn": "Lakeside pedestrian boardwalk that contains the famous scale model of old Managua before the 1972 earthquake, replicas of the birthplaces of national heroes and poets, water parks and recreation areas.",
+      "historiaEn": "Developed by the Managua mayor's office to recover the urban boardwalk and preserve the historical memory of the capital. The space has been incorporating scale replicas of churches and heritage sites from various municipalities of Nicaragua."
+    },
+    "plaza_de_la_cultura_antigua_estacion_del_ferrocarril": {
+      "nombreEn": "Plaza of Culture (Old Railway Station)",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Public space and community center that rescues the memory of the railway and the visit of Rubén Darío. It works as an artistic hub where open marimba classes are taught for all ages.",
+      "historiaEn": "It was formerly the main station of the Masaya railway, a key symbol of commercial progress in the late 19th and early 20th centuries. After the railway system was deactivated, the space was transformed into a center for folkloric training and preservation of musical heritage."
+    },
+    "plazoleta_ruben_dario": {
+      "nombreEn": "Rubén Darío Small Plaza",
+      "categoriaEn": "Parks",
+      "descripcionEn": "Located at the entrance of León, specifically on the Paseo de los Leones, the small plaza is an open and modern public space designed for family recreation. Its central and most imposing element is a monumental sculpture of Rubén Darío measuring 4...",
+      "historiaEn": "The construction of this small plaza was a project carried out by the Municipal Mayor's Office of León in order to beautify the main road access to the city and pay tribute to the \"Prince of Castilian Letters\", who spent his childhood and last days in León. The site was conceived as a fundamental point of interest within the Rubén Darío Tourist Route. As a commemorative detail of great historical value, at the base of the main monument an original bronze medallion that belonged to one of the old monuments dedicated to the poet in the university city was installed and rescued."
+    },
+    "puerto_salvador_allende": {
+      "nombreEn": "Puerto Salvador Allende",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Extensive complex on the shores of Lake Xolotlán that includes restaurants, craft kiosks, children's play areas, pedestrian walks and a boarding port for tourist boat tours.",
+      "historiaEn": "Promoted by the National Port Company (EPN) to recover and revitalize the coastline of Lake Xolotlán, the port revitalized access to the lake through several stages of commercial and food expansion."
+    },
+    "ruben_dario": {
+      "nombreEn": "Statue of Rubén Darío",
+      "categoriaEn": "Monuments",
+      "descripcionEn": "Sculpture dedicated to the poet Rubén Darío.",
+      "historiaEn": "Representative figure of Nicaraguan literature."
+    },
+    "taller_bordados_marisol": {
+      "nombreEn": "Bordados Marisol Workshop",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Artisan workshop of traditional textile clothing that fuses ancestral hand-embroidery techniques with contemporary designs. It allows visitors to observe the process of making dresses, guayabera shirts and bags.",
+      "historiaEn": "It began in the mid-1980s as a family venture to preserve the Masaya embroidery tradition. Over four decades it has established itself as a reference for Nicaraguan textile identity and artisan design."
+    },
+    "teatro_municipal_jose_de_la_cruz_mena": {
+      "nombreEn": "José de la Cruz Mena Municipal Theater",
+      "categoriaEn": "Historic sites",
+      "descripcionEn": "The great tribute: In 1904 it was renamed in honor of José de la Cruz Mena, the Leonese master of the Central American waltz. Because he suffered from leprosy, the musician used to listen to the theater's concerts from the sidewalk opposite.\nAshes and rebirth: In 1956, a devastating fire destroyed its sumptuous interior. After decades in ruins, international solidarity (Utrecht, Zaragoza and Hamburg) and local effort achieved its reconstruction in the 1980s.\nNational pride: It was declared Historical, Architectural and Cultural Heritage of the Nation.",
+      "historiaEn": "Visual style: Two-level façade that elegantly fuses Neoclassical with colonial Baroque.\nCapacity: Its main hall has a capacity for 948 spectators.\nToday: It is a fully modernized, air-conditioned space with universal accessibility. It remains the main stage for ballet galas, symphonic concerts and art festivals in the western part of the country."
+    },
+    "teatro_nacional_ruben_dario": {
+      "nombreEn": "Rubén Darío National Theater",
+      "categoriaEn": "Cultural sites",
+      "descripcionEn": "Cultural venue with outstanding acoustics and architectural design, equipped with a main performance hall (main hall), experimental rooms, galleries and terraces overlooking the lake.",
+      "historiaEn": "Conceived in the 1960s to commemorate the centenary of the birth of the poet Rubén Darío, it was designed by architects José Francisco Terán and Alfredo Osorio. It stands out historically for having survived the devastating 1972 earthquake intact thanks to its structural specifications and anti-seismic engineering."
+    },
+    "toro_chontaleno": {
+      "nombreEn": "Toro Chontaleño",
+      "categoriaEn": "Monuments",
+      "descripcionEn": "Monument dedicated to the cattle tradition of Chontales.",
+      "historiaEn": "It was inaugurated in Juigalpa in August 2018."
+    },
+    "tumba_ruben_dario": {
+      "nombreEn": "Tomb of Rubén Darío",
+      "categoriaEn": "Historic sites",
+      "descripcionEn": "Historic monument in León, dedicated to the poet Rubén Darío.",
+      "historiaEn": "Rubén Darío rests in the Cathedral of León."
+    },
+    "vallas_informativas_unan_leon": {
+      "nombreEn": "UNAN León Information Boards",
+      "categoriaEn": "Historic sites",
+      "descripcionEn": "These are panels, fixed bulletin boards and digital screens strategically located at the main entrances, corridors and common areas of the faculties and regional centers.",
+      "historiaEn": "Traditional origin: In its beginnings, internal communication depended on wooden display cases and cork boards managed independently by each faculty or by the University Center of the National University (CUUN).\nModernization and Identity (2014 - Present): With the goal of projecting a uniform and orderly institutional image, the university standardized these structures under the direct supervision of the Institutional Communication Division.\nDigital Evolution: Along with the growth of new buildings and classrooms, these physical boards have been transitioning toward \"virtual boards\" or dynamic digital display platforms to keep the student and teaching community immediately informed."
+    },
+    "zoologico_thomas_belt": {
+      "nombreEn": "Thomas Belt Zoo",
+      "categoriaEn": "Nature reserves",
+      "descripcionEn": "The Thomas Belt Zoo, officially founded in 1961 by the Intellectual Clan of Chontales, is a scientific-cultural institution that aims to contribute to environmental education as a way to promote the conservation of the biodiversity of our environment and create harmonious relationships with Mother Earth.",
+      "historiaEn": "It was named after the distinguished English naturalist and scientist Thomas Belt (1832-1878), author of the book \"The Naturalist in Nicaragua\" (1874), a work that exposes the scenic richness of Chontales of old. The Zoo currently has its own legal status, non-profit, under the name Scientific Cultural Association Thomas Belt Zoo. The zoo carries out sustainable efforts and practices to provide the best care to the animal population housed in its facilities. It has specialized technical staff with extensive experience in wildlife, veterinary medicine, animal nutrition and environmental education."
+    }
+  },
+  "rutas": {
+    "circuito_creativo_dariano": {
+      "nombreEn": "Dariano Creative Circuit",
+      "descripcionEn": "A cultural and historical tour through the heart of León that celebrates the literary legacy of Rubén Darío and Nicaraguan artistic identity. Through 10 emblematic stops, the route connects museums, the iconic Cathedral Basilica, sculptures, theaters and artistic training spaces in an accessible itinerary.",
+      "duracionEstimadaEn": "approx. 7 hours",
+      "notaDuracionEn": "This duration is approximate, not exact.",
+      "objetivosEn": [
+        "Preserve and spread the Dariano legacy: Connect the emblematic places associated with the life, work and memory of Rubén Darío to highlight his literary heritage.",
+        "Foster orderly cultural tourism: Offer national and international visitors an accessible itinerary, optimized in time and structured for the app.",
+        "Enliven cultural and educational spaces: Promote the flow of visitors to museums, theaters, libraries and local artistic training centers.",
+        "Strengthen local identity and economy: Value the historical heritage of León as a Creative City, boosting tourism and economic activity around the route."
+      ]
+    },
+    "circuito_creativo_xolotlan": {
+      "nombreEn": "Xolotlán Creative Circuit",
+      "descripcionEn": "It is an urban, cultural and recreational tour that connects the shore of Lake Xolotlán with the historic center of Managua, ending at Tiscapa Hill. The route integrates historical heritage, architecture, museums, sound monuments and family recreation spaces such as theme parks, the lakeside boardwalk and natural viewpoints.",
+      "duracionEstimadaEn": "3 - 5 hours",
+      "notaDuracionEn": "Approximately 3 to 5 hours (full walking tour with brief stops at each point).",
+      "objetivosEn": [
+        "Promote the tourism, cultural and economic development of the historic center and the lakeside strip of Managua, integrating heritage spaces, family recreation and local entrepreneurship within the Creative Cities Network."
+      ]
+    },
+    "circuito_creativo_y_folclorico_de_masaya_integrante_de_la_red_nacional_de_ciudades_creativas_de_nicaragua": {
+      "nombreEn": "Creative and Folkloric Circuit of Masaya (member of the National Network of Creative Cities of Nicaragua).",
+      "descripcionEn": "It is a tourist, cultural and artisan tour that connects the military and architectural history of the municipality with the living tradition of Nicaraguan folklore. The route integrates historic monuments, craft galleries, Baroque temples and natural viewpoints, allowing visitors to experience first-hand the making of crafts, local cuisine, marimba music and the historical memory of the city.",
+      "duracionEstimadaEn": "4 to 6 hours",
+      "notaDuracionEn": "Visit pace: If a prolonged stay at the Apoyo Lagoon Nature Reserve (water activities or lunch) is included, or you attend interactive craft workshops and performances such as the \"Jueves de Verbena\", the experience extends to a full day (7 to 9 hours).\n\nTravel: The stretch between the Crafts Market, the Central Park and the Church of Our Lady of the Assumption can easily be done on foot through the city center. To travel to the El Coyotepe Fortress, the Catarina Viewpoint or the Masaya Volcano National Park, vehicular transport is required (bus, private vehicle or taxi).",
+      "objetivosEn": [
+        "Promote the cultural identity, historical heritage and socioeconomic development of Masaya by articulating its artisan, natural and architectural attractions in a sustainable tourist circuit within the Creative Cities Network."
+      ]
+    },
+    "ruta_cultural_juigalpa": {
+      "nombreEn": "Juigalpa Cultural Route",
+      "descripcionEn": "A tour of Juigalpa's heritage that combines places with different estimated crowds and a stop at a local business.",
+      "duracionEstimadaEn": "2-3 hours",
+      "notaDuracionEn": "Approximate duration of the prototype; it does not use GPS or real-time information.",
+      "objetivosEn": [
+        "Distribute visits among places with different estimated crowds.",
+        "Promote the local heritage of Juigalpa.",
+        "Connect tourists with local businesses in Juigalpa.",
+        "Encourage responsible tourism practices."
+      ]
+    }
+  },
+  "comercios": {
+    "Restaurantes-1": {
+      "nombreEn": "AmerriPizza",
+      "categoriaEn": "Fast food",
+      "categoriaPadreEn": "Restaurants and food",
+      "descripcionEn": "AmerriPizza is a local business in Juigalpa dedicated to making pizzas, offering an ideal space to share with friends and family. It stands out for its variety of flavors, friendly service and options to enjoy a quick and pleasant meal in the city."
+    },
+    "Restaurantes-2": {
+      "nombreEn": "Coffee Break",
+      "categoriaEn": "Cafés",
+      "categoriaPadreEn": "Restaurants and food",
+      "descripcionEn": "Coffee Break is a café and restaurant in Juigalpa that offers a variety of coffees, drinks, desserts, breakfasts and meals, in a comfortable atmosphere to share with friends or family. It also has options such as burgers and regional food, plus takeout and home delivery service."
+    },
+    "Restaurantes-3": {
+      "nombreEn": "Restaurante Mi Choza",
+      "categoriaEn": "Restaurants",
+      "categoriaPadreEn": "Restaurants and food",
+      "descripcionEn": "Traditional restaurant in Juigalpa that offers Nicaraguan food, meats, seafood and a variety of dishes in a family-friendly and pleasant atmosphere, ideal for sharing and enjoying local cuisine."
+    },
+    "hotel_las_miradas": {
+      "nombreEn": "Hotel Las Miradas",
+      "categoriaEn": "Hotels",
+      "categoriaPadreEn": "Lodging"
+    },
+    "huaBsWfXlGsLAfJQGIoW": {
+      "nombreEn": "DIGITX",
+      "categoriaEn": "Shops",
+      "categoriaPadreEn": "Local shops",
+      "descripcionEn": "We are a shop where we sell all kinds of technological and school accessories.",
+      "serviciosEn": [
+        "PC maintenance"
+      ],
+      "productosEn": [
+        "RAM, motherboard, power supply"
+      ]
+    }
+  },
+  "categorias_lugares": {
+    "iglesias": { "nombreEn": "Churches" },
+    "lugares_turisticos": { "nombreEn": "Tourist places" },
+    "miradores": { "nombreEn": "Viewpoints" },
+    "monumentos": { "nombreEn": "Monuments" },
+    "museos": { "nombreEn": "Museums" },
+    "parques": { "nombreEn": "Parks" },
+    "reservas_naturales": { "nombreEn": "Nature reserves" },
+    "sitios_culturales": { "nombreEn": "Cultural sites" },
+    "sitios_historicos": { "nombreEn": "Historic sites" },
+    "teatro": { "nombreEn": "Theater" }
+  },
+  "categorias_comercios": {
+    "actividades_al_aire_libre": { "nombreEn": "Outdoor activities" },
+    "actividades_familiares": { "nombreEn": "Family activities" },
+    "alquiler_de_vehiculos": { "nombreEn": "Car rental" },
+    "artesanias": { "nombreEn": "Handicrafts" },
+    "balnearios": { "nombreEn": "Swimming spots" },
+    "bancos": { "nombreEn": "Banks" },
+    "bares": { "nombreEn": "Bars" },
+    "cafeterias": { "nombreEn": "Cafés" },
+    "casas_de_huespedes": { "nombreEn": "Guest houses" },
+    "cascadas": { "nombreEn": "Waterfalls" },
+    "centros_deportivos": { "nombreEn": "Sports centers" },
+    "centros_recreativos": { "nombreEn": "Recreation centers" },
+    "cines": { "nombreEn": "Cinemas" },
+    "comercios_locales": { "nombreEn": "Local shops" },
+    "comida_rapida": { "nombreEn": "Fast food" },
+    "comida_tipica": { "nombreEn": "Typical food" },
+    "discotecas": { "nombreEn": "Nightclubs" },
+    "ecoturismo": { "nombreEn": "Ecotourism" },
+    "entretenimiento": { "nombreEn": "Entertainment" },
+    "farmacias": { "nombreEn": "Pharmacies" },
+    "gasolineras": { "nombreEn": "Gas stations" },
+    "heladerias_pastelerias": { "nombreEn": "Ice cream / pastry shops" },
+    "hospedaje": { "nombreEn": "Lodging" },
+    "hospitales_clinicas": { "nombreEn": "Hospitals / clinics" },
+    "hostales": { "nombreEn": "Hostels" },
+    "hoteles": { "nombreEn": "Hotels" },
+    "mercados": { "nombreEn": "Markets" },
+    "naturaleza_y_aventura": { "nombreEn": "Nature and adventure" },
+    "paradas_de_buses": { "nombreEn": "Bus stops" },
+    "posadas": { "nombreEn": "Inns" },
+    "restaurantes": { "nombreEn": "Restaurants" },
+    "restaurantes_y_comida": { "nombreEn": "Restaurants and food" },
+    "rios": { "nombreEn": "Rivers" },
+    "senderismo": { "nombreEn": "Hiking" },
+    "servicios": { "nombreEn": "Services" },
+    "servicios_turisticos": { "nombreEn": "Tourist services" },
+    "souvenirs": { "nombreEn": "Souvenirs" },
+    "supermercados": { "nombreEn": "Supermarkets" },
+    "talleres": { "nombreEn": "Workshops" },
+    "taxis": { "nombreEn": "Taxis" },
+    "terminales": { "nombreEn": "Terminals" },
+    "tiendas": { "nombreEn": "Shops" },
+    "tiendas_de_ropa": { "nombreEn": "Clothing stores" },
+    "transporte": { "nombreEn": "Transport" },
+    "transporte_turistico": { "nombreEn": "Tourist transport" }
+  }
+}
