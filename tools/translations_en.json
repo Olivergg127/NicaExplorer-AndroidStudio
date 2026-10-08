@@ -55,7 +55,8 @@
     "casa_de_la_cultura": {
       "nombreEn": "House of Culture",
       "categoriaEn": "Cultural sites",
-      "descripcionEn": "The Gregorio Aguilar Barea House of Culture and Creativity in Juigalpa, Chontales, is a cultural center offering free workshops and classes in various artistic disciplines such as dance, music, theater, visual arts and literature. Supported by the Juigalpa mayor's office and the central government, this space is open to all ages to foster the community's identity and creativity."
+      "descripcionEn": "The Gregorio Aguilar Barea House of Culture and Creativity in Juigalpa, Chontales, is a cultural center offering free workshops and classes in various artistic disciplines such as dance, music, theater, visual arts and literature. Supported by the Juigalpa mayor's office and the central government, this space is open to all ages to foster the community's identity and creativity.",
+      "historiaEn": "The Gregorio Aguilar Barea House of Culture and Creativity in Juigalpa is an emblematic space that officially opened on May 5, 2023, conceived within a national strategy to decentralize art and strengthen local identity."
     },
     "casa_de_las_artesanias": {
       "nombreEn": "House of Crafts",
@@ -66,12 +67,14 @@
     "casa_josefa_toledo_de_aguerri": {
       "nombreEn": "Casa Josefa Toledo de Aguerri",
       "categoriaEn": "Cultural sites",
-      "descripcionEn": "Birthplace of Josefa Toledo de Aguerri. It is the residence where the distinguished educator, writer and pioneering feminist in Nicaragua, Josefa Toledo de Aguerri (1866-1962), was born. This building was declared Cultural Heritage of the Nation in 2005 and is located on the corner opposite the Central Park of Juigalpa, northwest side."
+      "descripcionEn": "Birthplace of Josefa Toledo de Aguerri. It is the residence where the distinguished educator, writer and pioneering feminist in Nicaragua, Josefa Toledo de Aguerri (1866-1962), was born. This building was declared Cultural Heritage of the Nation in 2005 and is located on the corner opposite the Central Park of Juigalpa, northwest side.",
+      "historiaEn": "The birthplace house of Josefa Toledo de Aguerri, built in the mid-19th century in front of the Central Park of Juigalpa, is the site where the most famous educator, suffragist and pioneer of feminism in Nicaragua was born on April 21, 1866. The building was declared Cultural Heritage of the Nation in 2005."
     },
     "casa_museo_archivo_ruben_dario": {
       "nombreEn": "Rubén Darío House Museum Archive",
       "categoriaEn": "Cultural sites",
-      "descripcionEn": "Voluntary contribution for nationals; for foreign visitors, the entrance fee is about 37 córdobas. It is the house where the \"Prince of Castilian Letters\" lived during his childhood and preserves manuscripts, first editions of his books and personal objects."
+      "descripcionEn": "Voluntary contribution for nationals; for foreign visitors, the entrance fee is about 37 córdobas. It is the house where the \"Prince of Castilian Letters\" lived during his childhood and preserves manuscripts, first editions of his books and personal objects.",
+      "historiaEn": "The Rubén Darío House Museum Archive is the home where the poet spent part of his childhood in León. It preserves manuscripts, first editions of his works and personal objects, and works as a museum and archive dedicated to preserving his legacy."
     },
     "centro_cultural_ruben_dario": {
       "nombreEn": "Rubén Darío Cultural Center",
@@ -142,12 +145,14 @@
     "museo_gregorio_aguilar_barea": {
       "nombreEn": "Gregorio Aguilar Barea Museum",
       "categoriaEn": "Museums",
-      "descripcionEn": "The archaeological museum of Juigalpa, Chontales, is called the Gregorio Aguilar Barea Archaeological Museum. It has one of the largest collections of indigenous statuary in Nicaragua, including some of the tallest statues in Central America."
+      "descripcionEn": "The archaeological museum of Juigalpa, Chontales, is called the Gregorio Aguilar Barea Archaeological Museum. It has one of the largest collections of indigenous statuary in Nicaragua, including some of the tallest statues in Central America.",
+      "historiaEn": "The Gregorio Aguilar Barea Archaeological Museum of Juigalpa began in 1949, when professor Gregorio Aguilar Barea —affectionately known as \"Goyito\"— started touring the fields and mountains of Chontales with young students to rescue pre-Columbian remains."
     },
     "palacio_municipal_de_la_cultura": {
       "nombreEn": "Municipal Palace of Culture",
       "categoriaEn": "Cultural sites",
-      "descripcionEn": "The Palace of Culture offers a variety of artistic and cultural activities for all ages:\n\nWorkshops: Include classes in painting, dance, music, theater, choir, visual arts and literature.\nExhibitions: Exhibitions are held on the history, customs and traditions of the municipality.\nEvents: It hosts cultural events, such as museum gatherings and other artistic activities.\nMuseum: The community museum exhibits the local history and cultural heritage of Juigalpa."
+      "descripcionEn": "The Palace of Culture offers a variety of artistic and cultural activities for all ages:\n\nWorkshops: Include classes in painting, dance, music, theater, choir, visual arts and literature.\nExhibitions: Exhibitions are held on the history, customs and traditions of the municipality.\nEvents: It hosts cultural events, such as museum gatherings and other artistic activities.\nMuseum: The community museum exhibits the local history and cultural heritage of Juigalpa.",
+      "historiaEn": "The Municipal Palace of Culture of Juigalpa began construction in 1861 to serve as the town hall, making it the oldest building in the city. During the 20th century it underwent a harsh transformation when it was converted into the barracks of the National Guard, a period from which its old cells are still preserved.\nAfter being rescued for the community, the colonial building became the epicenter of local art, housing the \"María Ramos\" Community Museum and the Museum of the Revolution. Its historical value was consolidated with a full restoration completed in June 2026, ensuring the preservation of its centuries-old columns and wooden structures for future generations."
     },
     "parque_centenario_de_la_dignidad_ruben_dario": {
       "nombreEn": "Rubén Darío Centennial Park of Dignity",
@@ -158,7 +163,8 @@
     "parque_central_de_juigalpa": {
       "nombreEn": "Central Park of Juigalpa",
       "categoriaEn": "Parks",
-      "descripcionEn": "The Central Park of Juigalpa, officially called Josefa Toledo de Aguerri, is a social and family gathering point in Chontales. It is located on Josefa Toledo Avenue. It is a space with walking areas, children's games and benches to sit on."
+      "descripcionEn": "The Central Park of Juigalpa, officially called Josefa Toledo de Aguerri, is a social and family gathering point in Chontales. It is located on Josefa Toledo Avenue. It is a space with walking areas, children's games and benches to sit on.",
+      "historiaEn": "The Central Park of Juigalpa, named in honor of the educator Josefa Toledo de Aguerri, was born in the 19th century as the city's old Plaza de Armas. Its transformation into a public garden formally began on July 19, 1885, when the first trees were planted and its walkways were laid out."
     },
     "parque_central_de_managua": {
       "nombreEn": "Central Park of Managua",
@@ -187,7 +193,8 @@
     "parque_mirador_sandino": {
       "nombreEn": "Sandino Viewpoint Park",
       "categoriaEn": "Viewpoints",
-      "descripcionEn": "The Sandino viewpoint, built on the popular Támanes hill, offers a complete panorama of the city and the natural surroundings of the municipality. The Sandino Viewpoint is quite busy, since from this tourist destination one can fully observe the majestic Amerrisque mountain range, considered the Pride of My Country. The attractive park now has a perimeter fence for the safety of its visitors, wide walkways, gardens and a stage for performances."
+      "descripcionEn": "The Sandino viewpoint, built on the popular Támanes hill, offers a complete panorama of the city and the natural surroundings of the municipality. The Sandino Viewpoint is quite busy, since from this tourist destination one can fully observe the majestic Amerrisque mountain range, considered the Pride of My Country. The attractive park now has a perimeter fence for the safety of its visitors, wide walkways, gardens and a stage for performances.",
+      "historiaEn": "Sandino Viewpoint Park was born at the top of the Tamanes hill, a mound east of Juigalpa that historically served as a natural observation point thanks to its impressive views of the Amerrisque mountain range and the Mayales River.\nIts formal transformation began with the construction of an imposing 15-meter-tall effigy dedicated to General Augusto C. Sandino, turning the place into a site of historical and political value visible from all over the city. After years of abandonment, the space was fully renovated in September 2017 by the municipal mayor's office, which installed walkways, gardens, lighting and security, consolidating it as the recreational park and tourist viewpoint it is today."
     },
     "parque_nacional_volcan_masaya": {
       "nombreEn": "Masaya Volcano National Park",
@@ -347,6 +354,27 @@
       "productosEn": [
         "RAM, motherboard, power supply"
       ]
+    },
+    "pane_e_vino": {
+      "nombreEn": "Pane e Vino",
+      "categoriaEn": "Restaurants",
+      "categoriaPadreEn": "Restaurants and food",
+      "descripcionEn": "Authentic Italian restaurant famous for its wood-fired artisanal pizzas, fresh pasta and wine selection.",
+      "infoAdicionalEn": "It has an outdoor terrace, a cozy atmosphere and is ideal for both casual and family outings."
+    },
+    "restaurante_don_candido": {
+      "nombreEn": "Restaurante Don Cándido",
+      "categoriaEn": "Restaurants",
+      "categoriaPadreEn": "Restaurants and food",
+      "descripcionEn": "Fine dining restaurant specializing in premium cuts of meat and seafood, offering an elegant and refined atmosphere.",
+      "infoAdicionalEn": "Ideal for romantic dinners, corporate events and wine tastings with personalized service."
+    },
+    "restaurante_los_ranchos": {
+      "nombreEn": "Restaurante Los Ranchos",
+      "categoriaEn": "Restaurants",
+      "categoriaPadreEn": "Restaurants and food",
+      "descripcionEn": "Iconic Central American-style steakhouse and traditional grill. A gastronomic classic for family and business gatherings.",
+      "infoAdicionalEn": "It features air-conditioned areas, private parking and reservation options for special events."
     }
   },
   "categorias_lugares": {

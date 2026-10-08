@@ -83,8 +83,9 @@ Firestore (proyecto `nica-explore`):
 
 ## Ciudades y monumentos
 
-Las únicas ciudades vigentes del prototipo son **Juigalpa, León y Managua**. El catálogo
-contiene exactamente ocho monumentos:
+El catálogo actual abarca **cuatro ciudades** —Juigalpa, León, Managua y Masaya— con
+**42 lugares** en total (Juigalpa 10, León 12, Managua 9 y Masaya 11) y una ruta turística
+por ciudad. Los siguientes son los monumentos con **modelo 3D** en el visor Unity:
 
 | Ciudad | Monumento | `monumentId` |
 |---|---|---|
@@ -172,7 +173,7 @@ Patrimonio religioso.
 | `compileSdk` (app) | 34 |
 | `minSdk` | 30 |
 | `targetSdk` (app) | 34 |
-| `versionCode` / `versionName` | 4 / 1.1.2 |
+| `versionCode` / `versionName` | 5 / 1.1.3 |
 | Firebase BOM | 34.16.0 |
 | MapLibre (`android-sdk-opengl`) | 12.3.1 |
 | Unity | 6000.5.1f1 |
@@ -276,6 +277,10 @@ English) y se guarda en `UserPreferences` (`app_language`).
   (`nombreEn`, `descripcionEn`, `historiaEn`, `lemaEn`, `categoriaEn`, `categoriaPadreEn`,
   `infoAdicionalEn`). Si el idioma es inglés y el campo existe, se usa; si no, se muestra el
   español. Se editan desde el panel web.
+- El catálogo tiene cargados sus campos en inglés. El flujo de traducción es manual:
+  `tools/dump_content.mjs` (dump del contenido en español) → editar
+  `tools/translations_en.json` → `node tools/apply_translations_en.mjs --apply`
+  (requiere ADC de Google Cloud).
 - **Asistente Itzae:** responde en el idioma de la app (directiva de idioma en
   `GeminiRepository`); los nombres propios se conservan.
 
@@ -575,6 +580,18 @@ Release firmada (requiere `keystore.properties` local, fuera de Git):
 .\gradlew.bat :app:assembleRelease
 ```
 
+#### Instalar el APK publicado (release)
+
+Para probar sin compilar, descarga el APK firmado de la última release:
+
+<https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/latest/download/NicaExplorer.apk>
+
+Instálalo por ADB (`adb install -r NicaExplorer.apk`) o directamente en el teléfono
+(activa "Instalar apps de orígenes desconocidos"). Requiere un **teléfono físico ARM64**.
+
+> Si venías usando un APK `debug`, desinstálalo antes: la firma de release es distinta y
+> Android rechazará la instalación por conflicto de firmas.
+
 ### Panel web / Backend
 
 Requisitos: PHP 8.3 (`intl`, `fileinfo`, `curl`, `openssl`, `mbstring`, `zip`), Composer 2 y
@@ -668,8 +685,12 @@ mantiene despierto.
 
 ### Distribución del APK
 
-GitHub Releases distribuye el APK:
-<https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/latest/download/NicaExplorer.apk>
+GitHub Releases distribuye el APK firmado. La versión publicada actual es **v1.1.3**
+(`versionCode 5`, `versionName` 1.1.3):
+
+- Última release: <https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/latest>
+- Descarga directa del APK:
+  <https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/latest/download/NicaExplorer.apk>
 
 ### Migración a Microsoft Azure (propuesta, no implementada)
 
@@ -686,10 +707,9 @@ principal: App Service **no ofrece un tier gratuito comparable** al de Render.
 - Es un **prototipo académico** del equipo Los Punto y Coma.
 - **No** se ofrecen GPS de navegación, rutas en tiempo real ni afluencia en tiempo real. La
   afluencia y la duración de las rutas son **orientativas**.
-- La ruta turística está desarrollada principalmente para **Juigalpa** (ciudad con comercios
-  cargados); otras ciudades muestran "Rutas próximamente".
-- El mapa muestra coordenadas reales, pero el catálogo está limitado a Juigalpa, León y
-  Managua.
+- La ruta turística está disponible para cada ciudad vigente (Juigalpa, León, Managua y
+  Masaya); las ciudades sin datos muestran "Rutas próximamente".
+- El mapa muestra coordenadas reales; el catálogo cubre Juigalpa, León, Managua y Masaya.
 - **Nunca** se versionan reglas, claves privadas, tokens, contraseñas, keystores ni
   credenciales (ADC).
 
