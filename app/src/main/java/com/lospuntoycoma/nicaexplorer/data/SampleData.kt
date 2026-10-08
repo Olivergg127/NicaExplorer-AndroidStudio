@@ -46,7 +46,7 @@ object SampleData {
         }
     }
 
-    /** Carga todo el catálogo desde la API del backend. */
+    /** Carga el catálogo desde la API (llega ya en el idioma activo; nombres en español). */
     suspend fun loadCatalog(): Boolean {
         return try {
             val loadedPlaces = ApiRepository.getLugares().groupBy { it.cityId }

@@ -28,33 +28,35 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
 
     /**
-     * Aplica el idioma guardado a TODA la Activity antes de crearla. Es la forma
-     * robusta en Android: el contexto de la Activity ya queda localizado y no se
-     * rompen otros CompositionLocals (p. ej. ActivityResultRegistryOwner).
+     * Aplica el idioma guardado (es/en) al contexto de la Activity antes de crearla.
+     * Se hace aquí (y no con `LocalContext` en Compose) porque sobrescribir `LocalContext`
+     * rompía `ActivityResultRegistryOwner` (permisos, selectores) y cerraba la app.
      */
     override fun attachBaseContext(newBase: Context) {
         UserPreferences.init(newBase)
+        // "es", "en" o null (= seguir el idioma del sistema).
         val language = runBlocking { UserPreferences.languageFlow().first() }
         if (language.isNullOrBlank()) {
-            // "Sistema": alinea Locale.getDefault() con el idioma del dispositivo.
+            // Sistema: alinea Locale.getDefault() con el del dispositivo.
             Locale.setDefault(newBase.resources.configuration.locales[0])
             super.attachBaseContext(newBase)
         } else {
+            // Idioma explícito: contexto localizado con ese Locale.
             val locale = Locale(language)
             Locale.setDefault(locale)
-            val config = Configuration(newBase.resources.configuration)
-            config.setLocale(locale)
+            val config = Configuration(newBase.resources.configuration).apply { setLocale(locale) }
             super.attachBaseContext(newBase.createConfigurationContext(config))
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Inicializa MapLibre una sola vez antes de crear cualquier MapView.
+        // MapLibre se inicializa una sola vez, antes de crear cualquier MapView.
         MapLibre.getInstance(applicationContext)
         UserPreferences.init(this)
         enableEdgeToEdge()
         setContent {
+            // Al crear (o recrear por cambio de idioma): carga catálogo, refresco y valoraciones.
             LaunchedEffect(Unit) {
                 SampleData.loadCatalog()
                 CatalogSync.watch()
@@ -63,8 +65,7 @@ class MainActivity : ComponentActivity() {
             val darkThemePref by UserPreferences.darkThemeFlow().collectAsState(initial = null)
             NicaExplorerTheme(darkTheme = darkThemePref ?: isSystemInDarkTheme()) {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    val navController = rememberNavController()
-                    AppNavigation(navController = navController)
+                    AppNavigation(navController = rememberNavController())
                 }
             }
         }

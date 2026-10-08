@@ -107,7 +107,7 @@ fun AssistantScreen(
     var selectorCiudad by remember { mutableStateOf(false) }
     val textoPermisoDenegado = stringResource(R.string.assistant_ubicacion_permiso)
 
-    // Detecta la ciudad más cercana usando la última ubicación conocida (sin seguimiento continuo).
+    // Detecta la ciudad más cercana (última ubicación conocida, sin seguimiento continuo).
     fun detectarCiudad() {
         scope.launch {
             ciudadUsuario = UbicacionHelper.ciudadActual(context, SampleData.cities)
@@ -154,8 +154,7 @@ fun AssistantScreen(
         isLoading = true
 
         scope.launch {
-            // Comercios de la API; si hay ciudad del usuario, se filtran a esa ciudad
-            // (menos datos y recomendaciones más cercanas).
+            // Comercios de la API; si hay ciudad del usuario, se filtran a esa ciudad.
             val comerciosTodos = ApiRepository.getComercios().getOrDefault(emptyList())
             val comercios = ciudadUsuario?.let { ciudad ->
                 comerciosTodos.filter {
@@ -164,7 +163,7 @@ fun AssistantScreen(
                 }
             } ?: comerciosTodos
 
-            // Lugares: si hay ciudad del usuario, se limita el contexto a esa ciudad.
+            // Lugares: si hay ciudad, se limita el contexto a esa ciudad.
             val places = ciudadUsuario?.let { ciudad ->
                 localPlaces.filter { it.cityId == ciudad.id }
             } ?: localPlaces
@@ -230,8 +229,7 @@ fun AssistantScreen(
                 .imePadding()
                 .background(nicaAppBackgroundBrush())
         ) {
-            // Chip de ubicación: muestra la ciudad usada para recomendaciones cercanas.
-            // Al tocarlo abre el menú (usar ubicación / elegir ciudad / quitar).
+            // Chip de ubicación: ciudad usada para recomendaciones cercanas.
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -434,10 +432,8 @@ fun AssistantScreen(
 
             // Mascota flotante de Itzae (arrastrable). Se muestra solo si está activada.
             if (mascotaActiva) {
-                // El estado de ánimo de la mascota refleja lo que hace el asistente:
-                //  - PENSANDO mientras esperamos la respuesta de Gemini (isLoading),
-                //  - RESPONDIENDO durante unos segundos tras recibir la respuesta,
-                //  - IDLE (respirando/flotando) el resto del tiempo.
+                // Estado de la mascota: PENSANDO al esperar, RESPONDIENDO al llegar
+                // la respuesta, IDLE el resto del tiempo.
                 val estadoMascota = when {
                     isLoading -> EstadoMascota.PENSANDO
                     respondiendo -> EstadoMascota.RESPONDIENDO

@@ -126,17 +126,14 @@ object GeminiRepository {
             prompt
         }
 
-        // Directiva de idioma: las instrucciones de sistema están en español, así que sin
-        // esto Gemini respondería siempre en español. Según el idioma activo de la app
-        // (Locale.getDefault(), fijado en MainActivity.attachBaseContext) se le pide
-        // responder en inglés o en español. Los nombres propios se conservan.
+        // Las instrucciones están en español; según el idioma de la app se le pide
+        // responder en inglés o español (los nombres propios se conservan).
         val languageDirective = if (Locale.getDefault().language == "en") {
             "IMPORTANT: Answer ONLY in English, regardless of the language of these instructions, " +
                 "the context, or the data. Keep proper nouns (place names) as they are."
         } else {
             "IMPORTANTE: Responde únicamente en español."
         }
-        // Se antepone la directiva al prompt final que se envía al modelo.
         val promptWithLanguage = "$languageDirective\n\n$fullPrompt"
 
         return try {

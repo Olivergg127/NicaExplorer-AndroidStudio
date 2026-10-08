@@ -61,9 +61,11 @@ fun ConfiguracionScreen(
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    // Para poder recrear la Activity al cambiar de idioma.
     val activity = context.findActivity()
     val darkThemePref by UserPreferences.darkThemeFlow().collectAsState(initial = null)
     val notifications by UserPreferences.notificationsFlow().collectAsState(initial = true)
+    // Idioma guardado ("es"/"en" o null = sistema); marca el chip activo.
     val language by UserPreferences.languageFlow().collectAsState(initial = null)
 
     val isDark = darkThemePref ?: isSystemInDarkTheme()
@@ -168,12 +170,14 @@ fun ConfiguracionScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
+                    // Selector de idioma: guarda la preferencia y recrea la Activity,
+                    // porque el idioma se aplica en MainActivity.attachBaseContext.
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         FilterChip(
                             selected = language == null,
                             onClick = {
                                 scope.launch {
-                                    UserPreferences.setLanguage(null)
+                                    UserPreferences.setLanguage(null) // null = idioma del sistema
                                     activity?.recreate()
                                 }
                             },
@@ -279,7 +283,7 @@ private fun SettingRow(
     }
 }
 
-/** Encuentra la Activity a partir de un Context (para poder recrearla al cambiar idioma). */
+/** Obtiene la `Activity` desde un `Context` (para recrearla al cambiar de idioma). */
 private fun Context.findActivity(): Activity? {
     var ctx: Context = this
     while (ctx is ContextWrapper) {
