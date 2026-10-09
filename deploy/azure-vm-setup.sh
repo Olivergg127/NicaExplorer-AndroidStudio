@@ -113,6 +113,10 @@ if [ -d "${APP_DIR}" ]; then
     mkdir -p writable/cache writable/logs writable/session writable/uploads writable/debugbar
     chown -R www-data:www-data writable
     chmod -R 775 writable
+    # Carpeta pública de subidas (la app sube imágenes aquí si no hay token de GitHub).
+    mkdir -p public/uploads
+    chown -R www-data:www-data public/uploads
+    chmod -R 775 public/uploads
     echo "   Backend detectado y dependencias instaladas."
 else
     echo "   Aún no existe ${APP_DIR}."

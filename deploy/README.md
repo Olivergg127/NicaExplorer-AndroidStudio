@@ -61,7 +61,17 @@ composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader -
 cp .env.example .env    # y edítalo (projectId, apiKey, admin, credentialsFile, baseURL)
 sudo chown -R www-data:www-data writable
 sudo chmod 600 .env      # el .env lleva secretos: no debe ser legible por todos
+
+# Carpeta pública de subidas: la app sube aquí las imágenes si no hay token de GitHub.
+sudo mkdir -p public/uploads
+sudo chown -R www-data:www-data public/uploads
+sudo chmod 775 public/uploads
 ```
+
+> **Imágenes:** si defines `nica.githubToken` en `.env`, las subidas van al repo
+> `nica.githubRepo` (raw.githubusercontent.com). Si queda **vacío**, se guardan en
+> `public/uploads` de la propia VM (`ImageStorage` cae al modo local). Si ves el error
+> "Could not move file ... public/uploads", es que esta carpeta no pertenece a `www-data`.
 
 ### Credenciales de Firestore
 

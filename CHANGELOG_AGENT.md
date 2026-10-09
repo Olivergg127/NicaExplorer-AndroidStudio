@@ -28,6 +28,9 @@
 - App: `nica.apiBaseUrl` pasa a `https://68.211.72.101.sslip.io`; se elimina la excepción
   de tráfico en claro (`network_security_config.xml` + referencia en el manifest) y se
   recompila el APK.
+- Fix subida de imágenes: `public/uploads` pertenecía a `root` (Apache no podía escribir)
+  y `nica.githubToken` está vacío → `ImageStorage` usa modo local. Se corrigió el dueño a
+  `www-data` y `azure-vm-setup.sh` ahora crea/chowna `public/uploads`.
 - Pendiente: UFW + SSH solo con clave; (opcional) cambiar a dominio `cloudapp.azure.com`.
 
 ## 2026-10-07
