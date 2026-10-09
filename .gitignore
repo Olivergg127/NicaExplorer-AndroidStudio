@@ -39,3 +39,7 @@ tools/node_modules/
 /launcher/
 /NicaExplorer_BurstDebugInformation_DoNotShip/
 /unityLibrary_backup_20260904/
+
+# Clon de referencia y paquete de despliegue (locales, no versionables)
+/repo/
+/nicaexp_web/app.zip

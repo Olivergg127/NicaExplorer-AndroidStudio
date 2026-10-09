@@ -694,13 +694,25 @@ GitHub Releases distribuye el APK firmado. La versión publicada actual es **v1.
 - Descarga directa del APK:
   <https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/latest/download/NicaExplorer.apk>
 
-### Migración a Microsoft Azure (propuesta, no implementada)
+### Despliegue en Microsoft Azure (VM Ubuntu) — Hackathon
 
-Al estar el backend dockerizado y configurado por variables de entorno, migrar a **Azure App
-Service (Web App for Containers)** es viable. Puntos a adaptar: el **puerto**
-(`WEBSITES_PORT` en lugar de `PORT`), la **URL base** (`APP_BASE_URL` en lugar de
-`RENDER_EXTERNAL_URL`) y el **secreto** de Firebase (Key Vault/mount). Consideración
-principal: App Service **no ofrece un tier gratuito comparable** al de Render.
+Además de Render, el backend está desplegado en una **VM Ubuntu 24.04** de Azure para el
+hackathon. Guía completa y script en **`deploy/`**.
+
+- **IP pública:** `68.211.72.101`.
+- **Dominio con TLS (Let's Encrypt):** `https://68.211.72.101.sslip.io`; HTTP redirige a
+  HTTPS (301).
+- **Stack en la VM:** Apache 2 + PHP 8.3 (sirve `nicaexp_web`) + MariaDB (escucha solo en
+  `127.0.0.1:3306`). La base de datos real del backend sigue siendo **Firestore**
+  (transporte REST); MariaDB queda instalada por requisito pero no la usa la app.
+- **Docroot:** `/var/www/nicaexp/public`. Credenciales de Firestore en
+  `/etc/secrets/firebase.json` (`chmod 600`, dueño `www-data`); `.env` con permisos `600`.
+- **Puertos expuestos (NSG):** solo 22 (SSH), 80 (HTTP) y 443 (HTTPS). MySQL/3306 no se
+  expone. Apache no anuncia su versión (`ServerTokens Prod`, `ServerSignature Off`).
+- **APK:** la landing lo sirve en `/builds/NicaExplorer.apk` (`Home::index` usa
+  `base_url('builds/NicaExplorer.apk')`); es la forma de instalar la app desde Azure.
+- **App Android:** `local.properties` (`nica.apiBaseUrl`) apunta a la IP/dominio de Azure
+  (no versionado).
 
 ---
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Permite tráfico HTTP en claro únicamente hacia el servidor de Azure
+  del hackathon (IP pública). El resto de dominios sigue exigiendo HTTPS.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">68.211.72.101</domain>
+    </domain-config>
+</network-security-config>

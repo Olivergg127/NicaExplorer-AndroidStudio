@@ -22,6 +22,7 @@
     <application
         android:name=".NicaExplorerApp"
         android:allowBackup="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:icon="@drawable/nicaexplorer_isotipo"
         android:label="NicaExplore"
         android:roundIcon="@drawable/nicaexplorer_isotipo"

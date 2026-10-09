@@ -263,6 +263,31 @@ Notas del plan free: el servicio duerme tras 15 min sin tráfico (despierta en ~
 concede 750 h/mes (un servicio siempre activo usa ~730 h). La app consulta
 `/api/v1/version` cada 15 s, lo que en la práctica mantiene el servicio despierto.
 
+## Backend en Azure — VM Ubuntu (hackathon, 2026-10-09)
+
+Además de Render, el backend está desplegado en una **VM Ubuntu 24.04** de Azure para el
+hackathon. Guía y script en **`deploy/`**.
+
+Hecho y verificado:
+
+- **VM:** `68.211.72.101` (host `lospuntoycoma`), Ubuntu 24.04 LTS.
+- **Stack:** Apache 2 + PHP 8.3 (docroot `/var/www/nicaexp/public`) + MariaDB (solo en
+  `127.0.0.1:3306`; no la usa la app, que sigue en Firestore REST).
+- **TLS:** dominio `68.211.72.101.sslip.io` con certificado **Let's Encrypt**; HTTP → HTTPS
+  (301). `app.baseURL` = `https://68.211.72.101.sslip.io/`.
+- **Secretos:** `/etc/secrets/firebase.json` (`600`, dueño `www-data`); `.env` en `600`.
+- **Puertos públicos (NSG):** solo 22/80/443. Apache sin banner de versión
+  (`ServerTokens Prod`, `ServerSignature Off`).
+- **Entregable app pública:** la landing sirve el APK en
+  `https://68.211.72.101.sslip.io/builds/NicaExplorer.apk`; verificado (HTTP 200).
+- **API:** `/api/v1/health` → `ok` (`nica-explore`, `rest`, 4 ciudades) sobre HTTPS con API key.
+
+Pendiente (endurecimiento opcional):
+
+- Firewall **UFW** en la VM (hoy inactivo; se depende del NSG) y SSH solo con clave.
+- Migrar la app a `https://68.211.72.101.sslip.io` y quitar el tráfico en claro
+  (`network_security_config.xml`) — hoy usa `http://` y el 301 puede afectar POST.
+
 ## Notas de honestidad
 
 - No se ofrecen GPS, navegación GPS, rutas en tiempo real ni afluencia en tiempo real.

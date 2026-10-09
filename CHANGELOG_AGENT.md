@@ -4,6 +4,29 @@
 > cambios importantes. No sustituye al historial de Git; lo complementa con contexto.
 > Formato: fecha, objetivo, archivos, cambios, build, resultado, riesgos y pendientes.
 
+## 2026-10-09
+
+### Infra — Despliegue en Azure (VM Ubuntu) documentado y endurecido (#2 y #5)
+- Objetivo: cerrar los entregables de despliegue del hackathon en la VM Ubuntu de Azure.
+- Servidor (VM `68.211.72.101`, host `lospuntoycoma`):
+  - Apache 2 + PHP 8.3 (docroot `/var/www/nicaexp/public`) + MariaDB (solo `127.0.0.1`).
+  - TLS **Let's Encrypt** en `68.211.72.101.sslip.io`; HTTP → HTTPS (301).
+  - Firestore REST; credenciales en `/etc/secrets/firebase.json`.
+  - Endurecimiento aplicado: `.env` de `644` → `600`; Apache `ServerTokens Prod` +
+    `ServerSignature Off` (oculta versión) y reload verificado.
+  - Puertos públicos: solo 22/80/443 (comprobado por escaneo externo); 3306 y otros cerrados.
+- Repositorio (entregable #5):
+  - Se versionan `deploy/` (guía + `azure-vm-setup.sh`),
+    `app/src/main/res/xml/network_security_config.xml` y la referencia
+    `android:networkSecurityConfig` en `AndroidManifest.xml`.
+  - `nicaexp_web/app/Controllers/Home.php`: el APK se sirve desde `base_url('builds/...')`.
+  - Documentado el despliegue real en `README.md` (antes decía "propuesta, no implementada")
+    y en `ROADMAP.md`.
+  - `.gitignore`: se ignoran `nicaexp_web/app.zip` y `repo/` (artefactos locales).
+- Verificación: `/api/v1/health` → `ok` sobre HTTPS; APK en
+  `https://68.211.72.101.sslip.io/builds/NicaExplorer.apk` → HTTP 200.
+- Pendiente: UFW + SSH solo con clave; migrar la app a HTTPS y quitar cleartext.
+
 ## 2026-10-07
 
 ### App — Itzae conoce la ciudad del usuario (recomendaciones cercanas)

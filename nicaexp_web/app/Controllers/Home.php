@@ -10,7 +10,7 @@ class Home extends BaseController
     public function index(): string
     {
         return view('landing', [
-            'apkUrl'  => 'https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/download/v1.1.3/NicaExplorer.apk',
+            'apkUrl'  => base_url('builds/NicaExplorer.apk'),
             'repoUrl' => 'https://github.com/Olivergg127/NicaExplorer-AndroidStudio',
             'version' => '1.1.3',
             'year'    => date('Y'),
