@@ -55,7 +55,7 @@ Instala **Apache + PHP 8.3 + Composer + MariaDB** y deja el vhost apuntando a
 scp -r nicaexp_web azureuser@68.211.72.101:/tmp/nicaexp_web
 # En la VM:
 sudo mkdir -p /var/www/nicaexp
-sudo cp -r /tmp/nicaexp_web/* /var/www/nicaexp/
+sudo cp -r /tmp/nicaexp_web/. /var/www/nicaexp/   # el '.' copia también los archivos ocultos (.gitignore, .dockerignore, .env.example)
 cd /var/www/nicaexp
 composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-req=ext-grpc
 cp .env.example .env    # y edítalo (projectId, apiKey, admin, credentialsFile, baseURL)

@@ -31,6 +31,10 @@
 - Fix subida de imágenes: `public/uploads` pertenecía a `root` (Apache no podía escribir)
   y `nica.githubToken` está vacío → `ImageStorage` usa modo local. Se corrigió el dueño a
   `www-data` y `azure-vm-setup.sh` ahora crea/chowna `public/uploads`.
+- Verificación de sincronía (#5): los **162** archivos versionados de `nicaexp_web` en la VM
+  coinciden **byte a byte** con `main` (hash SHA-256, ignorando saltos de línea). Los 3
+  dotfiles que el `cp *` omitía (`.gitignore`, `.dockerignore`, `.env.example`) se copiaron y
+  se corrigió la guía para usar `cp -r /tmp/nicaexp_web/. ...`.
 - Pendiente: UFW + SSH solo con clave; (opcional) cambiar a dominio `cloudapp.azure.com`.
 
 ## 2026-10-07
