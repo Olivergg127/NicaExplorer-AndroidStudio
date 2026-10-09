@@ -34,6 +34,8 @@ Firestore (proyecto `nica-explore`):
 9. [Unity y visor 3D](#unity-y-visor-3d)
 10. [Instalación y ejecución](#instalación-y-ejecución)
 11. [Despliegue](#despliegue)
+    - [Backend en Render](#backend-en-render-plan-free)
+    - [Despliegue en Microsoft Azure](#despliegue-en-microsoft-azure)
 12. [Alcance y transparencia](#alcance-y-transparencia)
 13. [Equipo](#equipo)
 
@@ -694,7 +696,7 @@ GitHub Releases distribuye el APK firmado. La versión publicada actual es **v1.
 - Descarga directa del APK:
   <https://github.com/Olivergg127/NicaExplorer-AndroidStudio/releases/latest/download/NicaExplorer.apk>
 
-### Despliegue en Microsoft Azure (VM Ubuntu) — Hackathon
+### Despliegue en Microsoft Azure
 
 Además de Render, el backend está desplegado en una **VM Ubuntu 24.04** de Azure para el
 hackathon. Guía completa y script en **`deploy/`**.
