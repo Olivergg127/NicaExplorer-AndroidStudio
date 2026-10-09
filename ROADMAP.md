@@ -285,8 +285,9 @@ Hecho y verificado:
 Pendiente (endurecimiento opcional):
 
 - Firewall **UFW** en la VM (hoy inactivo; se depende del NSG) y SSH solo con clave.
-- Migrar la app a `https://68.211.72.101.sslip.io` y quitar el tráfico en claro
-  (`network_security_config.xml`) — hoy usa `http://` y el 301 puede afectar POST.
+- Mejora opcional de dominio: sustituir `sslip.io` por la **DNS label de Azure**
+  (`lospuntoycoma.chilecentral.cloudapp.azure.com`, creada en el portal) para no depender
+  de un tercero. La app ya usa HTTPS con certificado Let's Encrypt.
 
 ## Notas de honestidad
 

@@ -711,8 +711,9 @@ hackathon. Guía completa y script en **`deploy/`**.
   expone. Apache no anuncia su versión (`ServerTokens Prod`, `ServerSignature Off`).
 - **APK:** la landing lo sirve en `/builds/NicaExplorer.apk` (`Home::index` usa
   `base_url('builds/NicaExplorer.apk')`); es la forma de instalar la app desde Azure.
-- **App Android:** `local.properties` (`nica.apiBaseUrl`) apunta a la IP/dominio de Azure
-  (no versionado).
+- **App Android:** `local.properties` (`nica.apiBaseUrl`) apunta a
+  `https://68.211.72.101.sslip.io` (no versionado); la app usa **HTTPS** y ya no requiere
+  excepción de tráfico en claro.
 
 ---
 

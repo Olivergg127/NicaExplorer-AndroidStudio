@@ -25,7 +25,10 @@
   - `.gitignore`: se ignoran `nicaexp_web/app.zip` y `repo/` (artefactos locales).
 - Verificación: `/api/v1/health` → `ok` sobre HTTPS; APK en
   `https://68.211.72.101.sslip.io/builds/NicaExplorer.apk` → HTTP 200.
-- Pendiente: UFW + SSH solo con clave; migrar la app a HTTPS y quitar cleartext.
+- App: `nica.apiBaseUrl` pasa a `https://68.211.72.101.sslip.io`; se elimina la excepción
+  de tráfico en claro (`network_security_config.xml` + referencia en el manifest) y se
+  recompila el APK.
+- Pendiente: UFW + SSH solo con clave; (opcional) cambiar a dominio `cloudapp.azure.com`.
 
 ## 2026-10-07
 
